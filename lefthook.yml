@@ -53,31 +53,28 @@ pre-commit:
   parallel: false
   jobs:
     - name: format backend
-      run: dotnet format Markivio.sln
+      run: dotnet format ./backend/api/Markivio.sln
       runner: bash
       glob: "{*.cs, *.csproj}"
       root: ./backend/api
 
     - name: dotnet build
-      run: dotnet build Markivio.sln
+      run: dotnet build ./backend/api/Markivio.sln
       runner: bash
-      glob: "{*.cs, *.csproj}"
-      root: ./backend/api
+      glob: "*.{cs,csproj,sln}"
 
 pre-push:
   parallel: false
   jobs:
     - name: build backend
-      run: dotnet build Markivio.sln
+      run: dotnet build ./backend/api/Markivio.sln
       runner: bash
-      glob: "{*.cs, *.csproj}"
-      root: ./backend/api
+      glob: "*.{cs,csproj,sln}"
 
     - name: test backend 
-      run: dotnet test Tests/Markivio.UnitTests/Markivio.UnitTests.csproj
+      run: dotnet test ./backend/api/Tests/Markivio.UnitTests/Markivio.UnitTests.csproj
       runner: bash
-      glob: "{*.cs, *.csproj}"
-      root: ./backend/api
+      glob: "*.{cs,csproj,sln}"
 
 post-receive:
   parallel: true
