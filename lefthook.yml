@@ -55,12 +55,14 @@ pre-commit:
     - name: format backend
       run: dotnet format Markivio.sln
       runner: bash
-      root: ./backend/api/
+      glob: "{*.cs, *.csproj}"
+      root: ./backend/api
 
     - name: dotnet build
       run: dotnet build Markivio.sln
       runner: bash
-      root: ./backend/api/
+      glob: "{*.cs, *.csproj}"
+      root: ./backend/api
 
 pre-push:
   parallel: false
@@ -68,15 +70,20 @@ pre-push:
     - name: build backend
       run: dotnet build Markivio.sln
       runner: bash
-      root: ./backend/api/
+      glob: "{*.cs, *.csproj}"
+      root: ./backend/api
 
     - name: test backend 
       run: dotnet test Tests/Markivio.UnitTests/Markivio.UnitTests.csproj
       runner: bash
-      root: ./backend/api/
+      glob: "{*.cs, *.csproj}"
+      root: ./backend/api
 
 post-receive:
-  parallel: false
+  parallel: true
   jobs:
     - name: restore backend
       run: dotnet restore ./backend/api/Markivio.sln
+    - name: build docker image
+      run: docker buildx build -f Dockerfile.Api .
+      root: ./backend/api
