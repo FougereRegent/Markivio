@@ -47,3 +47,31 @@ commit-msg:
   jobs:
     - script: "message-checker.sh"
       runner: "sh"
+
+
+pre-commit:
+  parallel: false
+  jobs:
+    - name: format backend
+      run: dotnet format ./backend/api/Markivio.sln
+      runner: bash
+
+    - name: dotnet build
+      run: dotnet build ./backend/api/Markivio.sln
+      runner: bash
+
+pre-push:
+  parallel: false
+  jobs:
+    - name: build backend
+      run: dotnet build ./backend/api/Markivio.sln
+      runner: bash
+
+    - name: test backend 
+      run: dotnet test ./backend/api/Tests/Markivio.UnitTests/Markivio.UnitTests.csproj
+
+post-receive:
+  parallel: false
+  jobs:
+    - name: restore backend
+      run: dotnet restore ./backend/api/Markivio.sln
