@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
+
+WORKDIR /build
+
+COPY . .
+
+RUN dotnet restore \
+  && mkdir publish \
+  && dotnet publish \
+    --no-restore \
+    --configuration Release \
+    --output ./publish \
+    ./Presentation/Markivio.GraphQl/Markivio.GraphQl.csproj
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runner
+
+WORKDIR /app
+
+COPY --from=builder /build/publish ./markivio
+
+EXPOSE 8080
+ENTRYPOINT ["./markivio/Markivio.GraphQl"]
+
