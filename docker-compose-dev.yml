@@ -17,6 +17,20 @@ services:
     ports:
       - 8080:8080
 
+  graphql_api:
+    build:
+      context: ./backend/api/
+      dockerfile: Dockerfile.Api
+    ports:
+      - 8082:8080
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/api
+          ignore: 
+            - ./backend/api/**/bin
+            - ./backend/api/**/obj
+
 secrets:
   db_password_secret:
     file: ./psql-secret.txt
