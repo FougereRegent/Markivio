@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:18.0
+    container_name: "relational_db"
+    shm_size: 128mb
+    secrets:
+      - db_password_secret
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password_secret
+      POSTGRES_DB: markivio
+    volumes:
+      - db_data_volume:/var/lib/postgresql
+
+  adminer:
+    image: adminer
+    container_name: db_management
+    ports:
+      - 8080:8080
+
+secrets:
+  db_password_secret:
+    file: ./psql-secret.txt
+
+volumes:
+  db_data_volume:
