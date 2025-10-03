@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
 
+ARG COMPIL_MODE=Release
+
 WORKDIR /build
 
 COPY . .
@@ -8,7 +10,7 @@ RUN dotnet restore \
   && mkdir publish \
   && dotnet publish \
     --no-restore \
-    --configuration Release \
+    --configuration $COMPIL_MODE \
     --output ./publish \
     ./Presentation/Markivio.GraphQl/Markivio.GraphQl.csproj
 

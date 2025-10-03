@@ -14,6 +14,7 @@ Action<ScalarOptions> scalarOptions = options =>
     options.WithTitle("Markivio API");
 };
 
+Console.WriteLine(app.Environment.IsDevelopment());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -41,7 +42,8 @@ app.MapGet("/version", () =>
 app.MapGet("/health-check", () =>
 {
     return Task.FromResult(Results.Ok(new HealtkCheckDto(EnumHealthStatus.Alive)));
-}).WithDisplayName("Health Check")
+})
+.WithDisplayName("Health Check")
 .WithDescription("Get api health-check");
 
 app.UseHttpsRedirection();
