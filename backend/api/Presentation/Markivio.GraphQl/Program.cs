@@ -1,5 +1,5 @@
 using Scalar.AspNetCore;
-using Markivio.Presentation.Dto;
+using Markivio.Presentation.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,27 +24,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", scalarOptions);
 }
 
-app.MapGet("/", () =>
-{
-    return new DefaultMessageDto("test");
-})
-.WithDisplayName("Default Route")
-.WithDescription("The default route");
-
-app.MapGet("/version", () =>
-{
-    return new VersionDto("markivio", "v0.0.0");
-})
-.WithDisplayName("Version")
-.WithDescription("Get api version");
-
-
-app.MapGet("/health-check", () =>
-{
-    return Task.FromResult(Results.Ok(new HealtkCheckDto(EnumHealthStatus.Alive)));
-})
-.WithDisplayName("Health Check")
-.WithDescription("Get api health-check");
+EndpointStatus.ConfigRoute(app);
 
 app.UseHttpsRedirection();
 app.Run();
