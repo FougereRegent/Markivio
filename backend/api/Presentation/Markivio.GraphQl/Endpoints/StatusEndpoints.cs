@@ -4,7 +4,7 @@ namespace Markivio.Presentation.Endpoints;
 
 public static class EndpointStatus
 {
-    public static void ConfigRoute(this WebApplication app)
+    public static void ConfigureStatusEndpoints(this WebApplication app)
     {
         app.MapGet("/", () =>
         {

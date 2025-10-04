@@ -5,18 +5,19 @@ using Markivio.Presentation.Config;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.Config();
+EnvConfig? config = builder.Configuration.BindEnvVariables<EnvConfig>();
+if (config is null) return;
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddAuth0(config);
 
-builder.Configuration.Config();
-EnvConfig? config = builder.Configuration.BindEnvVariables<EnvConfig>();
-Console.WriteLine(config);
 
 
 var app = builder.Build();
 
+app.UseAuth();
 Action<ScalarOptions> scalarOptions = options =>
 {
     options.WithTitle("Markivio API");
@@ -31,7 +32,9 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", scalarOptions);
 }
 
-EndpointStatus.ConfigRoute(app);
+
+app.ConfigureStatusEndpoints();
+app.ConfigureAuthEndpoints();
 
 app.UseHttpsRedirection();
 app.Run();
