@@ -25,6 +25,7 @@ services:
         COMPIL_MODE: Debug
     ports:
       - 8082:8080
+    env_file: ./backend/api/Presentation/Markivio.GraphQl/dev.env
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
     develop:
