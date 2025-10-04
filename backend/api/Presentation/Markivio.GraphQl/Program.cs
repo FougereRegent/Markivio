@@ -1,11 +1,19 @@
 using Scalar.AspNetCore;
 using Markivio.Presentation.Endpoints;
+using Markivio.Presentation.Dto;
+using Markivio.Presentation.Config;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Configuration.Config();
+EnvConfig? config = builder.Configuration.BindEnvVariables<EnvConfig>();
+Console.WriteLine(config);
+
 
 var app = builder.Build();
 
@@ -14,7 +22,6 @@ Action<ScalarOptions> scalarOptions = options =>
     options.WithTitle("Markivio API");
 };
 
-Console.WriteLine(app.Environment.IsDevelopment());
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
