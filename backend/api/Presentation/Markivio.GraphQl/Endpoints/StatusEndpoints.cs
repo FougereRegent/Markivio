@@ -1,4 +1,5 @@
 using Markivio.Presentation.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Markivio.Presentation.Endpoints;
 
@@ -21,7 +22,7 @@ public static class EndpointStatus
         .WithDescription("Get api version");
 
 
-        app.MapGet("/health-check", () =>
+        app.MapGet("/health-check", [Authorize] () =>
         {
             return Task.FromResult(Results.Ok(new HealtkCheckDto(EnumHealthStatus.Alive)));
         })

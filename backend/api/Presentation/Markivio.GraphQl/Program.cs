@@ -13,8 +13,6 @@ if (config is null) return;
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config);
 
-
-
 var app = builder.Build();
 
 app.UseAuth();
@@ -34,7 +32,6 @@ if (app.Environment.IsDevelopment())
 
 
 app.ConfigureStatusEndpoints();
-app.ConfigureAuthEndpoints();
 
 app.UseHttpsRedirection();
 app.Run();

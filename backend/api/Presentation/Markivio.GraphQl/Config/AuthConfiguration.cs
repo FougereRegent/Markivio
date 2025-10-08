@@ -1,22 +1,27 @@
-using Auth0.AspNetCore.Authentication;
 using Markivio.Presentation.Dto;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 namespace Markivio.Presentation.Config;
 
 public static class AuthConfiguration
 {
     public static void AddAuth0(this IServiceCollection services, EnvConfig config)
     {
-        services.Configure<CookiePolicyOptions>(options =>
+        services.AddAuthentication(options =>
         {
-            options.MinimumSameSitePolicy = SameSiteMode.None;
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.Authority = config.Authority;
+            options.Audience = config.Audience;
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateAudience = false,
+            };
         });
-        services.AddAuthorization();
-        services.AddAuth0WebAppAuthentication(options =>
+
+        services.AddAuthorization(options =>
         {
-            options.CallbackPath = "/auth/callback";
-            options.Domain = config.Domain;
-            options.ClientId = config.ClientId;
         });
     }
 
