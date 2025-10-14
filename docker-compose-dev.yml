@@ -3,6 +3,12 @@ services:
     image: postgres:18.0
     container_name: "relational_db"
     shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 60s
     secrets:
       - db_password_secret
     environment:
@@ -17,6 +23,16 @@ services:
     ports:
       - 8080:8080
 
+  db-updater:
+    build:
+      context: ./backend/api/
+      dockerfile: Dockerfile.DbUpdater
+    container_name: "updater"
+    env_file: ./backend/api/dev.env
+    depends_on:
+      db:
+        condition: service_healthy
+
   graphql_api:
     build:
       context: ./backend/api/
@@ -25,9 +41,12 @@ services:
         COMPIL_MODE: Debug
     ports:
       - 8082:8080
-    env_file: ./backend/api/Presentation/Markivio.GraphQl/dev.env
+    env_file: ./backend/api/dev.env
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+    depends_on:
+      db-updater:
+        condition: service_completed_successfully
     develop:
       watch:
         - action: rebuild

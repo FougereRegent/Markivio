@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
+
+WORKDIR /dbUpdater
+
+RUN dotnet tool install --global dotnet-ef
+
+COPY . .
+
+RUN dotnet restore
+
+WORKDIR /dbUpdater/Infra/Markivio.DbUpdater
+
+ENV PATH="$PATH:/root/.dotnet/tools"
+ENTRYPOINT dotnet-ef database update
