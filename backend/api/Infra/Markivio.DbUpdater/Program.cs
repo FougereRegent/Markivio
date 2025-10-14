@@ -1,10 +1,15 @@
 ﻿using Markivio.Persistence.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Markivio.Extensions.HostingExtensions;
 
 namespace Markivio.DbUpdater;
+
+internal record EnvConfig(
+    [EnvironmentVariable("MARKIVIO_CONNECTION_STRING")] string ConnectionString
+    );
 
 public class Program
 {
@@ -19,11 +24,16 @@ public class Program
     // EF Core uses this method at design time to access the DbContext
     public static IHostBuilder CreateHostBuilder(string[] args)
         => Host.CreateDefaultBuilder(args)
-            .ConfigureServices(service =>
+            .ConfigureAppConfiguration((context, options) =>
             {
+                options.AddEnvironmentVariables();
+            })
+            .ConfigureServices((context, service) =>
+            {
+                EnvConfig? config = context.Configuration.BindEnvVariables<EnvConfig>();
                 service.AddDbContext<MarkivioContext>(options =>
                 {
-                    options.UseNpgsql("", b => b.MigrationsAssembly("Markivio.DbUpdater"));
+                    options.UseNpgsql(config?.ConnectionString ?? string.Empty, b => b.MigrationsAssembly("Markivio.DbUpdater"));
                 });
             });
 }
