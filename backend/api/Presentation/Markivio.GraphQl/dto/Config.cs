@@ -1,3 +1,4 @@
+using Markivio.Extensions.HostingExtensions;
 using Markivio.Presentation.Config;
 
 namespace Markivio.Presentation.Dto;

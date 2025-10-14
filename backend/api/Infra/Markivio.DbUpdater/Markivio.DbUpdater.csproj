@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Markivio.Persistence\Markivio.Persistence.csproj" />
+    <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@ using Scalar.AspNetCore;
 using Markivio.Presentation.Endpoints;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
+using Markivio.Extensions.HostingExtensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
