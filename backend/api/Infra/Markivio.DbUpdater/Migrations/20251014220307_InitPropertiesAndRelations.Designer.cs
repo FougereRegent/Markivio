@@ -3,6 +3,7 @@ using System;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Markivio.DbUpdater.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    partial class MarkivioContextModelSnapshot : ModelSnapshot
+    [Migration("20251014220307_InitPropertiesAndRelations")]
+    partial class InitPropertiesAndRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Markivio.DbUpdater.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ArticleId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ArticleTag");
-                });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Article", b =>
                 {
@@ -79,7 +67,12 @@ namespace Markivio.DbUpdater.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Folder");
                 });
@@ -100,7 +93,12 @@ namespace Markivio.DbUpdater.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tag");
                 });
@@ -115,16 +113,6 @@ namespace Markivio.DbUpdater.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -135,46 +123,38 @@ namespace Markivio.DbUpdater.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.HasOne("Markivio.Domain.Entities.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Markivio.Domain.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Markivio.Domain.Entities.Article", b =>
                 {
-                    b.HasOne("Markivio.Domain.Entities.Folder", "Folder")
+                    b.HasOne("Markivio.Domain.Entities.Folder", null)
                         .WithMany("Articles")
-                        .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("FolderId");
+                });
 
-                    b.Navigation("Folder");
+            modelBuilder.Entity("Markivio.Domain.Entities.Folder", b =>
+                {
+                    b.HasOne("Markivio.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Markivio.Domain.Entities.Tag", b =>
+                {
+                    b.HasOne("Markivio.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.User", b =>
                 {
                     b.HasOne("Markivio.Domain.Entities.Article", null)
-                        .WithOne("User")
-                        .HasForeignKey("Markivio.Domain.Entities.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Markivio.Domain.Entities.Folder", null)
-                        .WithOne("User")
-                        .HasForeignKey("Markivio.Domain.Entities.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Markivio.Domain.Entities.Tag", null)
                         .WithOne("User")
                         .HasForeignKey("Markivio.Domain.Entities.User", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -190,15 +170,6 @@ namespace Markivio.DbUpdater.Migrations
             modelBuilder.Entity("Markivio.Domain.Entities.Folder", b =>
                 {
                     b.Navigation("Articles");
-
-                    b.Navigation("User")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Markivio.Domain.Entities.Tag", b =>
-                {
-                    b.Navigation("User")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
