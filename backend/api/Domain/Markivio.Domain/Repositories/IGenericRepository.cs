@@ -3,11 +3,14 @@ namespace Markivio.Domain.Repositories;
 
 public interface IGenericRepository<T> where T : Entity
 {
-    ValueTask<T> GetById(Guid id);
-    ValueTask<List<T>> GetAll();
-    ValueTask<T> Update(T entity);
-    ValueTask<T> Save(T entity);
-    ValueTask<T> Delete(T entity);
+    void Delete(T entity);
 
-    ValueTask<T> GetAllPaginated(int limit, int skip);
+    T Update(T entity);
+    T Save(T entity);
+
+    void UpdateInRange(IEnumerable<T> entities);
+    void SaveInRange(IEnumerable<T> entities);
+
+    ValueTask<T?> GetById(Guid id);
+    ValueTask<PaginatedValues<T>> GetAllPaginated(int limit, int skip);
 }

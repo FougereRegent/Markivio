@@ -4,9 +4,9 @@ namespace Markivio.Domain.Repositories;
 public record PaginatedValues<T>
 (
     List<T> Values,
-    uint ElementByPage,
-    uint PageNumber,
-    uint TotalPage
+    int PageSize,
+    int PageNumber,
+    int TotalPage
  ) where T : class;
 
 public record CursorValues<T>(
