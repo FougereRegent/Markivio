@@ -53,20 +53,19 @@ public class Program
         FolderGenerator folderGenerator = new FolderGenerator();
 
         List<User> users = userGenerator.Generate(100);
-        List<Article> articles = articleGenerator.Generate(200);
+        List<Article> articles = articleGenerator.Generate(40_000);
         List<Tag> tags = tagGenerator.Generate(50);
-        List<Folder> folder = folderGenerator.Generate(20);
-
+        List<Folder> folders = folderGenerator.Generate(400);
 
         CreateUser(users, context);
         CreateArticles(articles, users, context);
-
-        context.SaveChanges();
+        CreateFolder(folders, articles, users, context);
     }
 
     private static void CreateUser(List<User> users, MarkivioContext context)
     {
         context.User.AddRange(users);
+        context.SaveChanges();
     }
 
     private static void CreateArticles(List<Article> articles, List<User> users, MarkivioContext context)
@@ -78,10 +77,24 @@ public class Program
             article.User = faker.Random.ListItem(users);
             context.Add(article);
         }
+        context.SaveChanges();
     }
 
-    private static void CreateFolder(List<Folder> folders)
+    private static void CreateFolder(List<Folder> folders, List<Article> articles, List<User> users, MarkivioContext context)
     {
+        Faker faker = new Faker();
+        foreach (Folder folder in folders)
+        {
+            User user = faker.Random.ListItem(users);
+            List<Article> selectedArticles = articles.Where(pre => pre.User == user).ToList();
+            selectedArticles = faker.Random.ListItems(selectedArticles)
+             .Distinct()
+             .ToList();
+            folder.Articles.AddRange(selectedArticles);
+            folder.User = user;
+        }
 
+        context.Folder.AddRange(folders);
+        context.SaveChanges();
     }
 }
