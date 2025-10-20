@@ -1,9 +1,7 @@
 using Scalar.AspNetCore;
-using Markivio.Presentation.Endpoints;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
 using Markivio.Extensions.HostingExtensions;
-using HotChocolate.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +13,8 @@ if (config is null) return;
 
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config);
-builder.Services.AddGraphQLServer();
+builder.Services.GraphQlConfig();
+builder.Services.ConfigureDependencyInjection(config);
 
 var app = builder.Build();
 
@@ -35,7 +34,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.ConfigureStatusEndpoints();
+//app.ConfigureStatusEndpoints();
 
 app.UseHttpsRedirection();
 app.MapGraphQL();

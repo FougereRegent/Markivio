@@ -10,6 +10,10 @@ public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository
     public void Delete(T entity) =>
         context.Remove(entity);
 
+    public IQueryable<T> GetAll() =>
+        context.Set<T>()
+          .AsQueryable();
+
     public async
       ValueTask<PaginatedValues<T>> GetAllPaginated(int limit, int skip)
     {
