@@ -28,7 +28,7 @@ internal static class TagDbConfiguration
         builder
           .HasOne(pre => pre.User)
           .WithOne()
-          .HasForeignKey<User>("TagId")
+          .HasForeignKey<Tag>("UserId")
           .IsRequired();
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Markivio.DbUpdater.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    partial class MarkivioContextModelSnapshot : ModelSnapshot
+    [Migration("20251020194413_AddUserTenancy")]
+    partial class AddUserTenancy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,8 @@ namespace Markivio.DbUpdater.Migrations
 
                     b.HasIndex("FolderId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Article");
                 });
@@ -175,8 +179,8 @@ namespace Markivio.DbUpdater.Migrations
                         .HasForeignKey("FolderId");
 
                     b.HasOne("Markivio.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne()
+                        .HasForeignKey("Markivio.Domain.Entities.Article", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -7,6 +7,7 @@ using Markivio.Extensions.HostingExtensions;
 using Markivio.Domain.Entities;
 using Markivio.DbUpdater.ModelGenerator;
 using Bogus;
+using System.Linq;
 
 namespace Markivio.DbUpdater;
 
