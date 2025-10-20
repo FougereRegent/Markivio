@@ -3,6 +3,7 @@ using Markivio.Presentation.Endpoints;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
 using Markivio.Extensions.HostingExtensions;
+using HotChocolate.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +12,10 @@ EnvConfig? config = builder.Configuration.BindEnvVariables<EnvConfig>();
 if (config is null) return;
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config);
+builder.Services.AddGraphQLServer();
 
 var app = builder.Build();
 
@@ -35,4 +38,5 @@ if (app.Environment.IsDevelopment())
 app.ConfigureStatusEndpoints();
 
 app.UseHttpsRedirection();
+app.MapGraphQL();
 app.Run();
