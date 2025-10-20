@@ -27,7 +27,8 @@ internal static class ArticleDbConfiguration
 
         builder
           .HasOne(pre => pre.User)
-          .WithMany();
+          .WithMany()
+          .HasForeignKey("UserId");
 
         builder
           .HasMany(pre => pre.Tags)

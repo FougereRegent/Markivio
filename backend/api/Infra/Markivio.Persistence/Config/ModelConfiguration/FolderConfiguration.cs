@@ -23,8 +23,8 @@ internal static class FolderDbConfiguration
 
         builder
           .HasOne(pre => pre.User)
-          .WithOne()
-          .HasForeignKey<Folder>("UserId")
+          .WithMany()
+          .HasForeignKey("UserId")
           .OnDelete(DeleteBehavior.Cascade)
           .IsRequired(true);
     }
