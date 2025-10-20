@@ -11,6 +11,11 @@ internal static class ArticleDbConfiguration
         EntityTypeBuilder<Article> builder = modelBuilder.Entity<Article>();
         builder
           .HasKey(pre => pre.Id);
+
+        builder
+          .Property(pre => pre.Id)
+          .ValueGeneratedOnAdd();
+
         builder.Property(pre => pre.Title)
           .IsRequired()
           .HasMaxLength(64);
@@ -19,10 +24,11 @@ internal static class ArticleDbConfiguration
 
         builder.Property(pre => pre.Source)
           .HasMaxLength(256);
+
         builder
           .HasOne(pre => pre.User)
           .WithOne()
-          .HasForeignKey<User>();
+          .HasForeignKey<User>("ArticleId");
 
         builder
           .HasMany(pre => pre.Tags)

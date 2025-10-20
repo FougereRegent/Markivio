@@ -14,20 +14,18 @@ internal static class FolderDbConfiguration
           .HasKey(pre => pre.Id);
 
         builder
+          .Property(pre => pre.Id)
+          .ValueGeneratedOnAdd();
+
+        builder
           .Property(pre => pre.Name)
           .HasMaxLength(32);
 
         builder
           .HasOne(pre => pre.User)
           .WithOne()
-          .HasForeignKey<User>(pre => pre.Id)
+          .HasForeignKey<Folder>("UserId")
           .OnDelete(DeleteBehavior.Cascade)
-          .IsRequired();
-
-        builder
-          .HasMany(pre => pre.Articles)
-          .WithOne(pre => pre.Folder)
-          .OnDelete(DeleteBehavior.SetNull)
-          .IsRequired(false);
+          .IsRequired(true);
     }
 }

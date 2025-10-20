@@ -14,6 +14,10 @@ internal static class TagDbConfiguration
           .HasKey(pre => pre.Id);
 
         builder
+          .Property(pre => pre.Id)
+          .ValueGeneratedOnAdd();
+
+        builder
           .Property(pre => pre.Name)
           .HasMaxLength(32);
 
@@ -24,6 +28,7 @@ internal static class TagDbConfiguration
         builder
           .HasOne(pre => pre.User)
           .WithOne()
-          .HasForeignKey<User>(pre => pre.Id);
+          .HasForeignKey<User>("TagId")
+          .IsRequired();
     }
 }

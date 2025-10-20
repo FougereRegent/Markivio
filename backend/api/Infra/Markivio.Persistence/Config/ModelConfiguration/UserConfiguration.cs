@@ -14,6 +14,10 @@ internal static class UserDbConfiguration
           .HasKey(pre => pre.Id);
 
         builder
+          .Property(pre => pre.Id)
+          .ValueGeneratedOnAdd();
+
+        builder
           .Property(pre => pre.Email)
           .HasMaxLength(128);
 

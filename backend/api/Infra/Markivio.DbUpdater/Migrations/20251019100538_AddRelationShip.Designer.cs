@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Markivio.DbUpdater.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    [Migration("20251016174336_InitRelations")]
-    partial class InitRelations
+    [Migration("20251019100538_AddRelationShip")]
+    partial class AddRelationShip
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,6 +111,10 @@ namespace Markivio.DbUpdater.Migrations
             modelBuilder.Entity("Markivio.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ArticleId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Email")
@@ -123,10 +127,16 @@ namespace Markivio.DbUpdater.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -134,6 +144,15 @@ namespace Markivio.DbUpdater.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArticleId")
+                        .IsUnique();
+
+                    b.HasIndex("FolderId")
+                        .IsUnique();
+
+                    b.HasIndex("TagId")
+                        .IsUnique();
 
                     b.ToTable("User");
                 });
@@ -157,8 +176,7 @@ namespace Markivio.DbUpdater.Migrations
                 {
                     b.HasOne("Markivio.Domain.Entities.Folder", "Folder")
                         .WithMany("Articles")
-                        .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("FolderId");
 
                     b.Navigation("Folder");
                 });
@@ -167,19 +185,17 @@ namespace Markivio.DbUpdater.Migrations
                 {
                     b.HasOne("Markivio.Domain.Entities.Article", null)
                         .WithOne("User")
-                        .HasForeignKey("Markivio.Domain.Entities.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Markivio.Domain.Entities.User", "ArticleId");
 
                     b.HasOne("Markivio.Domain.Entities.Folder", null)
                         .WithOne("User")
-                        .HasForeignKey("Markivio.Domain.Entities.User", "Id")
+                        .HasForeignKey("Markivio.Domain.Entities.User", "FolderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Markivio.Domain.Entities.Tag", null)
                         .WithOne("User")
-                        .HasForeignKey("Markivio.Domain.Entities.User", "Id")
+                        .HasForeignKey("Markivio.Domain.Entities.User", "TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

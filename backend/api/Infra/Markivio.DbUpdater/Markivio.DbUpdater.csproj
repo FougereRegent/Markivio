@@ -3,9 +3,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Markivio.Persistence\Markivio.Persistence.csproj" />
     <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
+    <ProjectReference Include="..\..\Domain\Markivio.Domain\Markivio.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
