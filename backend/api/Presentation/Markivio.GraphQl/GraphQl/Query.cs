@@ -16,6 +16,8 @@ public class QueryType : ObjectType<Query>
 {
     protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
     {
+
+        descriptor.Authorize();
         descriptor
           .Field(f => f.GetUserById(default!, default!))
           .Argument("id", args => args.Type<UuidType>())

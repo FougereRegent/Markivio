@@ -37,5 +37,8 @@ if (app.Environment.IsDevelopment())
 //app.ConfigureStatusEndpoints();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGraphQL();
 app.Run();

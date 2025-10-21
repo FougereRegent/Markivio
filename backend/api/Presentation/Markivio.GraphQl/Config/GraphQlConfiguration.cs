@@ -7,6 +7,7 @@ public static class GraphQlConfiguration
     public static void GraphQlConfig(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddGraphQLServer()
+          .AddAuthorization()
           .AddQueryType<QueryType>();
     }
 }
