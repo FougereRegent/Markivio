@@ -1,3 +1,4 @@
+using Markivio.Application.Users;
 using Markivio.Domain.Repositories;
 using Markivio.Persistence.Config;
 using Markivio.Persistence.Repositories;
@@ -18,6 +19,7 @@ public static class DependencyInjectionConfiguration
         servicesCollection.AddScoped<IUserRepository, UserRepository>();
         servicesCollection.AddScoped<ITagRepository, TagRepository>();
         servicesCollection.AddScoped<IFolderRepository, FolderRepository>();
+        servicesCollection.AddScoped<IUserUseCase, UserUseCase>();
     }
 }
 

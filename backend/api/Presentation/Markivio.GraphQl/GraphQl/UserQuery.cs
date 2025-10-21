@@ -9,9 +9,22 @@ public class UserType : ObjectType<User>
         descriptor
           .Field(f => f.FirstName)
           .Type<StringType>();
+
         descriptor
           .Field(f => f.LastName)
           .Type<StringType>();
+
+        descriptor
+          .Field(f => f.Email)
+          .Type<StringType>();
+
+        descriptor
+          .Field(f => f.Id)
+          .Type<UuidType>();
+
+        descriptor
+          .Field(f => f.Username)
+          .Type<UuidType>();
     }
 }
 

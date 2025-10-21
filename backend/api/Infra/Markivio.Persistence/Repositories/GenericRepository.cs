@@ -14,26 +14,6 @@ public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository
         context.Set<T>()
           .AsQueryable();
 
-    public async
-      ValueTask<PaginatedValues<T>> GetAllPaginated(int limit, int skip)
-    {
-        Task<int> t_totaElement = context.Set<T>()
-          .CountAsync();
-        Task<List<T>> t_values = context.Set<T>()
-          .Take(limit)
-          .Skip(skip)
-          .ToListAsync();
-
-        int totalElement = await t_totaElement;
-        List<T> values = await t_values;
-
-        int pageSize = limit;
-        int pageNumber = (skip / limit) + 1;
-        int totalPage = (int)Math.Floor((decimal)(totalElement / limit));
-        PaginatedValues<T> result = new PaginatedValues<T>(values, pageSize, pageNumber, totalPage);
-        return result;
-    }
-
     public async ValueTask<T?> GetById(Guid id)
     {
         T? result = await context.Set<T>().FirstOrDefaultAsync(pre => pre.Id == id);

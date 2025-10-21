@@ -1,4 +1,5 @@
 using Markivio.Domain.Entities;
+
 namespace Markivio.Domain.Repositories;
 
 public interface IGenericRepository<T> where T : Entity
@@ -13,5 +14,4 @@ public interface IGenericRepository<T> where T : Entity
 
     IQueryable<T> GetAll();
     ValueTask<T?> GetById(Guid id);
-    ValueTask<PaginatedValues<T>> GetAllPaginated(int limit, int skip);
 }
