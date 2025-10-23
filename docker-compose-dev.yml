@@ -55,6 +55,28 @@ services:
             - ./backend/api/**/bin
             - ./backend/api/**/obj
 
+  frontend:
+    build:
+      context: ./frontend/markivio-frontend
+      dockerfile: Dockerfile.dev
+    container_name: webapp-frontend
+    ports:
+      - 5173:5173
+    depends_on:
+      - graphql_api
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/markivio-frontend/package.json
+        - action: sync
+          path: ./frontend/markivio-frontend
+          target: /app
+          initial_sync: true
+          ignore:
+            - ./frontend/markivio-frontend/node_modules
+
+
+
 secrets:
   db_password_secret:
     file: ./psql-secret.txt

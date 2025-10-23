@@ -55,6 +55,7 @@ nunit-*.xml
 psql-secret.txt
 
 **/*.env
+**/*.env.*
 
 # Logs
 logs
