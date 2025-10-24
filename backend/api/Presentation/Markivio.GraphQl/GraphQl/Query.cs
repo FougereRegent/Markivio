@@ -1,14 +1,21 @@
 using HotChocolate.Types.Pagination;
+using Markivio.Application.Dto;
+using Markivio.Application.Users;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
+using FluentResults;
 
 namespace Markivio.Presentation.GraphQl;
 
 public class Query
 {
-    public ValueTask<User?> GetUserById(IUserRepository userRepository, Guid id)
+    public async ValueTask<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id)
     {
-        return userRepository.GetById(id);
+        FluentResults.Result<UserInformation> result = await userUseCase.GetUserInformationById(id);
+        if (result.IsFailed)
+            throw new InvalidOperationException();
+
+        return result.Value;
     }
 }
 
@@ -34,8 +41,8 @@ public class QueryType : ObjectType<Query>
           })
           .Resolve(context =>
           {
-              IUserRepository userRepository = context.Service<IUserRepository>();
-              return userRepository.GetAll();
+              IUserUseCase userUseCase = context.Service<IUserUseCase>();
+              return userUseCase.GetUsers();
           });
     }
 }

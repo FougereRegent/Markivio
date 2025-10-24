@@ -4,5 +4,5 @@ namespace Markivio.Domain.Repositories;
 
 public interface IUserRepository : IGenericRepository<User>
 {
-
+    ValueTask<User> GetUserByAuthId(string authId, CancellationToken token = default);
 }

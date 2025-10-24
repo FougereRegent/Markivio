@@ -1,11 +1,15 @@
-using Markivio.Domain.Entities;
+using Markivio.Application.Dto;
 
 namespace Markivio.Presentation.GraphQl;
 
-public class UserType : ObjectType<User>
+public class UserType : ObjectType<UserInformation>
 {
-    protected override void Configure(IObjectTypeDescriptor<User> descriptor)
+    protected override void Configure(IObjectTypeDescriptor<UserInformation> descriptor)
     {
+        descriptor
+          .Field(f => f.Id)
+          .Type<UuidType>();
+
         descriptor
           .Field(f => f.FirstName)
           .Type<StringType>();
@@ -17,14 +21,6 @@ public class UserType : ObjectType<User>
         descriptor
           .Field(f => f.Email)
           .Type<StringType>();
-
-        descriptor
-          .Field(f => f.Id)
-          .Type<UuidType>();
-
-        descriptor
-          .Field(f => f.Username)
-          .Type<UuidType>();
     }
 }
 
