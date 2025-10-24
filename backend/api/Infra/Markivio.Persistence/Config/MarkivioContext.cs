@@ -14,6 +14,8 @@ public class MarkivioContext : DbContext
 
     public MarkivioContext(DbContextOptions options) : base(options) { }
 
+    public MarkivioContext() { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ConfigureUser();

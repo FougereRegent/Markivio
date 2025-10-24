@@ -6,8 +6,8 @@ namespace Markivio.Persistence;
 public interface IUnitOfWork : IDisposable
 {
     Task BeginTransactionAsync(CancellationToken token = default);
-    Task SaveChangesAsync();
-    Task RollbackChangesAsync();
+    Task SaveChangesAsync(CancellationToken token = default);
+    Task RollbackChangesAsync(CancellationToken token = default);
 }
 
 public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
@@ -24,17 +24,17 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
         transaction.Dispose();
     }
 
-    public async Task RollbackChangesAsync()
+    public async Task RollbackChangesAsync(CancellationToken token = default)
     {
         if (transaction is null)
             throw new InvalidOperationException("You cannot rollback a transaction when a transaction has not opened");
-        await transaction.RollbackAsync();
+        await transaction.RollbackAsync(token);
     }
 
-    public async Task SaveChangesAsync()
+    public async Task SaveChangesAsync(CancellationToken token = default)
     {
         if (transaction is null)
             throw new InvalidOperationException("You cannot rollback a transaction when a transaction has not opened");
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
     }
 }
