@@ -30,7 +30,13 @@ internal static class UserDbConfiguration
           .HasMaxLength(128);
 
         builder
+          .Property(pre => pre.AuthId);
+
+        builder
           .Property(pre => pre.LastName)
           .HasMaxLength(128);
+
+        builder
+          .HasIndex(pre => pre.AuthId);
     }
 }
