@@ -15,6 +15,7 @@ public static class DependencyInjectionConfiguration
         {
             options.UseNpgsql(config.ConnectionString);
         });
+        servicesCollection.AddHttpClient();
         servicesCollection.AddScoped<IArticleRepository, ArticleRepository>();
         servicesCollection.AddScoped<IUserRepository, UserRepository>();
         servicesCollection.AddScoped<ITagRepository, TagRepository>();
