@@ -13,5 +13,5 @@ public interface IGenericRepository<T> where T : Entity
     void SaveInRange(IEnumerable<T> entities);
 
     IQueryable<T> GetAll();
-    ValueTask<T?> GetById(Guid id);
+    ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default);
 }
