@@ -4,6 +4,7 @@ using FluentResults;
 using Markivio.Domain.Entities;
 using Markivio.Application.Mapper;
 using Markivio.Application.Errors;
+using Markivio.Extensions.Identity;
 
 
 namespace Markivio.Application.Users;
@@ -11,6 +12,7 @@ namespace Markivio.Application.Users;
 public interface IUserUseCase
 {
     ValueTask<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default);
+    ValueTask<Result<UserInformation>> Me(UserConnectionDto user, CancellationToken cancellationToken = default);
     ValueTask<Result<bool>> UserExist(UserConnectionDto user);
     ValueTask<Result<UserInformation>> GetUserInformationById(Guid id);
     IQueryable<UserInformation> GetUsers();
@@ -36,6 +38,18 @@ public class UserUseCase : IUserUseCase
             userRepository.Save(userFromToken);
 
         return Result.Ok();
+    }
+
+    public async ValueTask<Result<UserInformation>> Me(UserConnectionDto user, CancellationToken cancellationToken = default)
+    {
+        UserMapper mapper = new UserMapper();
+        JwtTokenInfo token = JwtTokenExtentions.ParseToken(user.Token);
+        string authId = token.Subject;
+        User? userDb = await userRepository.GetUserByAuthId(authId, cancellationToken);
+        if (userDb is null)
+            return Result.Fail(new NotFoundError("User not found"));
+
+        return Result.Ok(mapper.UserToUserInformation(userDb));
     }
 
     public async ValueTask<Result<UserInformation>> GetUserInformationById(Guid id)

@@ -21,6 +21,7 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
         if (!string.IsNullOrEmpty(authHeader) && authHeader.Contains("Bearer"))
         {
             string token = authHeader.Substring("Bearer ".Length);
+            requestBuilder.SetGlobalState("token", token);
             Result result = await userUseCase.CreateNewUserOnConnection(new UserConnectionDto(token), cancellationToken)!;
             if (result.IsFailed)
             {

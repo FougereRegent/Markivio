@@ -1,9 +1,9 @@
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
+using Markivio.Extensions.Identity;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 
 
@@ -27,8 +27,7 @@ public class UserRepository(MarkivioContext context,
     public async ValueTask<User?> GetUserInfoByToken(string JwtToken, CancellationToken token = default)
     {
         HttpClient client = httpClientFactory.CreateClient();
-        JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-        JwtSecurityToken tok = handler.ReadJwtToken(JwtToken);
+        JwtTokenInfo tok = JwtTokenExtentions.ParseToken(JwtToken);
 
         string baseUrl = tok.Audiences.ToArray()[1];
         string authId = tok.Subject;
@@ -46,13 +45,15 @@ public class UserRepository(MarkivioContext context,
 
             HttpResponseMessage responseMessage = await client.SendAsync(request, token);
             if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                Console.WriteLine(responseMessage.StatusCode);
                 throw new InvalidOperationException();
-            }
 
-            return await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>();
+            return await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>(new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower,
+            });
         });
+
         return new User
         {
             AuthId = authId,

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Markivio.Domain\Markivio.Domain.csproj" />
+    <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

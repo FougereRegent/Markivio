@@ -31,6 +31,21 @@ public class QueryType : ObjectType<Query>
           .Type<UserType>();
 
         descriptor
+          .Field("me")
+          .Resolve(async context =>
+          {
+              IUserUseCase userUseCase = context.Service<IUserUseCase>();
+              string token = context.GetGlobalState<string>("token");
+              Console.WriteLine(token);
+
+              FluentResults.Result<UserInformation> result = await userUseCase.Me(new UserConnectionDto(token));
+              if (result.IsSuccess)
+                  return result.Value;
+              return new UserInformation();
+          })
+          .Type<UserType>();
+
+        descriptor
           .Field("users")
           .UseOffsetPaging(options: new PagingOptions()
           {
