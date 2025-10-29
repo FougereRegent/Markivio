@@ -28,6 +28,7 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
     {
         if (transaction is null)
             throw new InvalidOperationException("You cannot rollback a transaction when a transaction has not opened");
+
         await transaction.RollbackAsync(token);
     }
 
@@ -35,6 +36,8 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
     {
         if (transaction is null)
             throw new InvalidOperationException("You cannot rollback a transaction when a transaction has not opened");
+
+        await dbcontext.SaveChangesAsync(token);
         await transaction.CommitAsync(token);
     }
 }
