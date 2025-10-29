@@ -1,9 +1,8 @@
 using HotChocolate.Types.Pagination;
+using HotChocolate.Resolvers;
 using Markivio.Application.Dto;
 using Markivio.Application.Users;
-using Markivio.Domain.Entities;
-using Markivio.Domain.Repositories;
-using FluentResults;
+
 
 namespace Markivio.Presentation.GraphQl;
 
@@ -24,7 +23,8 @@ public class QueryType : ObjectType<Query>
     protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
     {
 
-        descriptor.Authorize();
+        descriptor
+          .Authorize();
         descriptor
           .Field(f => f.GetUserById(default!, default!))
           .Argument("id", args => args.Type<UuidType>())

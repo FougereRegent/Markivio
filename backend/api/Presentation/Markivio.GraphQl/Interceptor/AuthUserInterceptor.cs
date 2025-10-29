@@ -1,7 +1,8 @@
-
 using HotChocolate.AspNetCore;
-using Markivio.Domain.Entities;
-using Markivio.Domain.Repositories;
+using Markivio.Application.Users;
+using Markivio.Application.Dto;
+using FluentResults;
+using Markivio.Persistence;
 
 namespace Markivio.Presentation.Interceptor;
 
@@ -12,14 +13,24 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
         HotChocolate.Execution.OperationRequestBuilder requestBuilder,
         CancellationToken cancellationToken)
     {
-        IUserRepository userRepository = context.RequestServices.GetRequiredService<IUserRepository>();
+        IUserUseCase userUseCase = context.RequestServices.GetRequiredService<IUserUseCase>();
+        IUnitOfWork unitOfWork = context.RequestServices.GetRequiredService<IUnitOfWork>();
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
         string authHeader = context.Request.Headers.Authorization.FirstOrDefault(string.Empty)!;
+
         if (!string.IsNullOrEmpty(authHeader) && authHeader.Contains("Bearer"))
         {
             string token = authHeader.Substring("Bearer ".Length);
-            User user = await userRepository.GetUserInfoByToken(token, cancellationToken)!;
-            Console.WriteLine(user.Email);
+            Result result = await userUseCase.CreateNewUserOnConnection(new UserConnectionDto(token), cancellationToken)!;
+            if (result.IsFailed)
+            {
+                await unitOfWork.RollbackChangesAsync(cancellationToken);
+                throw new GraphQLException(ErrorBuilder.New()
+                    .SetMessage(string.Join(Environment.NewLine, result.Errors.Select(pre => pre.Message)))
+                    .Build());
+            }
         }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
     }
 }

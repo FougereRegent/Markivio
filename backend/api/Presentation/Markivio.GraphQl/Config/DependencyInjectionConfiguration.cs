@@ -1,5 +1,6 @@
 using Markivio.Application.Users;
 using Markivio.Domain.Repositories;
+using Markivio.Persistence;
 using Markivio.Persistence.Config;
 using Markivio.Persistence.Repositories;
 using Markivio.Presentation.Dto;
@@ -16,6 +17,8 @@ public static class DependencyInjectionConfiguration
             options.UseNpgsql(config.ConnectionString);
         });
         servicesCollection.AddHttpClient();
+
+        servicesCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         servicesCollection.AddScoped<IArticleRepository, ArticleRepository>();
         servicesCollection.AddScoped<IUserRepository, UserRepository>();
         servicesCollection.AddScoped<ITagRepository, TagRepository>();
