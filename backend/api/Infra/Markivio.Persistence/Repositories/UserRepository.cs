@@ -2,6 +2,7 @@ using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 
@@ -9,7 +10,8 @@ using System.Net.Http.Json;
 namespace Markivio.Persistence.Repositories;
 
 public class UserRepository(MarkivioContext context,
-    IHttpClientFactory httpClientFactory) : GenericRepositpory<User>(context), IUserRepository
+    IHttpClientFactory httpClientFactory,
+    IMemoryCache cache) : GenericRepositpory<User>(context), IUserRepository
 {
     class UserInfoFromAuth
     {
@@ -31,22 +33,26 @@ public class UserRepository(MarkivioContext context,
         string baseUrl = tok.Audiences.ToArray()[1];
         string authId = tok.Subject;
 
-        HttpRequestMessage request = new HttpRequestMessage()
+        string keyCache = $"User_Token_{authId}";
+        UserInfoFromAuth? userInfo = await cache.GetOrCreateAsync<UserInfoFromAuth?>(keyCache, async cacheEntry =>
         {
-            Method = HttpMethod.Get,
-            RequestUri = new Uri(baseUrl),
-        };
-        request.Headers.Add("Authorization", $"Bearer {JwtToken}");
+            cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+            HttpRequestMessage request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(baseUrl),
+            };
+            request.Headers.Add("Authorization", $"Bearer {JwtToken}");
 
-        HttpResponseMessage responseMessage = await client.SendAsync(request, token);
-        if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
-        {
-            Console.WriteLine(responseMessage.StatusCode);
-            throw new InvalidOperationException();
-        }
+            HttpResponseMessage responseMessage = await client.SendAsync(request, token);
+            if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                Console.WriteLine(responseMessage.StatusCode);
+                throw new InvalidOperationException();
+            }
 
-        UserInfoFromAuth? userInfo = await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>();
-
+            return await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>();
+        });
         return new User
         {
             AuthId = authId,

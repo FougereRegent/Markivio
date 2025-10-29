@@ -17,6 +17,7 @@ public static class DependencyInjectionConfiguration
             options.UseNpgsql(config.ConnectionString);
         });
         servicesCollection.AddHttpClient();
+        servicesCollection.AddMemoryCache();
 
         servicesCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         servicesCollection.AddScoped<IArticleRepository, ArticleRepository>();
