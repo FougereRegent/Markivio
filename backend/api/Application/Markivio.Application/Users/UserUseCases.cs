@@ -11,15 +11,19 @@ namespace Markivio.Application.Users;
 
 public interface IUserUseCase
 {
+    UserInformation CurrentUser { get; set; }
     ValueTask<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default);
     ValueTask<Result<UserInformation>> Me(UserConnectionDto user, CancellationToken cancellationToken = default);
     ValueTask<Result<UserInformation>> GetUserInformationById(Guid id);
+    ValueTask<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser, CancellationToken cancellationToken = default);
     IQueryable<UserInformation> GetUsers();
 }
 
 public class UserUseCase : IUserUseCase
 {
     private readonly IUserRepository userRepository;
+
+    public UserInformation CurrentUser { get; set; }
 
     public UserUseCase(IUserRepository userRepository)
     {
@@ -69,5 +73,23 @@ public class UserUseCase : IUserUseCase
         UserMapper mapper = new UserMapper();
         return userRepository.GetAll()
           .Select(user => mapper.UserToUserInformation(user));
+    }
+
+    public async ValueTask<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser,
+        CancellationToken cancellationToken = default)
+    {
+        User? user = await userRepository.GetById(updateUser.Id, cancellationToken);
+        if (user is null)
+            return Result.Fail(new NotFoundError("Cannot found"));
+        if (CurrentUser.Id != user.Id)
+            return Result.Fail(new UnauthorizedError("Cannot update this user"));
+
+        user.FirstName = updateUser.FirstName;
+        user.LastName = updateUser.LastName;
+
+        User returnUser = userRepository.Update(user);
+        UserMapper userMapper = new UserMapper();
+
+        return userMapper.UserToUserInformation(returnUser);
     }
 }

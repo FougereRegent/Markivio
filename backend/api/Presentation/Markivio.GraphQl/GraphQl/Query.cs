@@ -35,13 +35,8 @@ public class QueryType : ObjectType<Query>
           .Resolve(async context =>
           {
               IUserUseCase userUseCase = context.Service<IUserUseCase>();
-              string token = context.GetGlobalState<string>("token");
-              Console.WriteLine(token);
-
-              FluentResults.Result<UserInformation> result = await userUseCase.Me(new UserConnectionDto(token));
-              if (result.IsSuccess)
-                  return result.Value;
-              return new UserInformation();
+              UserInformation result = userUseCase.CurrentUser;
+              return result;
           })
           .Type<UserType>();
 

@@ -30,8 +30,22 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
                     .SetMessage(string.Join(Environment.NewLine, result.Errors.Select(pre => pre.Message)))
                     .Build());
             }
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await SetCurrentUser(userUseCase, token, cancellationToken);
         }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
         await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
+    }
+
+    private static async Task SetCurrentUser(IUserUseCase userUseCase, string token, CancellationToken cancellationToken = default)
+    {
+        FluentResults.Result<UserInformation> userInformation = await userUseCase.Me(new UserConnectionDto(token));
+        if (userInformation.IsFailed)
+            throw new GraphQLException(ErrorBuilder.New()
+                .SetMessage(
+                  string.Join(Environment.NewLine, userInformation.Errors.Select(pre => pre.Message)))
+                .Build());
+
+        userUseCase.CurrentUser = userInformation.Value;
     }
 }
