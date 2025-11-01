@@ -1,6 +1,5 @@
 namespace Markivio.Application.Errors;
 
-using System.Collections.Generic;
 using FluentResults;
 
 public class NotFoundError : Error

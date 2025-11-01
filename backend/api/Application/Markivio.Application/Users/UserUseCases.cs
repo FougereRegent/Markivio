@@ -13,7 +13,6 @@ public interface IUserUseCase
 {
     ValueTask<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default);
     ValueTask<Result<UserInformation>> Me(UserConnectionDto user, CancellationToken cancellationToken = default);
-    ValueTask<Result<bool>> UserExist(UserConnectionDto user);
     ValueTask<Result<UserInformation>> GetUserInformationById(Guid id);
     IQueryable<UserInformation> GetUsers();
 }
@@ -63,11 +62,6 @@ public class UserUseCase : IUserUseCase
         UserInformation UserInformation = userMapper.UserToUserInformation(user!);
 
         return Result.Ok(UserInformation);
-    }
-
-    public ValueTask<Result<bool>> UserExist(UserConnectionDto user)
-    {
-        throw new NotImplementedException();
     }
 
     public IQueryable<UserInformation> GetUsers()
