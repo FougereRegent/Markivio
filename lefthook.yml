@@ -56,10 +56,6 @@ pre-commit:
       run: dotnet format ./backend/api/Markivio.sln
       runner: bash
 
-    - name: dotnet build
-      run: dotnet build ./backend/api/Markivio.sln
-      runner: bash
-
 pre-push:
   parallel: false
   jobs:
