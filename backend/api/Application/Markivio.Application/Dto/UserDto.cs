@@ -14,6 +14,5 @@ public readonly record struct UserInformation(
 public readonly record struct UpdateUserInformation(
     Guid Id,
     string FirstName,
-    string LastName,
-    string NickName
+    string LastName
     );

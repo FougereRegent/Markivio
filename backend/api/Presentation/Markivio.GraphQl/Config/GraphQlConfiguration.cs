@@ -15,6 +15,7 @@ public static class GraphQlConfiguration
           })
           .AddAuthorization()
           .AddHttpRequestInterceptor<AuthUserInterceptor>()
-          .AddQueryType<QueryType>();
+        .AddQueryType<QueryType>()
+        .AddMutationType<MutationType>();
     }
 }
