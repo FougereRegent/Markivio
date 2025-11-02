@@ -1,7 +1,7 @@
 using HotChocolate.Types.Pagination;
 using HotChocolate.Resolvers;
 using Markivio.Application.Dto;
-using Markivio.Application.Users;
+using Markivio.Application.UseCases;
 
 
 namespace Markivio.Presentation.GraphQl;

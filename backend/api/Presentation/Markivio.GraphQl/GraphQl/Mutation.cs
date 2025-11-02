@@ -1,5 +1,5 @@
 using Markivio.Application.Dto;
-using Markivio.Application.Users;
+using Markivio.Application.UseCases;
 using Markivio.Presentation.GraphQl.Midleware;
 
 namespace Markivio.Presentation.GraphQl;

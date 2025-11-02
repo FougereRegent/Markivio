@@ -1,9 +1,8 @@
-using System.Collections;
 using Bogus;
 using FluentResults;
 using Markivio.Application.Dto;
 using Markivio.Application.Errors;
-using Markivio.Application.Users;
+using Markivio.Application.UseCases;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
 using Moq;

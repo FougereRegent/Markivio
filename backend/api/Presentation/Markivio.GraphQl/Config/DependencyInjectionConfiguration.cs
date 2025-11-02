@@ -1,4 +1,4 @@
-using Markivio.Application.Users;
+using Markivio.Application.UseCases;
 using Markivio.Domain.Repositories;
 using Markivio.Persistence;
 using Markivio.Persistence.Config;

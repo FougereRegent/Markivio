@@ -1,5 +1,5 @@
 using HotChocolate.AspNetCore;
-using Markivio.Application.Users;
+using Markivio.Application.UseCases;
 using Markivio.Application.Dto;
 using FluentResults;
 using Markivio.Persistence;

@@ -7,7 +7,7 @@ using Markivio.Application.Errors;
 using Markivio.Extensions.Identity;
 
 
-namespace Markivio.Application.Users;
+namespace Markivio.Application.UseCases;
 
 public interface IAuthUser
 {
