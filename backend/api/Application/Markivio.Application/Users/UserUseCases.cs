@@ -78,11 +78,9 @@ public class UserUseCase : IUserUseCase
     public async ValueTask<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser,
         CancellationToken cancellationToken = default)
     {
-        User? user = await userRepository.GetById(updateUser.Id, cancellationToken);
+        User? user = await userRepository.GetById(CurrentUser.Id, cancellationToken);
         if (user is null)
             return Result.Fail(new NotFoundError("Cannot found"));
-        if (CurrentUser.Id != user.Id)
-            return Result.Fail(new UnauthorizedError("Cannot update this user"));
 
         user.FirstName = updateUser.FirstName;
         user.LastName = updateUser.LastName;

@@ -1,5 +1,8 @@
+using System.Collections;
+using Bogus;
 using FluentResults;
 using Markivio.Application.Dto;
+using Markivio.Application.Errors;
 using Markivio.Application.Users;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
@@ -101,5 +104,64 @@ public class UserUseCaseTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async ValueTask UpdateCurrentUser_ShouldNotUpdate_WhenCurrentUserIsNotFound()
+    {
+        //Arrange
+        userRepositoryMock
+          .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+          .Returns(ValueTask.FromResult<User?>(null));
+
+        //Act
+        Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation());
+
+        //Assert
+        result.IsFailed.ShouldBeTrue();
+        result.Errors[0].Message.ShouldBe("Cannot found");
+        result.Errors[0].GetType().ShouldBe(typeof(NotFoundError));
+    }
+
+
+    public static IEnumerable<object[]> GetPersonUserName()
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            Faker faker = new Faker("fr");
+            yield return new object[] { faker.Person.FirstName, faker.Person.LastName };
+        }
+    }
+    [Theory]
+    [MemberData(nameof(GetPersonUserName))]
+    public async ValueTask UpdateCurrentUser_ShouldUpdate(string firstName,
+        string lastName)
+    {
+        //Arrange
+        Faker faker = new Faker("fr");
+        User currentUser = new User()
+        {
+            Id = Guid.NewGuid(),
+            Email = faker.Internet.Email(),
+            FirstName = faker.Person.FirstName,
+            LastName = faker.Person.LastName
+        };
+
+        userRepositoryMock
+          .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+          .Returns(ValueTask.FromResult<User?>(currentUser));
+
+        userRepositoryMock
+          .Setup(pre => pre.Update(It.IsAny<User>()))
+          .Returns(currentUser);
+
+        //Act
+        Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation(firstName, lastName));
+
+        //Assert
+        result.IsSuccess.ShouldBeTrue();
+        UserInformation user = result.Value;
+        user.FirstName.ShouldBe(firstName);
+        user.LastName.ShouldBe(lastName);
     }
 }
