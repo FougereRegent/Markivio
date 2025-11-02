@@ -19,12 +19,24 @@ public static class DependencyInjectionConfiguration
         servicesCollection.AddHttpClient();
         servicesCollection.AddMemoryCache();
 
+        servicesCollection.ConfigureRepositories();
+        servicesCollection.ConfigureUseCases();
+
+    }
+
+    private static void ConfigureUseCases(this IServiceCollection servicesCollection)
+    {
+        servicesCollection.AddScoped<IUserUseCase, UserUseCase>();
+        servicesCollection.AddScoped<IAuthUser, UserUseCase>();
+    }
+
+    private static void ConfigureRepositories(this IServiceCollection servicesCollection)
+    {
         servicesCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         servicesCollection.AddScoped<IArticleRepository, ArticleRepository>();
         servicesCollection.AddScoped<IUserRepository, UserRepository>();
         servicesCollection.AddScoped<ITagRepository, TagRepository>();
         servicesCollection.AddScoped<IFolderRepository, FolderRepository>();
-        servicesCollection.AddScoped<IUserUseCase, UserUseCase>();
     }
 }
 

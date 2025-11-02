@@ -8,9 +8,9 @@ namespace Markivio.Presentation.GraphQl;
 
 public class Query
 {
-    public async ValueTask<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id)
+    public async ValueTask<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id, CancellationToken cancellationToken = default)
     {
-        FluentResults.Result<UserInformation> result = await userUseCase.GetUserInformationById(id);
+        FluentResults.Result<UserInformation> result = await userUseCase.GetUserInformationById(id, cancellationToken);
         if (result.IsFailed)
             throw new InvalidOperationException();
 
@@ -26,13 +26,13 @@ public class QueryType : ObjectType<Query>
         descriptor
           .Authorize();
         descriptor
-          .Field(f => f.GetUserById(default!, default!))
+          .Field(f => f.GetUserById(default!, default!, default!))
           .Argument("id", args => args.Type<UuidType>())
           .Type<UserType>();
 
         descriptor
           .Field("me")
-          .Resolve(async context =>
+          .Resolve(context =>
           {
               IUserUseCase userUseCase = context.Service<IUserUseCase>();
               UserInformation result = userUseCase.CurrentUser;

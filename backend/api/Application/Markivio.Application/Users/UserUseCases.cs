@@ -9,12 +9,16 @@ using Markivio.Extensions.Identity;
 
 namespace Markivio.Application.Users;
 
-public interface IUserUseCase
+public interface IAuthUser
 {
     UserInformation CurrentUser { get; set; }
+}
+
+public interface IUserUseCase : IAuthUser
+{
     ValueTask<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default);
     ValueTask<Result<UserInformation>> Me(UserConnectionDto user, CancellationToken cancellationToken = default);
-    ValueTask<Result<UserInformation>> GetUserInformationById(Guid id);
+    ValueTask<Result<UserInformation>> GetUserInformationById(Guid id, CancellationToken cancellationToken = default);
     ValueTask<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser, CancellationToken cancellationToken = default);
     IQueryable<UserInformation> GetUsers();
 }
@@ -55,7 +59,7 @@ public class UserUseCase : IUserUseCase
         return Result.Ok(mapper.UserToUserInformation(userDb));
     }
 
-    public async ValueTask<Result<UserInformation>> GetUserInformationById(Guid id)
+    public async ValueTask<Result<UserInformation>> GetUserInformationById(Guid id, CancellationToken cancellationToken = default)
     {
         User? user = await userRepository.GetById(id);
         Result<UserInformation> result = Result.FailIf(user is null, "");
