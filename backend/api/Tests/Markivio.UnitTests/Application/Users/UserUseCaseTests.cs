@@ -3,6 +3,7 @@ using FluentResults;
 using Markivio.Application.Dto;
 using Markivio.Application.Errors;
 using Markivio.Application.UseCases;
+using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
 using Moq;
@@ -13,19 +14,21 @@ namespace Markivio.UnitTests.Application.Users;
 public class UserUseCaseTests
 {
     public Mock<IUserRepository> userRepositoryMock;
+    public Mock<IAuthUser> authUser;
     public UserUseCase useCase;
 
     public UserUseCaseTests()
     {
         this.userRepositoryMock = new Mock<IUserRepository>();
-        this.useCase = new UserUseCase(this.userRepositoryMock.Object);
+        this.authUser = new Mock<IAuthUser>();
+        this.useCase = new UserUseCase(this.userRepositoryMock.Object, this.authUser.Object);
     }
 
     [Fact]
     public async ValueTask CreateNewUserOnConnection_ShouldReturnFailedResult_WhenTokenIsCorrupted()
     {
         //Arrange
-        userRepositoryMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+        authUser.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(null));
 
         //Act
@@ -40,7 +43,7 @@ public class UserUseCaseTests
     public async ValueTask CreateNewUserOnConnection_ShouldNotSaveUser_WhenUserExist()
     {
         //Arrange
-        userRepositoryMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+        authUser.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(new User()));
         userRepositoryMock.Setup(pre => pre.GetUserByAuthId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(new User()));
@@ -59,7 +62,7 @@ public class UserUseCaseTests
     public async ValueTask CreateNewUserOnConnection_ShouldSave_WhenUserNotExist()
     {
         //Arrange
-        userRepositoryMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+        authUser.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(new User()));
         userRepositoryMock.Setup(pre => pre.GetUserByAuthId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(null));

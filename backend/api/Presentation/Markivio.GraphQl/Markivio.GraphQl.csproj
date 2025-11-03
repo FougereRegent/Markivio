@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\Infra\Markivio.Persistence\Markivio.Persistence.csproj" />
     <ProjectReference Include="..\..\Application\Markivio.Application\Markivio.Application.csproj" />
     <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
+    <ProjectReference Include="..\..\Infra\Markivio.Auth\Markivio.Auth.csproj" />
   </ItemGroup>
 
 </Project>

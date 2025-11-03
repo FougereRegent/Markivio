@@ -3,6 +3,10 @@ using Markivio.Application.UseCases;
 using Markivio.Application.Dto;
 using FluentResults;
 using Markivio.Persistence;
+using Markivio.Domain.Auth;
+using Markivio.Domain.Repositories;
+using Markivio.Extensions.Identity;
+using Markivio.Domain.Entities;
 
 namespace Markivio.Presentation.Interceptor;
 
@@ -13,6 +17,7 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
         HotChocolate.Execution.OperationRequestBuilder requestBuilder,
         CancellationToken cancellationToken)
     {
+        IAuthUser authUser = context.RequestServices.GetRequiredService<IAuthUser>();
         IUserUseCase userUseCase = context.RequestServices.GetRequiredService<IUserUseCase>();
         IUnitOfWork unitOfWork = context.RequestServices.GetRequiredService<IUnitOfWork>();
         await unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -32,20 +37,25 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
             }
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await SetCurrentUser(userUseCase, token, cancellationToken);
+            await SetCurrentUser(authUser, context.RequestServices, token, cancellationToken);
         }
         await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
     }
 
-    private static async Task SetCurrentUser(IUserUseCase userUseCase, string token, CancellationToken cancellationToken = default)
+    private static async Task SetCurrentUser(IAuthUser authUser,
+        IServiceProvider serviceProvider,
+        string token,
+        CancellationToken cancellationToken = default)
     {
-        FluentResults.Result<UserInformation> userInformation = await userUseCase.Me(new UserConnectionDto(token));
-        if (userInformation.IsFailed)
+        IUserRepository userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+        JwtTokenInfo tokenInfo = JwtTokenExtentions.ParseToken(token);
+        User? user = await userRepository.GetUserByAuthId(tokenInfo.Subject, cancellationToken);
+        if (user is null)
             throw new GraphQLException(ErrorBuilder.New()
                 .SetMessage(
-                  string.Join(Environment.NewLine, userInformation.Errors.Select(pre => pre.Message)))
+                  "User not found")
                 .Build());
 
-        userUseCase.CurrentUser = userInformation.Value;
+        authUser.CurrentUser = user;
     }
 }

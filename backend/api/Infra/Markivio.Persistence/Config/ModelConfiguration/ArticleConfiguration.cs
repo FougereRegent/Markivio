@@ -1,3 +1,4 @@
+using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -6,7 +7,7 @@ namespace Markivio.Persistence.Config.ModelConfiguration;
 
 internal static class ArticleDbConfiguration
 {
-    internal static void ConfigureArticle(this ModelBuilder modelBuilder)
+    internal static void ConfigureArticle(this ModelBuilder modelBuilder, IAuthUser authUser)
     {
         EntityTypeBuilder<Article> builder = modelBuilder.Entity<Article>();
         builder
@@ -29,6 +30,9 @@ internal static class ArticleDbConfiguration
           .HasOne(pre => pre.User)
           .WithMany()
           .HasForeignKey("UserId");
+
+        builder
+          .HasQueryFilter(pre => pre.User.AuthId == authUser.CurrentUser.AuthId);
 
         builder
           .HasMany(pre => pre.Tags)

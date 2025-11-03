@@ -8,6 +8,7 @@ using Markivio.Domain.Entities;
 using Markivio.DbUpdater.ModelGenerator;
 using Bogus;
 using System.Linq;
+using Markivio.Domain.Auth;
 
 namespace Markivio.DbUpdater;
 
@@ -37,6 +38,10 @@ public class Program
             .ConfigureServices((context, service) =>
             {
                 EnvConfig? config = context.Configuration.BindEnvVariables<EnvConfig>();
+                service.AddScoped<IAuthUser>(ServiceProvider =>
+                {
+                    return null!;
+                });
                 service.AddDbContext<MarkivioContext>(options =>
                 {
                     options.UseNpgsql(config?.ConnectionString ?? string.Empty, b => b.MigrationsAssembly("Markivio.DbUpdater"));
