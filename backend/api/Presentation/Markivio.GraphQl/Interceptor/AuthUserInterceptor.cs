@@ -47,6 +47,8 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
         string token,
         CancellationToken cancellationToken = default)
     {
+        if (authUser is not null)
+            return;
         IUserRepository userRepository = serviceProvider.GetRequiredService<IUserRepository>();
         JwtTokenInfo tokenInfo = JwtTokenExtentions.ParseToken(token);
         User? user = await userRepository.GetUserByAuthId(tokenInfo.Subject, cancellationToken);

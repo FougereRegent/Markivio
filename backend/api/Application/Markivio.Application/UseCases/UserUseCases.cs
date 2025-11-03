@@ -47,6 +47,8 @@ public class UserUseCase : IUserUseCase
         User? userFromDb = await userRepository.GetUserByAuthId(userFromToken.AuthId, cancellationToken);
         if (userFromDb is null)
             userRepository.Save(userFromToken);
+        else
+            authUser.CurrentUser = userFromDb;
 
         return Result.Ok();
     }

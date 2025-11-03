@@ -18,6 +18,8 @@ public static class DependencyInjectionConfiguration
         servicesCollection.AddDbContext<MarkivioContext>(options =>
         {
             options.UseNpgsql(config.ConnectionString);
+            options.LogTo(Console.WriteLine, LogLevel.Debug)
+            .EnableSensitiveDataLogging();
         });
         servicesCollection.AddHttpClient();
         servicesCollection.AddMemoryCache();
@@ -30,6 +32,7 @@ public static class DependencyInjectionConfiguration
     private static void ConfigureUseCases(this IServiceCollection servicesCollection)
     {
         servicesCollection.AddScoped<IUserUseCase, UserUseCase>();
+        servicesCollection.AddScoped<IArticleUseCase, ArticleUseCase>();
     }
 
     private static void ConfigureRepositories(this IServiceCollection servicesCollection)

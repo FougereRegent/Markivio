@@ -54,5 +54,20 @@ public class QueryType : ObjectType<Query>
               IUserUseCase userUseCase = context.Service<IUserUseCase>();
               return userUseCase.GetUsers();
           });
+
+        descriptor
+          .Field("articles")
+          .UseOffsetPaging(options: new PagingOptions()
+          {
+              MaxPageSize = 100,
+              IncludeTotalCount = true,
+              RequirePagingBoundaries = true,
+              AllowBackwardPagination = false
+          })
+          .Resolve(context =>
+          {
+              IArticleUseCase articleUseCase = context.Service<IArticleUseCase>();
+              return articleUseCase.GetArticles();
+          });
     }
 }

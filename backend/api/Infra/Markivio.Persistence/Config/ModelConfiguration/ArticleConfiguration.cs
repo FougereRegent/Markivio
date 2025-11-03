@@ -31,6 +31,7 @@ internal static class ArticleDbConfiguration
           .WithMany()
           .HasForeignKey("UserId");
 
+        builder.HasQueryFilter(pre => pre.User.Id == Guid.NewGuid());
         builder
           .HasQueryFilter(pre => pre.User.AuthId == authUser.CurrentUser.AuthId);
 

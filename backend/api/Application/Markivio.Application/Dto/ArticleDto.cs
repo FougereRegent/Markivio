@@ -7,3 +7,7 @@ public record ArticleInformation(
     string Source,
     UserInformation User
     );
+
+public record ArticleGetByName(
+    string Name
+    );
