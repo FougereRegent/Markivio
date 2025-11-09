@@ -1,3 +1,5 @@
+using FluentResults;
+
 namespace Markivio.Domain.Entities;
 
 public abstract class Entity
@@ -7,5 +9,5 @@ public abstract class Entity
 
 public interface IModelValidation
 {
-    bool Validate();
+    Result Validate();
 }

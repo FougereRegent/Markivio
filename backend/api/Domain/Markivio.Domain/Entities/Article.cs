@@ -1,3 +1,5 @@
+using FluentResults;
+
 namespace Markivio.Domain.Entities;
 
 public sealed class Article : Entity, IModelValidation
@@ -9,7 +11,7 @@ public sealed class Article : Entity, IModelValidation
     public Folder? Folder { get; set; } = null;
     public List<Tag> Tags { get; set; } = new List<Tag>();
 
-    public bool Validate()
+    public Result Validate()
     {
         throw new NotImplementedException();
     }

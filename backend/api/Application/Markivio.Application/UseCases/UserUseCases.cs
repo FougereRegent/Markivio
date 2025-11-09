@@ -83,6 +83,10 @@ public class UserUseCase : IUserUseCase
         user.FirstName = updateUser.FirstName;
         user.LastName = updateUser.LastName;
 
+        Result userValidation = user.Validate();
+        if (userValidation.IsFailed)
+            return userValidation;
+
         User returnUser = userRepository.Update(user);
         UserMapper userMapper = new UserMapper();
 
