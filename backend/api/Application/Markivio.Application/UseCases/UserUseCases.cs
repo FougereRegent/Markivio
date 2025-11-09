@@ -86,6 +86,6 @@ public class UserUseCase : IUserUseCase
         User returnUser = userRepository.Update(user);
         UserMapper userMapper = new UserMapper();
 
-        return CurrentUser;
+        return userMapper.UserToUserInformation(returnUser);
     }
 }
