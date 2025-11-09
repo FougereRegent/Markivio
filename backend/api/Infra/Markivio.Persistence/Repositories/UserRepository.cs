@@ -10,5 +10,7 @@ public class UserRepository(MarkivioContext context) : GenericRepositpory<User>(
 {
 
     public async ValueTask<User?> GetUserByAuthId(string authId, CancellationToken token = default) =>
-       await context.User.FirstOrDefaultAsync(pre => pre.AuthId == authId, token);
+       await context.User
+       .AsNoTracking()
+       .FirstOrDefaultAsync(pre => pre.AuthId == authId, token);
 }
