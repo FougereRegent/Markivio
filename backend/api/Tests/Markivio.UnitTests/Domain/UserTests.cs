@@ -6,10 +6,8 @@ using Shouldly;
 
 namespace Markivio.UnitTests.Domain;
 
-public class UserTests
+public class UserTests : BaseTests
 {
-    private readonly Faker faker = new Faker("fr");
-
     [Theory]
     [InlineData("test"), InlineData("test2@"), InlineData("&&&&@.fr"), InlineData("damien.Venant&com")]
     public void UserValidation_ShouldNotValidate_WhenEmailIsInBadFormat(string email)
