@@ -10,4 +10,8 @@
     <PackageReference Include="FluentResults" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
+  </ItemGroup>
+
 </Project>
