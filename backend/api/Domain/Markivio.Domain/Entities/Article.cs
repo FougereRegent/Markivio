@@ -1,9 +1,13 @@
 using FluentResults;
+using Markivio.Domain.Errors;
+using Markivio.Extensions;
 
 namespace Markivio.Domain.Entities;
 
 public sealed class Article : Entity, IModelValidation
 {
+    private const string REGEX_SOURCE = @"(?:http[s]?:\/\/.)?(?:www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b(?:[-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)";
+
     public string Title { get; set; } = string.Empty;
     public string Source { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
@@ -13,6 +17,10 @@ public sealed class Article : Entity, IModelValidation
 
     public Result Validate()
     {
-        throw new NotImplementedException();
+        Result resultUser = Result.FailIf(User is null, "");
+        Result resultTitle = Result.FailIf(string.IsNullOrEmpty(Title), new ShouldNotBeEmptyError(nameof(Title)));
+        Result resultSource = Result.FailIf(RegexExt.IsNotMatch(Source, REGEX_SOURCE), new FormatUnexpectedError(nameof(Source)));
+
+        return Result.Merge(resultUser);
     }
 }
