@@ -11,3 +11,9 @@ public record ArticleInformation(
 public record ArticleGetByName(
     string Name
     );
+
+
+public record CreateArticle(
+    string Title,
+    string Source
+    );

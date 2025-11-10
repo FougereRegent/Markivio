@@ -18,8 +18,8 @@ public static class DependencyInjectionConfiguration
         servicesCollection.AddDbContext<MarkivioContext>(options =>
         {
             options.UseNpgsql(config.ConnectionString);
-            options.LogTo(Console.WriteLine, LogLevel.Debug)
-            .EnableSensitiveDataLogging();
+            //options.LogTo(Console.WriteLine, LogLevel.Debug)
+            //.EnableSensitiveDataLogging();
         });
         servicesCollection.AddHttpClient();
         servicesCollection.AddMemoryCache();

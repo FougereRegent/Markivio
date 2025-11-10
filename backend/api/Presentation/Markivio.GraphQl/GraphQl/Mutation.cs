@@ -21,6 +21,23 @@ public class Mutation
         }
         return resultUpdate.Value;
     }
+
+    public async ValueTask<ArticleInformation> CreateArticle(IArticleUseCase articleUseCase,
+        CreateArticle createArticle,
+        CancellationToken cancellationToken = default)
+    {
+        FluentResults.Result<ArticleInformation> resutlCreate = await articleUseCase.CreateArticle(createArticle, cancellationToken);
+        if (resutlCreate.IsFailed)
+        {
+            throw new GraphQLException(
+                ErrorBuilder
+                .New()
+                .SetMessage(string.Join(Environment.NewLine, resutlCreate.Errors.Select(pre => pre.Message)))
+                .Build());
+        }
+
+        return resutlCreate.Value;
+    }
 }
 
 public class MutationType : ObjectType<Mutation>
@@ -33,6 +50,11 @@ public class MutationType : ObjectType<Mutation>
           .Field(f => f.UpdateMyUser(default!, default!, default!))
           .UseTransactionMildleware()
           .Type<UserType>();
+
+        descriptor
+          .Field(f => f.CreateArticle(default!, default!, default!))
+          .UseTransactionMildleware()
+          .Type<ArticleType>();
     }
 
 }
