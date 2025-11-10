@@ -107,21 +107,21 @@ public class UserUseCaseTests
         for (int i = 0; i < 10; ++i)
         {
             Faker faker = new Faker("fr");
-            yield return new object[] { faker.Person.FirstName, faker.Person.LastName };
+            yield return new object[] { faker.Person.FirstName, faker.Person.LastName, faker.Person.Email };
         }
     }
 
     [Theory]
     [MemberData(nameof(GetPersonUserName))]
     public async ValueTask UpdateCurrentUser_ShouldUpdate(string firstName,
-        string lastName)
+        string lastName, string email)
     {
         //Arrange
         Faker faker = new Faker("fr");
         User currentUser = new User()
         {
             Id = Guid.NewGuid(),
-            Email = faker.Internet.Email(),
+            Email = email,
             FirstName = faker.Person.FirstName,
             LastName = faker.Person.LastName
         };

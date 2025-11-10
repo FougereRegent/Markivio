@@ -9,7 +9,7 @@ namespace Markivio.Domain.Entities;
 public sealed class User : Entity, IModelValidation
 {
     private const string REGEX_EMAIL = @"^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$";
-    private const string REGEX_FIRSTNAME_AND_LASTNAME = @"^[A-ZÀ-Ÿ][a-zà-ÿ'-]+(?: [A-ZÀ-Ÿ][a-zà-ÿ'-]+)*$";
+    private const string REGEX_FIRSTNAME_AND_LASTNAME = @"^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$";
 
     public string Email { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
