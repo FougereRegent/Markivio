@@ -1,7 +1,6 @@
 using FluentResults;
 using Markivio.Domain.Errors;
 using Markivio.Extensions;
-using System.Text.RegularExpressions;
 
 namespace Markivio.Domain.Entities;
 

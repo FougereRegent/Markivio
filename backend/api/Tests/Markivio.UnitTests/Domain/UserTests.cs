@@ -25,7 +25,7 @@ public class UserTests : BaseTests
         //Assert
         Assert.Multiple(() =>
         {
-            result.IsFailed.ShouldBe(true);
+            result.IsFailed.ShouldBeTrue();
             result.Errors[0].ShouldBeOfType<FormatUnexpectedError>();
             result.Errors[0].Message.ShouldBe("Email is in bad format");
         });
@@ -48,7 +48,7 @@ public class UserTests : BaseTests
         //Assert
         Assert.Multiple(() =>
         {
-            result.IsFailed.ShouldBe(true);
+            result.IsFailed.ShouldBeTrue();
             result.Errors.Count.ShouldBe(1);
             result.Errors[0].ShouldBeOfType<FormatUnexpectedError>();
             result.Errors[0].Message.ShouldBe("FirstName is in bad format");
@@ -74,7 +74,7 @@ public class UserTests : BaseTests
         //Assert
         Assert.Multiple(() =>
         {
-            result.IsFailed.ShouldBe(true);
+            result.IsFailed.ShouldBeTrue();
             result.Errors.Count.ShouldBe(1);
             result.Errors[0].ShouldBeOfType<FormatUnexpectedError>();
             result.Errors[0].Message.ShouldBe("LastName is in bad format");
@@ -110,7 +110,7 @@ public class UserTests : BaseTests
         Result result = user.Validate();
 
         //Assert
-        result.IsSuccess.ShouldBe(true);
+        result.IsSuccess.ShouldBeTrue();
     }
 }
 
