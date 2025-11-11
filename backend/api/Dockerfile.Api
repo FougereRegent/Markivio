@@ -14,7 +14,7 @@ RUN dotnet restore \
     --output ./publish \
     ./Presentation/Markivio.GraphQl/Markivio.GraphQl.csproj
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runner
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runner
 
 WORKDIR /app
 

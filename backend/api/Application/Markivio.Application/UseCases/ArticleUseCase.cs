@@ -1,5 +1,6 @@
 using FluentResults;
 using Markivio.Application.Dto;
+using Markivio.Application.Errors;
 using Markivio.Application.Mapper;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
@@ -41,7 +42,7 @@ public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser auth
         ArticleMapper mapper = new ArticleMapper();
         Article? article = await articleRepository.GetByTitle(createArticle.Title);
         if (article is not null)
-            return Result.Fail("");
+            return Result.Fail(new AlreadyExistError("This article already exist"));
 
         article = mapper.CreateArticleToArticle(createArticle);
         article.User = authUser.CurrentUser;
