@@ -39,7 +39,7 @@ public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser auth
     public async ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default)
     {
         ArticleMapper mapper = new ArticleMapper();
-        Article? article = await articleRepository.GetByTitle("");
+        Article? article = await articleRepository.GetByTitle(createArticle.Title);
         if (article is not null)
             return Result.Fail("");
 
