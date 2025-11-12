@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+
+:root {
+  --primary-color-50:  #EFF6FF;
+  --primary-color-100: #DBEAFE;
+  --primary-color-200: #BFDBFE;
+  --primary-color-300: #93C5FD;
+  --primary-color-400: #60A5FA;
+  --primary-color-500: #3B82F6;
+  --primary-color-600: #2563EB;
+  --primary-color-700: #1D4ED8;
+  --primary-color-800: #1E40AF;
+  --primary-color-900: #1E3A8A;
+  --primary-color-950: #FFFFFF;
+
+  --primary-color-50-dark: #172A65;
+  --primary-color-100-dark: #1E3A8A;
+  --primary-color-200-dark: #1E40AF;
+  --primary-color-300-dark: #1D4ED8;
+  --primary-color-400-dark: #2563EB;
+  --primary-color-500-dark: #3B82F6;
+  --primary-color-600-dark: #60A5FA;
+  --primary-color-700-dark: #93C5FD;
+  --primary-color-800-dark: #BFDBFE;
+  --primary-color-900-dark: #DBEAFE;
+  --primary-color-950-dark: #EFF6FF;
+
+  --surface-color-0  : #FFFFFF;
+  --surface-color-50 : #F9FAFB;
+  --surface-color-100: #F3F4F6;
+  --surface-color-200: #E5E7EB;
+  --surface-color-300: #E2E8F0;
+  --surface-color-400: #CBD5E1;
+  --surface-color-500: #CBD5E1;
+  --surface-color-600: #94A3B8;
+  --surface-color-700: #64748B;
+  --surface-color-800: #475569;
+  --surface-color-900: #334155;
+  --surface-color-950: #030712;
+
+  --surface-color-0-dark: #0B1120;
+  --surface-color-50-dark: #0F172A;
+  --surface-color-100-dark: #1E293B;
+  --surface-color-200-dark: #273449;
+  --surface-color-300-dark: #334155;
+  --surface-color-400-dark: #475569;
+  --surface-color-500-dark: #64748B;
+  --surface-color-600-dark: #94A3B8;
+  --surface-color-700-dark: #CBD5E1;
+  --surface-color-800-dark: #E2E8F0;
+  --surface-color-900-dark: #F8FAFC;
+  --surface-color-950-dark: #FFFFFF;
+
+}

@@ -3,7 +3,8 @@ import { createAuth0 } from '@auth0/auth0-vue';
 import App from "./App.vue"
 import router from './router'
 import PrimeVue from 'primevue/config'
-import { Button } from 'primevue';
+import MyPreset from './themes/themes';
+import './assets/color.css';
 
 const app = createApp(App)
 
@@ -25,5 +26,13 @@ app.use(
     useRefreshTokens: true,
   })
 );
-app.use(PrimeVue);
+app.use(PrimeVue, {
+  theme: {
+    preset: MyPreset,
+    options: {
+      prefix: 'p',
+      darkModeSelector: '.app-dark'
+    }
+  }
+});
 app.mount('#app')

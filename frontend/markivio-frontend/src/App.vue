@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button @click="login" label="Log in" severity="secondary" />
+    <Button @click="login" label="Log in" />
     <Button @click="showToken" v-if="isAuthentificated" label="Show Token In Console" />
     <span>{{ user }}</span>
   </div>
