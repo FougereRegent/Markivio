@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <!-- Rounded square background -->
+  <rect width="120" height="120" rx="20" fill="#3B82F6"/>
+
+  <!-- Centered M -->
+  <path d="M35 85 L35 35 L60 60 L85 35 L85 85"
+        fill="none"
+        stroke="#FFFFFF"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+</svg>

@@ -1,6 +1,3 @@
-@import "tailwindcss";
-@import "tailwindcss-primeui";
-
 :root {
   --primary-color-50:  #EFF6FF;
   --primary-color-100: #DBEAFE;
@@ -52,4 +49,20 @@
   --surface-color-900-dark: #F8FAFC;
   --surface-color-950-dark: #FFFFFF;
 
+}
+
+@import "tailwindcss";
+
+@theme {
+  --color-neutral-50: var(--surface-color-50);
+  --color-neutral-100: var(--surface-color-100);
+  --color-neutral-200: var(--surface-color-200);  
+  --color-neutral-300: var(--surface-color-300);
+  --color-neutral-400: var(--surface-color-400);  
+  --color-neutral-500: var(--surface-color-500);  
+  --color-neutral-600: var(--surface-color-600);  
+  --color-neutral-700: var(--surface-color-700);  
+  --color-neutral-800: var(--surface-color-800);  
+  --color-neutral-900: var(--surface-color-900);  
+  --color-neutral-950: var(--surface-color-950);
 }
