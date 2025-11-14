@@ -20,6 +20,9 @@ importers:
       primevue:
         specifier: ^4.4.1
         version: 4.4.1(vue@3.5.22(typescript@5.9.3))
+      remixicon:
+        specifier: ^4.7.0
+        version: 4.7.0
       tailwindcss:
         specifier: ^4.1.17
         version: 4.1.17
@@ -1916,6 +1919,9 @@ packages:
   readdirp@4.1.2:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
+
+  remixicon@4.7.0:
+    resolution: {integrity: sha512-g2pHOofQWARWpxdbrQu5+K3C8ZbqguQFzE54HIMWFCpFa63pumaAltIgZmFMRQpKKBScRWQASQfWxS9asNCcHQ==}
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -4157,6 +4163,8 @@ snapshots:
       npm-normalize-package-bin: 4.0.0
 
   readdirp@4.1.2: {}
+
+  remixicon@4.7.0: {}
 
   require-from-string@2.0.2: {}
 

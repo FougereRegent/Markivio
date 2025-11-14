@@ -1,10 +1,7 @@
 <template>
   <div class="flex items-center justify-center h-screen bg-neutral-100">
     <div class="flex flex-col p-6 w-5/12 h-6/12 rounded-2xl bg-neutral-50">
-      <span class="flex flex-row w-50 items-center">
-        <img class="size-9" src="../assets/logo.svg" alt="markivio logo" />
-        <h2 class="font-semibold text-4xl text-neutral-950 text-center mx-1 antialiased">Markivio</h2>
-      </span>
+      <LogoComponent />
       <div class="flex flex-col items-center justify-center h-full">
         <span class="font-semibold text-4xl mb-2 text-neutral-900 antialiased">Sign In</span>
         <Button class="w-56" @click="signin" label="Continue" size="large" />
@@ -24,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import LogoComponent from '@/components/LogoComponent.vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { ref, watch } from 'vue';
 
