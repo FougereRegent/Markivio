@@ -6,10 +6,10 @@ import { authGuard } from '@auth0/auth0-vue'
 import { createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
-  {path: '/', component: App},
+  {path: '/', redirect: '/login'},
   {path: '/login', component: SignIn},
   {path: '/app', component: DefaultLayout, children: [
-    {path: '', component: DashBoard}
+    {path: '/', component: DashBoard}
   ], beforeEnter: authGuard},
 ]
 

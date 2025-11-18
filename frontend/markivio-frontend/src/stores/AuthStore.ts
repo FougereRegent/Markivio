@@ -1,4 +1,3 @@
-// src/stores/authStore.js
 import { defineStore } from 'pinia'
 import { useAuth0 } from '@auth0/auth0-vue'
 
@@ -14,21 +13,22 @@ export const useAuthStore = defineStore('auth', {
         const auth = useAuth0();
 
         return {
+            auth: auth,
             isAuthenticated: auth.isAuthenticated,
             user: auth.user,
             isLoading: auth.isLoading
         };
     },
     actions: {
-        login: async() => {
+        async login() {
             try {
-                await useAuth0().loginWithRedirect();
+                await this.auth.loginWithRedirect();
             } catch (err) {
                 console.error('Erreur login:', err);
             }
         },
 
-        logout: async () => {
+        async logout() {
             try {
                 await useAuth0().logout({ logoutParams: { returnTo: window.location.origin }});
             } catch (err) {
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        getToken: async() => {
+        async getToken() {
             try {
                 return await useAuth0().getAccessTokenSilently();
             } catch (err) {
