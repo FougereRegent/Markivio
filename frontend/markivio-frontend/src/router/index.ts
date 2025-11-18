@@ -2,6 +2,7 @@ import App from '@/App.vue'
 import DefaultLayout from '@/DefaultLayout.vue'
 import DashBoard from '@/pages/DashBoard.vue'
 import SignIn from '@/pages/SignIn.vue'
+import { authGuard } from '@auth0/auth0-vue'
 import { createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
@@ -9,7 +10,7 @@ const routes: RouteRecordRaw[] = [
   {path: '/login', component: SignIn},
   {path: '/app', component: DefaultLayout, children: [
     {path: '', component: DashBoard}
-  ]},
+  ], beforeEnter: authGuard},
 ]
 
 const router = createRouter({

@@ -18,7 +18,7 @@ app.use(
     domain: domain,
     clientId: clientId,
     authorizationParams: {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/app`,
       audience: audience,
     },
     useRefreshTokens: true,
