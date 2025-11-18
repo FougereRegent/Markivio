@@ -17,7 +17,7 @@ const search = () => {
 };
 
 const clickIcon = () => {
-    console.log(store.user);
+    console.log(store.getUser);
 };
 
 </script>

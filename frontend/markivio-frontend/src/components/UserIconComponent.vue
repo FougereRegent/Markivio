@@ -1,10 +1,25 @@
 <template>
-    <div class="size-12 rounded-full bg-blue-500 p-1 cursor-pointer" @click="$emit('clickIcon')">
-        <img :src="defaultUser" alt="User icon"/>
+    <div class="size-12 rounded-full cursor-pointer" :class="defaultClass" @click="$emit('clickIcon')">
+        <img :src="defaultUser" alt="User icon" class="rounded-full"/>
     </div>
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue';
-    const defaultUser = ref("/src/assets/default-user.svg");
+    import { useAuthStore } from '@/stores/AuthStore';
+    import { computed} from 'vue';
+    const store = useAuthStore()
+
+    const defaultUser = computed(() => {
+        if(store.getUser?.accountPicture === "") {
+            return "/src/assets/default-user.svg";
+        } 
+        return store.getUser?.accountPicture;
+    })
+
+    const defaultClass = computed(() => {
+        if(store.getUser?.accountPicture === "") {
+            return "p-1 bg-blue-500";
+        }
+        return ""; 
+    })
 </script>
