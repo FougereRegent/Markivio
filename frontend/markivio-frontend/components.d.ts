@@ -22,7 +22,9 @@ declare module 'vue' {
     LogoComponent: typeof import('./src/components/LogoComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Splitter: typeof import('primevue/splitter')['default']
     ToggleButton: typeof import('primevue/togglebutton')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
+    UserIconComponent: typeof import('./src/components/UserIconComponent.vue')['default']
   }
 }
