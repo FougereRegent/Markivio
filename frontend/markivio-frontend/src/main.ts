@@ -5,15 +5,18 @@ import router from './router'
 import PrimeVue from 'primevue/config'
 import MyPreset from './themes/themes';
 import './assets/style.css';
+import { createPinia } from 'pinia';
 
-const app = createApp(App)
+const app = createApp(App);
+const pinia = createPinia();
 
 const audience: string = import.meta.env.VITE_MARKIVIO_AUTH_AUDIENCE;
 const domain: string = import.meta.env.VITE_MARKIVIO_AUTH_DOMAIN;
 const clientId: string = import.meta.env.VITE_MARKIVIO_AUTH_CLIENT_ID;
 
 app.use(router)
-app.use(
+.use(pinia)
+.use(
   createAuth0({
     domain: domain,
     clientId: clientId,
@@ -23,8 +26,7 @@ app.use(
     },
     useRefreshTokens: true,
   })
-);
-app.use(PrimeVue, {
+).use(PrimeVue, {
   theme: {
     preset: MyPreset,
     options: {
@@ -32,5 +34,4 @@ app.use(PrimeVue, {
       darkModeSelector: '.app-dark'
     }
   }
-});
-app.mount('#app')
+}).mount('#app')

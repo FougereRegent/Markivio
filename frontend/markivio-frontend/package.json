@@ -20,6 +20,7 @@
     "@auth0/auth0-vue": "^2.4.0",
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/vite": "^4.1.17",
+    "pinia": "^3.0.4",
     "primevue": "^4.4.1",
     "remixicon": "^4.7.0",
     "tailwindcss": "^4.1.17",

@@ -3,7 +3,9 @@ import LogoComponent from './LogoComponent.vue';
 import { ref } from 'vue';
 import 'remixicon/fonts/remixicon.css';
 import UserIconComponent from './UserIconComponent.vue';
+import { useAuthStore } from '@/stores/AuthStore';
 
+const store = useAuthStore();
 const data = ref(["Test1", "Test2", "Test3"]);
 const search = () => {
     return [
@@ -15,6 +17,7 @@ const search = () => {
 };
 
 const clickIcon = () => {
+    console.log(store.user);
 };
 
 </script>
