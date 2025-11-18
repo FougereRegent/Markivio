@@ -37,6 +37,8 @@ if (app.Environment.IsDevelopment())
 
 //app.ConfigureStatusEndpoints();
 
+app.UseCors("AllowAllOrigins");
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

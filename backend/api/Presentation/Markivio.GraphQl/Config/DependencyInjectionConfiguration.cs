@@ -14,6 +14,15 @@ public static class DependencyInjectionConfiguration
 {
     public static void ConfigureDependencyInjection(this IServiceCollection servicesCollection, EnvConfig config)
     {
+        servicesCollection.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins", builder =>
+            {
+                builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            });
+        });
         servicesCollection.AddScoped<IAuthUser, AuthUser>();
         servicesCollection.AddDbContext<MarkivioContext>(options =>
         {

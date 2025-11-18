@@ -16,10 +16,17 @@ export const useAuthStore = defineStore('auth', {
       auth: auth,
       isAuthenticated: auth.isAuthenticated,
       user: auth.user,
-      isLoading: auth.isLoading
+      isLoading: auth.isLoading,
+      token: null as string | null,
     };
   },
   actions: {
+
+    async init() {
+      const token = await this.auth.getAccessTokenSilently();
+      this.token = token;
+    },
+
     async login() {
       try {
         await this.auth.loginWithRedirect();
@@ -30,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
 
     async logout() {
       try {
-        await useAuth0().logout({ logoutParams: { returnTo: window.location.origin } });
+        await this.auth.logout({ logoutParams: { returnTo: window.location.origin } });
       } catch (err) {
         console.error('Erreur logout:', err);
       }
@@ -38,7 +45,9 @@ export const useAuthStore = defineStore('auth', {
 
     async getToken() {
       try {
-        return await useAuth0().getAccessTokenSilently();
+        const token = await this.auth.getAccessTokenSilently();
+        this.token = token;
+        return token;
       } catch (err) {
         console.error('Erreur token:', err);
         return null
