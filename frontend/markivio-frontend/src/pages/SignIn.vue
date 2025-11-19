@@ -12,7 +12,6 @@
           <img class="size-12" src="../assets/github-icon.svg" alt="github logo" @click="signIn"/>
         </div>
         <span class="text-neutral-700 text-center font-extralight mt-1 antialiased">Sign in with different account</span>
-        <Button @click="showToken" label="show token" hidden/>
       </div>
       <div>
       </div>
@@ -34,10 +33,6 @@ import { useAuthStore } from '@/stores/AuthStore';
       else
         document.documentElement.classList.remove('app-dark')
     });
-
-    const showToken = async () => {
-      console.log(await authStore.getToken());
-    };
 
     const signIn = () => {
       debugger;

@@ -21,7 +21,7 @@ app.use(router)
     domain: domain,
     clientId: clientId,
     authorizationParams: {
-      redirect_uri: `${window.location.origin}/app`,
+      redirect_uri: `${window.location.origin}/callback`,
       audience: audience,
     },
     useRefreshTokens: true,

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useAuth0 } from '@auth0/auth0-vue'
+import { computed } from 'vue';
 
 export interface UserAuth {
   authId: string,
@@ -14,9 +15,9 @@ export const useAuthStore = defineStore('auth', {
 
     return {
       auth: auth,
-      isAuthenticated: auth.isAuthenticated,
-      user: auth.user,
-      isLoading: auth.isLoading,
+      isAuthenticated: computed(() => auth.isAuthenticated),
+      user: computed(() => auth.user),
+      isLoading: computed(() => auth.isLoading),
       token: null as string | null,
     };
   },
@@ -29,7 +30,11 @@ export const useAuthStore = defineStore('auth', {
 
     async login() {
       try {
-        await this.auth.loginWithRedirect();
+        await this.auth.loginWithRedirect({
+          appState: {
+            target: "/app/home"
+          }
+        });
       } catch (err) {
         console.error('Erreur login:', err);
       }
@@ -42,32 +47,21 @@ export const useAuthStore = defineStore('auth', {
         console.error('Erreur logout:', err);
       }
     },
-
-    async getToken() {
-      try {
-        const token = await this.auth.getAccessTokenSilently();
-        this.token = token;
-        return token;
-      } catch (err) {
-        console.error('Erreur token:', err);
-        return null
-      }
-    },
   },
   getters: {
     isLoggedIn: state => {
-      return state.isAuthenticated;
+      return state.auth.isAuthenticated;
     },
     getUser(state): UserAuth {
       return {
-        authId: state.user?.sub ?? "",
-        firstName: state.user?.name ?? "",
-        lastName: state.user?.family_name ?? "",
-        accountPicture: state.user?.picture ?? "",
+        authId: state.user.sub,
+        firstName: state.user.name,
+        lastName: state.user.family_name,
+        accountPicture: state.user.picture,
       };
     },
     loading: state => {
       return state.isLoading;
-    }
+    },
   }
 });

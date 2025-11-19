@@ -6,7 +6,7 @@ import UserIconComponent from './UserIconComponent.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import UserService, { } from '../services/UserService.ts';
 
-const store = useAuthStore();
+const auth = useAuthStore();
 const data = ref(["Test1", "Test2", "Test3"]);
 const search = () => {
   return [
@@ -17,6 +17,7 @@ const search = () => {
   ]
 };
 const clickIcon = async () => {
+  console.log(auth.token);
   UserService.getMe().subscribe(val => {
     console.log(val);
   })
