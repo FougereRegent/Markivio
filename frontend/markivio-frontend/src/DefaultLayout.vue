@@ -13,10 +13,10 @@ authStore.init();
     </header>
     <div class="p-2 h-full">
       <Splitter class="h-full" layout="horizontal">
-        <SplitterPanel :size="20" :min-size="20" class="bg-neutral-50">
+        <SplitterPanel :min-size=10 :size="15" class="bg-neutral-50">
           <NavBarComponent />
         </SplitterPanel>
-        <SplitterPanel :min-size="55">
+        <SplitterPanel :min-size=65 :size="85">
           <RouterView />
         </SplitterPanel>
       </Splitter>

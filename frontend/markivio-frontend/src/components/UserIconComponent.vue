@@ -10,7 +10,6 @@ import { computed } from 'vue';
 const store = useAuthStore();
 
 const defaultUser = computed(() => {
-  debugger;
   if ((store.getUser.accountPicture ?? "") === "") {
     return "/src/assets/default-user.svg";
   }
@@ -18,7 +17,6 @@ const defaultUser = computed(() => {
 })
 
 const defaultClass = computed(() => {
-  debugger;
   if ((store.getUser.accountPicture ?? "") === "") {
     return "p-1 bg-blue-500";
   }

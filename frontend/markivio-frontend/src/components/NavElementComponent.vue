@@ -4,10 +4,10 @@
     hover:text-neutral-900
     items-center" @click="$emit('click-element-nav')">
     <i :class="iconClass" class="text-2xl text-neutral-700 content-center" :hidden="!dispayIcon" />
-    <div class="size-5 rounded-full opacity-65" :style="styleTags" :hidden="!displayTags"></div>
-    <div class="col-start-2 col-span-2 text-1xl font-semibold ml-5 text-neutral-700 content-center">
+    <div class="size-4 rounded-full opacity-65" :style="styleTags" :hidden="!displayTags"></div>
+    <p class="col-start-2 col-span-2 text-1xl font-semibold ml-3.5 text-neutral-700 content-center">
       {{ name }}
-    </div>
+    </p>
   </div>
 </template>
 
