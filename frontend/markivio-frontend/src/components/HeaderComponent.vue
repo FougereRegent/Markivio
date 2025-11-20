@@ -3,10 +3,9 @@ import LogoComponent from './LogoComponent.vue';
 import { ref } from 'vue';
 import 'remixicon/fonts/remixicon.css';
 import UserIconComponent from './UserIconComponent.vue';
-import { useAuthStore } from '@/stores/AuthStore';
-import UserService, { } from '../services/UserService.ts';
+import UserMenuComponent from './UserMenuComponent.vue';
 
-const auth = useAuthStore();
+const op = ref();
 const data = ref(["Test1", "Test2", "Test3"]);
 const search = () => {
   return [
@@ -16,20 +15,15 @@ const search = () => {
     "Test4",
   ]
 };
-const clickIcon = async () => {
-  console.log(auth.token);
-  UserService.getMe().subscribe(val => {
-    console.log(val);
-  })
+const clickIcon = () => {
+  op.value.toggle(event);
 };
-
-
 
 </script>
 
 <template>
   <div class="flex flex-row w-full items-center justify-between">
-    <LogoComponent class="mb-2" />
+    <LogoComponent class="pb-2" />
     <IconField class="2xl:w-9/12">
       <InputIcon class="w-full">
         <i class="ri-search-line text-neutral-700"></i>
@@ -37,8 +31,11 @@ const clickIcon = async () => {
       <AutoComplete size="small" placeholder="Search ..." @complete="search" :suggestions="data" class="w-full"
         input-class="w-full" />
     </IconField>
-    <Button label="Add Link" />
+    <Button label="Add Link"/>
     <div class="h-7 border border-neutral-300"></div>
     <UserIconComponent @click-icon="clickIcon" class="mr-4" />
+    <Popover ref="op">
+      <UserMenuComponent />
+    </Popover>
   </div>
 </template>

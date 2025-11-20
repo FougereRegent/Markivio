@@ -20,8 +20,10 @@ declare module 'vue' {
     InputIcon: typeof import('primevue/inputicon')['default']
     InputText: typeof import('primevue/inputtext')['default']
     LogoComponent: typeof import('./src/components/LogoComponent.vue')['default']
+    Menu: typeof import('primevue/menu')['default']
     NavBarComponent: typeof import('./src/components/NavBarComponent.vue')['default']
     NavElementComponent: typeof import('./src/components/NavElementComponent.vue')['default']
+    Popover: typeof import('primevue/popover')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Splitter: typeof import('primevue/splitter')['default']
@@ -29,5 +31,9 @@ declare module 'vue' {
     ToggleButton: typeof import('primevue/togglebutton')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     UserIconComponent: typeof import('./src/components/UserIconComponent.vue')['default']
+    UserMenuComponent: typeof import('./src/components/UserMenuComponent.vue')['default']
+  }
+  export interface GlobalDirectives {
+    Ripple: typeof import('primevue/ripple')['default']
   }
 }
