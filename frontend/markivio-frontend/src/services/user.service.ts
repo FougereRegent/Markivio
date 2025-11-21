@@ -1,4 +1,4 @@
-import { from, Observable } from "rxjs"
+import { from, map, Observable } from "rxjs"
 import { client } from "./GraphQlService"
 import { gql } from "@urql/vue";
 
@@ -15,6 +15,9 @@ export default {
 }`;
     const variables: any[] = []
 
-    return from(client.query(query, variables));
+    return from(client.query(query, variables))
+      .pipe(
+        map(pre => pre.data)
+      )
   }
 }
