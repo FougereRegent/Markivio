@@ -13,12 +13,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     AutoComplete: typeof import('primevue/autocomplete')['default']
     Button: typeof import('primevue/button')['default']
-    Header: typeof import('./src/components/Header.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
-    HeaderComponents: typeof import('./src/components/HeaderComponents.vue')['default']
     IconField: typeof import('primevue/iconfield')['default']
     InputIcon: typeof import('primevue/inputicon')['default']
-    InputText: typeof import('primevue/inputtext')['default']
     LogoComponent: typeof import('./src/components/LogoComponent.vue')['default']
     Menu: typeof import('primevue/menu')['default']
     NavBarComponent: typeof import('./src/components/NavBarComponent.vue')['default']
@@ -28,8 +25,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Splitter: typeof import('primevue/splitter')['default']
     SplitterPanel: typeof import('primevue/splitterpanel')['default']
-    ToggleButton: typeof import('primevue/togglebutton')['default']
-    ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     UserIconComponent: typeof import('./src/components/UserIconComponent.vue')['default']
     UserMenuComponent: typeof import('./src/components/UserMenuComponent.vue')['default']
   }

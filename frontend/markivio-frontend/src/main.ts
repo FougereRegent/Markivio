@@ -6,6 +6,9 @@ import PrimeVue from 'primevue/config'
 import MyPreset from './themes/themes';
 import './assets/style.css';
 import { createPinia } from 'pinia';
+import urql, { cacheExchange, fetchExchange } from '@urql/vue'
+import { authExchange } from '@urql/exchange-auth';
+import { useAuthStore } from './stores/AuthStore';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -15,23 +18,37 @@ const domain: string = import.meta.env.VITE_MARKIVIO_AUTH_DOMAIN;
 const clientId: string = import.meta.env.VITE_MARKIVIO_AUTH_CLIENT_ID;
 
 app.use(router)
-.use(pinia)
-.use(
-  createAuth0({
-    domain: domain,
-    clientId: clientId,
-    authorizationParams: {
-      redirect_uri: `${window.location.origin}/callback`,
-      audience: audience,
-    },
-    useRefreshTokens: true,
+  .use(pinia)
+  .use(urql, {
+    url: `http://localhost:8080/graphql`,
+    exchanges: [cacheExchange, fetchExchange, authExchange(async utils => {
+      const auth = useAuthStore();
+      const token = auth.token;
+      return {
+        addAuthToOperation(operation) {
+          return utils.appendHeaders(operation, {
+            Authorization: `Bearer ${token}`
+          });
+        }
+      }
+    })],
   })
-).use(PrimeVue, {
-  theme: {
-    preset: MyPreset,
-    options: {
-      prefix: 'p',
-      darkModeSelector: '.app-dark'
+  .use(
+    createAuth0({
+      domain: domain,
+      clientId: clientId,
+      authorizationParams: {
+        redirect_uri: `${window.location.origin}/callback`,
+        audience: audience,
+      },
+      useRefreshTokens: true,
+    })
+  ).use(PrimeVue, {
+    theme: {
+      preset: MyPreset,
+      options: {
+        prefix: 'p',
+        darkModeSelector: '.app-dark'
+      }
     }
-  }
-}).mount('#app')
+  }).mount('#app')

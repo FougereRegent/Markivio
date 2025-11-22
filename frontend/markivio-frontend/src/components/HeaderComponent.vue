@@ -31,7 +31,7 @@ const clickIcon = () => {
       <AutoComplete size="small" placeholder="Search ..." @complete="search" :suggestions="data" class="w-full"
         input-class="w-full" />
     </IconField>
-    <Button label="Add Link"/>
+    <Button label="Add Link" />
     <div class="h-7 border border-neutral-300"></div>
     <UserIconComponent @click-icon="clickIcon" class="mr-4" />
     <Popover ref="op">

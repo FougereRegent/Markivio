@@ -1,23 +1,27 @@
 import { from, map, Observable } from "rxjs"
-import { client } from "./GraphQlService"
-import { gql } from "@urql/vue";
+import { gql, useQuery } from "@urql/vue";
+import { graphql } from "../gql";
+
+
+const query = graphql(`query me { me { id } }`);
+//const query = gql`query me {
+//    me {
+//        id
+//        firstName
+//        lastName
+//        email
+//    }
+//}`;
 
 export default {
   getMe() {
-    const query = gql`
-{
-  me {
-    id
-    firstName
-    lastName
-    email
-  }
-}`;
-    const variables: any[] = []
+    const { data, error } = useQuery({
+      query: query,
+      variables: {},
+    })
 
-    return from(client.query(query, variables))
-      .pipe(
-        map(pre => pre.data)
-      )
+    console.log(data);
+    console.log(error);
+    return data
   }
 }
