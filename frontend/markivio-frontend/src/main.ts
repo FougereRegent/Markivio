@@ -21,17 +21,17 @@ app.use(router)
   .use(pinia)
   .use(urql, {
     url: `http://localhost:8080/graphql`,
-    exchanges: [cacheExchange, fetchExchange, authExchange(async utils => {
+    exchanges: [authExchange(async utils => {
       const auth = useAuthStore();
-      const token = auth.token;
       return {
         addAuthToOperation(operation) {
+          const token = auth.token;
           return utils.appendHeaders(operation, {
             Authorization: `Bearer ${token}`
           });
         }
       }
-    })],
+    }), cacheExchange, fetchExchange],
   })
   .use(
     createAuth0({

@@ -14,10 +14,10 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "query me { me { id } }": typeof types.MeDocument,
+    "\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}": typeof types.MeDocument,
 };
 const documents: Documents = {
-    "query me { me { id } }": types.MeDocument,
+    "\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}": types.MeDocument,
 };
 
 /**
@@ -37,7 +37,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query me { me { id } }"): (typeof documents)["query me { me { id } }"];
+export function graphql(source: "\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}"): (typeof documents)["\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

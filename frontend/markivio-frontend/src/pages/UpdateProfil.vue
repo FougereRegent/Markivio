@@ -1,14 +1,14 @@
 <template>
   <div>
-    <p>{{ user?.Email }}</p>
-    <p>{{ user?.FirstName }}</p>
-    <p>{{ user?.LastName }}</p>
+    <p>{{ data?.me?.id }}</p>
+    <p>{{ data?.me?.firstName }}</p>
+    <p>{{ data?.me?.lastName }}</p>
+    <p>{{ data?.me?.email }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import userService from '@/services/user.service';
-import { ref } from 'vue';
 
-const user = userService.getMe();
+const { data } = userService.getMe();
 </script>
