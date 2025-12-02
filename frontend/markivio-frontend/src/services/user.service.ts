@@ -1,36 +1,21 @@
 import { type UserInformation, type UserUpdate } from "@/domain/user.models";
-import { useMutation, useQuery } from "@urql/vue";
-import { graphql } from "@/gql";
-import { type UpdateUserInformationInput, type UpdateUserMutation, type MeQuery } from "@/gql/graphql";
 import { Result } from "typescript-result";
+import { apolloClient } from "@/config/apollo.config";
+import { GetMe } from "@/graphql/user.queries";
 
 
-const getMequery = graphql(`
-query Me {
-  me {
-    id
-    firstName
-    lastName
-    email
-  }
-}`);
+export async function getMe() {
+  const { data, error } = await apolloClient.query({
+    query: GetMe,
+    fetchPolicy: "cache-first"
+  });
 
-const updateMyUserMutation = graphql(`
-  mutation UpdateUser($firstName: String!, $lastName: String!) {
-    updateMyUser(updateUserInformation: {
-      firstName: $firstName,
-      lastName: $lastName
-    }){
-      id
-      firstName
-      lastName
-      email
-    }
-  }
-`);
-
-
-export function getMe() {
+  return {
+    Email: data?.me.email,
+    FirstName: data?.me.firstName,
+    LastName: data?.me.lastName,
+    Id: data?.me.id
+  } as UserInformation
 };
 
 export function validateUser(user: UserUpdate) {
