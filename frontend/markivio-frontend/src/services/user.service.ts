@@ -31,22 +31,18 @@ const updateMyUserMutation = graphql(`
 
 
 export function getMe() {
-    const { data, error, fetching } = useQuery<MeQuery>({
-      query: getMequery,
-      variables: {},
-    })
-    return { data, error, fetching };
-  };
+};
 
 export function validateUser(user: UserUpdate) {
   const regexFirstName = new RegExp("");
   const regexLastName = new RegExp("");
 
-  if(regexFirstName.test(user.FirstName ?? "")) {
+  debugger;
+  if (regexFirstName.test(user.FirstName ?? "")) {
     return Result.error("");
   }
 
-  if(regexLastName.test(user.LastName ?? "")) {
+  if (regexLastName.test(user.LastName ?? "")) {
     return Result.error("");
   }
 
@@ -55,24 +51,10 @@ export function validateUser(user: UserUpdate) {
 
 export async function updateUser(user: UserUpdate) {
 
-  const result = useMutation<UpdateUserMutation>(updateMyUserMutation);
-
   //Implements logic here
   const resultValidation = validateUser(user);
-  if(!resultValidation.isResult)
+  if (!resultValidation.isResult)
     return resultValidation;
 
-  // Execute request 
-  const res = await result.executeMutation({
-    firstName: user.FirstName,
-    lastName: user.LastName,
-  } as UpdateUserInformationInput);
-
-  return Result.ok({
-    Id: res.data?.updateMyUser?.id,
-    Email: res.data?.updateMyUser?.email,
-    FirstName: res.data?.updateMyUser?.firstName,
-    LastName: res.data?.updateMyUser?.lastName,
-  } as UserInformation);
 };
 

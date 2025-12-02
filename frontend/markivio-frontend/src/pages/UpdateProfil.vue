@@ -1,38 +1,30 @@
 <template>
-  <div class="p-5">
-    <h1 class="text-4xl text-gray-900" >Account Settings</h1>
-    <form class="flex flex-col mt-6">
+  <div class="p-5 h-full flex flex-col justify-center">
+    <ProgressSpinner />
+  </div>
+  <div class="p-5 h-full">
+    <div class="flex flex-row justify-between">
+      <h1 class="text-4xl text-gray-900">Account Settings</h1>
+      <Button size="large" label="Save" class="w-2/12" />
+    </div>
+    <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
         <label for="firstName">First Name</label>
-        <InputText id="firstName" type="text" v-model="firstName" />
+        <InputText id="firstName" type="text" size="large" class="w-6/12" />
       </FloatLabel>
       <FloatLabel>
-        <label for="firstName">First Name</label>
-        <InputText id="firstName" type="text" v-model="firstName" />
+        <label for="lastName">Last Name</label>
+        <InputText id="lastName" type="text" size="large" class="w-6/12" />
       </FloatLabel>
       <FloatLabel>
-        <label for="firstName">First Name</label>
-        <InputText id="firstName" type="text" v-model="firstName" />
+        <label for="email">Email</label>
+        <InputText id="email" type="text" disabled size="large" class="w-6/12" />
       </FloatLabel>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getMe } from '@/services/user.service';
-import { ref, watch } from 'vue';
 import InputText from 'primevue/inputtext';
-import { FloatLabel } from 'primevue';
-
-const { data } = getMe();
-
-const firstName = ref("");
-const lastName = ref("");
-const email = ref("");
-
-watch(data, (dataNew) => {
-  firstName.value = dataNew?.me?.firstName ?? "";
-  lastName.value = dataNew?.me?.lastName ?? "";
-  email.value = dataNew?.me?.email ?? "";
-});
+import { FloatLabel, ProgressSpinner, Button } from 'primevue';
 </script>

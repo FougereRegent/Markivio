@@ -7,7 +7,6 @@ import MyPreset from './themes/themes';
 import './assets/style.css';
 import { createPinia } from 'pinia';
 import urql from '@urql/vue'
-import { GetConfig } from './config/urql.config';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -16,14 +15,9 @@ const audience: string = import.meta.env.VITE_MARKIVIO_AUTH_AUDIENCE;
 const domain: string = import.meta.env.VITE_MARKIVIO_AUTH_DOMAIN;
 const clientId: string = import.meta.env.VITE_MARKIVIO_AUTH_CLIENT_ID;
 
-const urlqConfig = GetConfig();
 
 app.use(router)
   .use(pinia)
-  .use(urql, {
-    url: urlqConfig.Url,
-    exchanges: urlqConfig.Exchanges
-  })
   .use(
     createAuth0({
       domain: domain,

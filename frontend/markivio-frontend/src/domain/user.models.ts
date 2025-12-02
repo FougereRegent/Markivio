@@ -5,7 +5,7 @@ export interface UserUpdate {
 }
 
 export interface UserInformation {
-  Id: string
+  Id?: string | undefined
   FirstName: string | undefined
   LastName: string | undefined
   Email: string

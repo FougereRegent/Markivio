@@ -18,12 +18,10 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.9",
     "@auth0/auth0-vue": "^2.4.0",
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/vite": "^4.1.17",
-    "@urql/core": "^6.0.1",
-    "@urql/exchange-auth": "^3.0.0",
-    "@urql/vue": "^2.0.0",
     "graphql": "^16.12.0",
     "pinia": "^3.0.4",
     "primevue": "^4.4.1",
@@ -36,8 +34,6 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^6.1.0",
-    "@graphql-codegen/client-preset": "^5.2.0",
     "@parcel/watcher": "^2.5.1",
     "@primevue/auto-import-resolver": "^4.4.1",
     "@tsconfig/node22": "^22.0.2",
