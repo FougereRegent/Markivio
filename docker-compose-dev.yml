@@ -21,7 +21,7 @@ services:
     image: adminer
     container_name: db_management
     ports:
-      - 8082:8080
+      - 8085:8080
 
   db-updater:
     build:

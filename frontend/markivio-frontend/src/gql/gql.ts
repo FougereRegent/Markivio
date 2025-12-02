@@ -15,9 +15,11 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  */
 type Documents = {
     "\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}": typeof types.MeDocument,
+    "\n  mutation UpdateUser($firstName: String!, $lastName: String!) {\n    updateMyUser(updateUserInformation: {\n      firstName: $firstName,\n      lastName: $lastName\n    }){\n      id\n      firstName\n      lastName\n      email\n    }\n  }\n": typeof types.UpdateUserDocument,
 };
 const documents: Documents = {
     "\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}": types.MeDocument,
+    "\n  mutation UpdateUser($firstName: String!, $lastName: String!) {\n    updateMyUser(updateUserInformation: {\n      firstName: $firstName,\n      lastName: $lastName\n    }){\n      id\n      firstName\n      lastName\n      email\n    }\n  }\n": types.UpdateUserDocument,
 };
 
 /**
@@ -38,6 +40,10 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}"): (typeof documents)["\nquery Me {\n  me {\n    id\n    firstName\n    lastName\n    email\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateUser($firstName: String!, $lastName: String!) {\n    updateMyUser(updateUserInformation: {\n      firstName: $firstName,\n      lastName: $lastName\n    }){\n      id\n      firstName\n      lastName\n      email\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateUser($firstName: String!, $lastName: String!) {\n    updateMyUser(updateUserInformation: {\n      firstName: $firstName,\n      lastName: $lastName\n    }){\n      id\n      firstName\n      lastName\n      email\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

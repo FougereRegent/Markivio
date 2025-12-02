@@ -6,9 +6,8 @@ import PrimeVue from 'primevue/config'
 import MyPreset from './themes/themes';
 import './assets/style.css';
 import { createPinia } from 'pinia';
-import urql, { cacheExchange, fetchExchange } from '@urql/vue'
-import { authExchange } from '@urql/exchange-auth';
-import { useAuthStore } from './stores/AuthStore';
+import urql from '@urql/vue'
+import { GetConfig } from './config/urql.config';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -17,21 +16,13 @@ const audience: string = import.meta.env.VITE_MARKIVIO_AUTH_AUDIENCE;
 const domain: string = import.meta.env.VITE_MARKIVIO_AUTH_DOMAIN;
 const clientId: string = import.meta.env.VITE_MARKIVIO_AUTH_CLIENT_ID;
 
+const urlqConfig = GetConfig();
+
 app.use(router)
   .use(pinia)
   .use(urql, {
-    url: `http://localhost:8080/graphql`,
-    exchanges: [authExchange(async utils => {
-      const auth = useAuthStore();
-      return {
-        addAuthToOperation(operation) {
-          const token = auth.token;
-          return utils.appendHeaders(operation, {
-            Authorization: `Bearer ${token}`
-          });
-        }
-      }
-    }), cacheExchange, fetchExchange],
+    url: urlqConfig.Url,
+    exchanges: urlqConfig.Exchanges
   })
   .use(
     createAuth0({

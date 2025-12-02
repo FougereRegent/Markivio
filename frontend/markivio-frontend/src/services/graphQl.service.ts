@@ -1,15 +1,10 @@
-import { useAuthStore } from "@/stores/AuthStore";
-import { Client, cacheExchange, fetchExchange } from "@urql/vue";
+import { GetConfig } from "@/config/urql.config";
+import { Client, type Exchange }from "@urql/core";
+
+const configUrql = GetConfig();
 
 export const client = new Client({
-  exchanges: [cacheExchange, fetchExchange],
-  url: "http://localhost:8082/graphql/",
-  fetchOptions: () => {
-    const authStore = useAuthStore();
-    const token = authStore.token;
-    return {
-      headers: { 'Authorization': `Bearer ${token}`, }
-    };
-  },
+  exchanges: configUrql.Exchanges as Exchange[],
+  url: configUrql.Url
 });
 
