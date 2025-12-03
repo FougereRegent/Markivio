@@ -2,20 +2,26 @@ import { type UserInformation, type UserUpdate } from "@/domain/user.models";
 import { Result } from "typescript-result";
 import { apolloClient } from "@/config/apollo.config";
 import { GetMe } from "@/graphql/user.queries";
+import { from, map } from "rxjs";
 
 
-export async function getMe() {
-  const { data, error } = await apolloClient.query({
+export function getMe() {
+  const observable = from(apolloClient.query({
     query: GetMe,
     fetchPolicy: "cache-first"
-  });
+  }));
 
-  return {
-    Email: data?.me.email,
-    FirstName: data?.me.firstName,
-    LastName: data?.me.lastName,
-    Id: data?.me.id
-  } as UserInformation
+  return observable.pipe(
+    map(src => src.data),
+    map((src) => {
+      return {
+        Email: src?.me.email,
+        FirstName: src?.me.firstName,
+        LastName: src?.me.lastName,
+        Id: src?.me.id
+      } as UserInformation
+    }),
+  )
 };
 
 export function validateUser(user: UserUpdate) {

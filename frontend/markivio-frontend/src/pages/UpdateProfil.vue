@@ -1,11 +1,11 @@
 <template>
-  <div class="p-5 h-full flex flex-col justify-center" hidden>
+  <div class="p-5 h-full flex flex-col justify-center" v-show="loading">
     <ProgressSpinner />
   </div>
-  <div class="p-5 h-full">
+  <div class="p-5 h-full" v-show="!loading">
     <div class="flex flex-row justify-between">
       <h1 class="text-4xl text-gray-900">Account Settings</h1>
-      <Button size="large" label="Save" class="w-2/12" />
+      <Button size="large" label="Save" class="w-2/12" @click="savedClick.next();"/>
     </div>
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
@@ -27,14 +27,42 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext';
 import { FloatLabel, ProgressSpinner, Button } from 'primevue';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import type { UserInformation } from '@/domain/user.models';
 import { getMe } from '@/services/user.service';
+import { debounce, debounceTime, sampleTime, Subject, type Subscription } from 'rxjs';
+import { CONST } from '@/config/constante.config';
 
 const user = ref<UserInformation>({ FirstName: "", LastName: "", Email: "", Id: "" } as UserInformation);
+const loading = ref(true);
+const savedClick = new Subject<void>();
 
-onMounted(async () => {
-  const data = await getMe();
-  user.value = data;
-})
+let subscribe: Subscription;
+let clickSubscribe: Subscription;
+
+onMounted(() => {
+  const onNext = (src:UserInformation) => {
+      user.value = src;
+      loading.value = false;
+  }
+
+  subscribe = getMe()
+  .subscribe({
+    next: onNext,
+    error: (err) => {console.error(err)}
+  });
+
+  clickSubscribe = savedClick
+    .pipe(
+      debounceTime(CONST.debounceTime.buttonTime)
+    ).subscribe({
+      
+    })
+});
+
+onUnmounted(() => {
+  subscribe?.unsubscribe();
+  clickSubscribe?.unsubscribe();
+});
+
 </script>

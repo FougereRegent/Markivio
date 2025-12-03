@@ -18,5 +18,18 @@ query Me {
     lastName
     email
   }
-}
-`;
+}`;
+
+
+export const UpdateUser: TypedDocumentNode<GetUserInformationQuery> = gql`
+mutation UpdateMyUser($firstName: !String, $lastName: !String){
+    updateMyUser(updateUserInformation:  {
+       firstName: $fistName,
+       lastName: $lastName
+    }){
+        id
+        firstName
+        lastName
+        email
+    }
+}`;
