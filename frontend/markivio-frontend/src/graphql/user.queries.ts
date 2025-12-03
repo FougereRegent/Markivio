@@ -20,12 +20,12 @@ query Me {
   }
 }`;
 
-
-export const UpdateUser: TypedDocumentNode<GetUserInformationQuery> = gql`
-mutation UpdateMyUser($firstName: !String, $lastName: !String){
-    updateMyUser(updateUserInformation:  {
-       firstName: $fistName,
-       lastName: $lastName
+export const UpdateUser: TypedDocumentNode<
+  GetUserInformationQuery> = gql`
+mutation UpdateMyUser($firstName: String!, $lastName: String!){
+    updateMyUser(updateUserInformation:{
+      firstName: $firstName,
+      lastName: $lastName
     }){
         id
         firstName

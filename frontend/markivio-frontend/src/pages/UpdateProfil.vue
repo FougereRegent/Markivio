@@ -5,7 +5,7 @@
   <div class="p-5 h-full" v-show="!loading">
     <div class="flex flex-row justify-between">
       <h1 class="text-4xl text-gray-900">Account Settings</h1>
-      <Button size="large" label="Save" class="w-2/12" @click="savedClick.next();"/>
+      <Button size="large" label="Save" class="w-2/12" @click="savedClick.next();" />
     </div>
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
@@ -29,8 +29,8 @@ import InputText from 'primevue/inputtext';
 import { FloatLabel, ProgressSpinner, Button } from 'primevue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { UserInformation } from '@/domain/user.models';
-import { getMe } from '@/services/user.service';
-import { debounce, debounceTime, sampleTime, Subject, type Subscription } from 'rxjs';
+import { getMe, updateUser } from '@/services/user.service';
+import { concatMap, debounce, debounceTime, sampleTime, Subject, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
 
 const user = ref<UserInformation>({ FirstName: "", LastName: "", Email: "", Id: "" } as UserInformation);
@@ -41,22 +41,26 @@ let subscribe: Subscription;
 let clickSubscribe: Subscription;
 
 onMounted(() => {
-  const onNext = (src:UserInformation) => {
-      user.value = src;
-      loading.value = false;
+  const onNext = (src: UserInformation) => {
+    user.value = src;
+    loading.value = false;
   }
 
   subscribe = getMe()
-  .subscribe({
-    next: onNext,
-    error: (err) => {console.error(err)}
-  });
+    .subscribe({
+      next: onNext,
+      error: (err) => { console.error(err) }
+    });
 
   clickSubscribe = savedClick
     .pipe(
-      debounceTime(CONST.debounceTime.buttonTime)
-    ).subscribe({
-      
+      debounceTime(CONST.debounceTime.buttonTime),
+      concatMap(_ => updateUser(user.value))
+    ).subscribe(pre => {
+      if (!pre.isResult)
+        return;
+
+      user.value = pre.value ?? user.value;
     })
 });
 

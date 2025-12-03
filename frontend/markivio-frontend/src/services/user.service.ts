@@ -1,8 +1,8 @@
 import { type UserInformation, type UserUpdate } from "@/domain/user.models";
 import { Result } from "typescript-result";
 import { apolloClient } from "@/config/apollo.config";
-import { GetMe } from "@/graphql/user.queries";
-import { from, map } from "rxjs";
+import { GetMe, UpdateUser } from "@/graphql/user.queries";
+import { catchError, from, map, of, switchMap } from "rxjs";
 
 
 export function getMe() {
@@ -24,28 +24,45 @@ export function getMe() {
   )
 };
 
-export function validateUser(user: UserUpdate) {
+export function validateUser(user: UserUpdate | UserInformation) {
   const regexFirstName = new RegExp("");
   const regexLastName = new RegExp("");
 
-  debugger;
-  if (regexFirstName.test(user.FirstName ?? "")) {
-    return Result.error("");
-  }
+  //if (regexFirstName.test(user.FirstName ?? "")) {
+  //  return Result.error("");
+  //}
 
-  if (regexLastName.test(user.LastName ?? "")) {
-    return Result.error("");
-  }
+  //if (regexLastName.test(user.LastName ?? "")) {
+  //  return Result.error("");
+  //}
 
   return Result.ok();
 };
 
-export async function updateUser(user: UserUpdate) {
+export function updateUser(user: UserUpdate | UserInformation) {
+  return of(user).pipe(
+    switchMap(u => {
+      const resultValidation = validateUser(u);
+      if (!resultValidation.isResult)
+        return of(Result.error(resultValidation.error));
 
-  //Implements logic here
-  const resultValidation = validateUser(user);
-  if (!resultValidation.isResult)
-    return resultValidation;
-
+      return from(apolloClient.mutate({
+        mutation: UpdateUser,
+        variables: { firstName: u.FirstName, lastName: u.LastName }
+      })).pipe(
+        map(data => {
+          if (data.error)
+            return Result.error("idk")
+          return Result.ok({
+            Id: data.data?.me.id,
+            FirstName: data.data?.me.firstName,
+            LastName: data.data?.me.lastName,
+            Email: data.data?.me.email
+          } as UserInformation)
+        }),
+        catchError(err => of(Result.error(err)))
+      )
+    }),
+  )
 };
 
