@@ -57,8 +57,11 @@ onMounted(() => {
       debounceTime(CONST.debounceTime.buttonTime),
       concatMap(_ => updateUser(user.value))
     ).subscribe(pre => {
-      if (!pre.isResult)
+      debugger;
+      if (!pre.isResult) {
+        console.log(pre.error[0])
         return;
+      }
 
       user.value = pre.value ?? user.value;
     })

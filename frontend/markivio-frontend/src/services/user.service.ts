@@ -3,6 +3,7 @@ import { Result } from "typescript-result";
 import { apolloClient } from "@/config/apollo.config";
 import { GetMe, UpdateUser } from "@/graphql/user.queries";
 import { catchError, from, map, of, switchMap } from "rxjs";
+import { UserFirstNameError, UserLastNameError } from "@/domain/user.errors";
 
 
 export function getMe() {
@@ -25,16 +26,16 @@ export function getMe() {
 };
 
 export function validateUser(user: UserUpdate | UserInformation) {
-  const regexFirstName = new RegExp("");
-  const regexLastName = new RegExp("");
+  const regexFirstName = new RegExp("^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$");
+  const regexLastName = new RegExp("^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$");
 
-  //if (regexFirstName.test(user.FirstName ?? "")) {
-  //  return Result.error("");
-  //}
+  if (!regexFirstName.test(user.FirstName ?? "")) {
+    return Result.error(new UserFirstNameError());
+  }
 
-  //if (regexLastName.test(user.LastName ?? "")) {
-  //  return Result.error("");
-  //}
+  if (!regexLastName.test(user.LastName ?? "")) {
+    return Result.error(new UserLastNameError());
+  }
 
   return Result.ok();
 };
@@ -52,7 +53,7 @@ export function updateUser(user: UserUpdate | UserInformation) {
       })).pipe(
         map(data => {
           if (data.error)
-            return Result.error("idk")
+            return Result.error(data.error)
           return Result.ok({
             Id: data.data?.me.id,
             FirstName: data.data?.me.firstName,
