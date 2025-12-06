@@ -1,4 +1,4 @@
-import { type UserInformation, type UserUpdate } from "@/domain/user.models";
+import { validateUser, type UserInformation, type UserUpdate } from "@/domain/user.models";
 import { Result } from "typescript-result";
 import { apolloClient } from "@/config/apollo.config";
 import { GetMe, UpdateUser } from "@/graphql/user.queries";
@@ -25,22 +25,7 @@ export function getMe() {
   )
 };
 
-export function validateUser(user: UserUpdate | UserInformation) {
-  const regexFirstName = new RegExp("^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$");
-  const regexLastName = new RegExp("^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$");
-
-  if (!regexFirstName.test(user.FirstName ?? "")) {
-    return Result.error(new UserFirstNameError());
-  }
-
-  if (!regexLastName.test(user.LastName ?? "")) {
-    return Result.error(new UserLastNameError());
-  }
-
-  return Result.ok();
-};
-
-export function updateUser(user: UserUpdate | UserInformation) {
+export function updateUser(user: UserInformation) {
   return of(user).pipe(
     switchMap(u => {
       const resultValidation = validateUser(u);

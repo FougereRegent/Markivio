@@ -32,6 +32,7 @@ import type { UserInformation } from '@/domain/user.models';
 import { getMe, updateUser } from '@/services/user.service';
 import { concatMap, debounce, debounceTime, sampleTime, Subject, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
+import { ValidationError } from '@/helpers/validation.helpers';
 
 const user = ref<UserInformation>({ FirstName: "", LastName: "", Email: "", Id: "" } as UserInformation);
 const loading = ref(true);
@@ -57,12 +58,16 @@ onMounted(() => {
       debounceTime(CONST.debounceTime.buttonTime),
       concatMap(_ => updateUser(user.value))
     ).subscribe(pre => {
-      debugger;
-      if (!pre.isResult) {
-        console.log(pre.error[0])
+      if (!pre.ok) {
+        pre.match()
+          .when(ValidationError, err => {
+          })
+          .else(err => console.log(err))
+          .run()
         return;
       }
 
+      console.log("Sucess")
       user.value = pre.value ?? user.value;
     })
 });
@@ -71,5 +76,4 @@ onUnmounted(() => {
   subscribe?.unsubscribe();
   clickSubscribe?.unsubscribe();
 });
-
 </script>
