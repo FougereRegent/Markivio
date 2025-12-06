@@ -28,7 +28,8 @@ export function updateUser(user: UserInformation) {
   return of(user).pipe(
     switchMap(u => {
       const resultValidation = validateUser(u);
-      if (!resultValidation.isResult)
+      debugger;
+      if (!resultValidation.ok)
         return of(Result.error(resultValidation.error));
 
       return from(apolloClient.mutate({

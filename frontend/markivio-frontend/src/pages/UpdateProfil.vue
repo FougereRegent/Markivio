@@ -10,11 +10,13 @@
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
         <label for="firstName">First Name</label>
-        <InputText id="firstName" type="text" v-model="user.FirstName" size="large" class="w-6/12" />
+        <InputText id="firstName" type="text" v-model="user.FirstName" size="large" class="w-6/12"
+          :invalid="invalidField.invalidFirstNameField" />
       </FloatLabel>
       <FloatLabel>
         <label for="lastName">Last Name</label>
-        <InputText id="lastName" type="text" v-model="user.LastName" class="w-6/12" />
+        <InputText id="lastName" type="text" v-model="user.LastName" class="w-6/12"
+          :invalid="invalidField.invalidLastNameFields" />
       </FloatLabel>
       <FloatLabel>
         <label for="email">Email</label>
@@ -32,11 +34,21 @@ import type { UserInformation } from '@/domain/user.models';
 import { getMe, updateUser } from '@/services/user.service';
 import { concatMap, debounce, debounceTime, sampleTime, Subject, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
-import { ValidationError } from '@/helpers/validation.helpers';
+import { nameof, ValidationError } from '@/helpers/validation.helpers';
 
 const user = ref<UserInformation>({ FirstName: "", LastName: "", Email: "", Id: "" } as UserInformation);
 const loading = ref(true);
 const savedClick = new Subject<void>();
+
+const invalidField = ref({
+  invalidFirstNameField: false,
+  invalidLastNameFields: false
+});
+
+const rec: { [key: string]: (state: boolean) => void } = {
+  'FirstName': (state: boolean) => invalidField.value.invalidFirstNameField = state,
+  'LastName': (state: boolean) => invalidField.value.invalidLastNameFields = state,
+};
 
 let subscribe: Subscription;
 let clickSubscribe: Subscription;
@@ -61,13 +73,19 @@ onMounted(() => {
       if (!pre.ok) {
         pre.match()
           .when(ValidationError, err => {
+            err.validationErrors.forEach(err => {
+              debugger;
+              const val = err.properyName as string
+              rec[val]?.call(null, true);
+            })
           })
           .else(err => console.log(err))
           .run()
         return;
       }
 
-      console.log("Sucess")
+      rec["FirstName"]?.call(null, false);
+      rec["FirstName"]?.call(null, false);
       user.value = pre.value ?? user.value;
     })
 });

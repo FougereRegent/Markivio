@@ -1,22 +1,34 @@
-import { beforeAll, describe, expect, test } from "vitest";
-import { fa, faker } from '@faker-js/faker'
+import { describe, expect, test } from "vitest";
+import { faker } from '@faker-js/faker'
 import { validateUser, type UserInformation } from '@/domain/user.models';
 import { randomUUID } from "crypto";
-import { nameof } from "@/helpers/validation.helpers";
 
 
 describe.concurrent("Validate User", () => {
   describe("First Name and Last Name match regex", () => {
-    const values = new Array<UserInformation>();
+    const singleNameValues = new Array<UserInformation>();
     for (let i = 0; i < 20; ++i) {
-      values.push({
+      singleNameValues.push({
         Id: randomUUID(),
         Email: faker.internet.email(),
         FirstName: faker.person.firstName(),
         LastName: faker.person.lastName(),
       });
     }
-    test.each(values)("Validate $FirstName $LastName", (user) => {
+    const doubleNameValues = new Array<UserInformation>();
+    for (let i = 0; i < 20; ++i) {
+      doubleNameValues.push({
+        Id: randomUUID(),
+        Email: faker.internet.email(),
+        FirstName: `${faker.person.firstName()} ${faker.person.firstName()}`,
+        LastName: `${faker.person.lastName()} ${faker.person.lastName()}`,
+      });
+    }
+    test.each(singleNameValues)("Validate $FirstName $LastName", (user) => {
+      const result = validateUser(user);
+      expect(result.ok).eq(true);
+    });
+    test.each(doubleNameValues)("Validate with double name $FirstName $LastName", (user) => {
       const result = validateUser(user);
       expect(result.ok).eq(true);
     });
