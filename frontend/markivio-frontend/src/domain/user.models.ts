@@ -10,18 +10,18 @@ export interface UserInformation {
 
 
 export function validateUser(user: UserInformation) {
-  const regexFirstName = new RegExp("");
-  const regexLastName = new RegExp("");
+  const regexFirstName = new RegExp("^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$");
+  const regexLastName = new RegExp("^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$");
   const validation = new Validation();
 
   validation.IsValid(() => regexFirstName.test(user.FirstName ?? ""), {
     properyName: nameof<UserInformation>("FirstName"),
-    errorMessage: "",
+    errorMessage: "FirstName doesn't respect format",
   }).IsValid(() => regexLastName.test(user.LastName ?? ""), {
     properyName: nameof<UserInformation>("LastName"),
-    errorMessage: ""
+    errorMessage: "LastName doesn't respect format"
   })
 
-  return Result.try(() => validation.Run())
+  return Result.try(() => validation.Throw())
     .mapError(err => err as ValidationError);
 }

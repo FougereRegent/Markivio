@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Validate User > First Name and Last Name doesn't match regex > First Name and Last Name doesn't match with regex should return bad result 1`] = `
+[
+  {
+    "errorMessage": "FirstName doesn't respect format",
+    "properyName": "FirstName",
+  },
+]
+`;
+
+exports[`Validate User > First Name and Last Name doesn't match regex > First Name and Last Name doesn't match with regex should return bad result 2`] = `
+[
+  {
+    "errorMessage": "LastName doesn't respect format",
+    "properyName": "LastName",
+  },
+]
+`;
+
+exports[`Validate User > First Name and Last Name doesn't match regex > First Name and Last Name doesn't match with regex should return bad result 3`] = `
+[
+  {
+    "errorMessage": "FirstName doesn't respect format",
+    "properyName": "FirstName",
+  },
+  {
+    "errorMessage": "LastName doesn't respect format",
+    "properyName": "LastName",
+  },
+]
+`;

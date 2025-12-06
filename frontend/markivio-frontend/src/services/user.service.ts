@@ -1,9 +1,8 @@
-import { validateUser, type UserInformation, type UserUpdate } from "@/domain/user.models";
+import { validateUser, type UserInformation } from "@/domain/user.models";
 import { Result } from "typescript-result";
 import { apolloClient } from "@/config/apollo.config";
 import { GetMe, UpdateUser } from "@/graphql/user.queries";
 import { catchError, from, map, of, switchMap } from "rxjs";
-import { UserFirstNameError, UserLastNameError } from "@/domain/user.errors";
 
 
 export function getMe() {
