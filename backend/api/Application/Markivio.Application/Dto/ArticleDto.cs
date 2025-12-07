@@ -1,12 +1,13 @@
 namespace Markivio.Application.Dto;
 
 
-public record ArticleInformation(
-    Guid Id,
-    string Title,
-    string Source,
-    UserInformation User
-    );
+public class ArticleInformation
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Source { get; set; } = string.Empty;
+    public UserInformation User { get; set; }
+}
 
 public record ArticleGetByName(
     string Name

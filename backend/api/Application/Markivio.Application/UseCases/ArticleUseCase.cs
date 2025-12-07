@@ -24,6 +24,7 @@ public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser auth
         return articleRepository
           .GetAll()
           .ProjectionToDto()
+          //.Select(pre => articleInformation.ArticleToArticleInformation(pre))
           .AsQueryable();
     }
 
