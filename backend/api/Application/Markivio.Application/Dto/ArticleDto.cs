@@ -16,5 +16,6 @@ public record ArticleGetByName(
 
 public record CreateArticle(
     string Title,
-    string Source
+    string Source,
+    TagCreateArticle[] Tags
     );

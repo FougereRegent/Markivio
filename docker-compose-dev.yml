@@ -14,6 +14,8 @@ services:
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password_secret
       POSTGRES_DB: markivio
+    ports:
+      - 5432:5432
     volumes:
       - db_data_volume:/var/lib/postgresql
 

@@ -16,7 +16,7 @@ public interface IArticleUseCase
     ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
 }
 
-public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser authUser) : IArticleUseCase
+public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository, IAuthUser authUser) : IArticleUseCase
 {
     public IQueryable<ArticleInformation> GetArticles()
     {
@@ -48,12 +48,26 @@ public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser auth
         article = mapper.CreateArticleToArticle(createArticle);
         article.User = authUser.CurrentUser;
 
+        if (!CheckIfTagsExits(createArticle))
+            return Result.Fail("");
+
         Result result = article.Validate();
         if (result.IsFailed)
             return Result.Merge(result);
 
         Article resultArticle = articleRepository.Save(article);
         return mapper.ArticleToArticleInformation(resultArticle);
+    }
+
+    private bool CheckIfTagsExits(CreateArticle createArticle)
+    {
+        TagMapper tagMapper = new TagMapper();
+        if (createArticle.Tags is null || createArticle.Tags is { Length: 0 })
+            return true;
+        Tag[] tags = createArticle.Tags.Select(pre => tagMapper.TagCreateArticleToTag(pre))
+          .ToArray();
+
+        return tagUseCase.TagsExist(tags);
     }
 
 }

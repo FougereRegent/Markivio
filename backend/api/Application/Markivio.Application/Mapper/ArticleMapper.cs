@@ -10,8 +10,18 @@ public partial class ArticleMapper
     [MapNestedProperties(nameof(Article.ArticleContent))]
     public partial ArticleInformation ArticleToArticleInformation(Article article);
 
-    [MapProperty(nameof(CreateArticle.Source), [nameof(Article.ArticleContent), nameof(Article.ArticleContent.Source)])]
-    public partial Article CreateArticleToArticle(CreateArticle article);
+    public Article CreateArticleToArticle(CreateArticle article)
+    {
+        return new Article
+        {
+            ArticleContent = new ArticleContent
+            {
+                Source = article.Source,
+                Tags = article.Tags.Select(pre => new SoftTag { Name = pre.Name }).ToList()
+            },
+            Title = article.Title,
+        };
+    }
 }
 
 [Mapper]
