@@ -10,4 +10,5 @@ public partial class TagMapper
     public partial TagInformation TagToTagInformation(Tag tag);
     public partial Tag TagCreateArticleToTag(TagCreateArticle tag);
     public partial Tag CreateTagToTag(CreateTag tag);
+    public partial SoftTag TagToSoftTag(Tag tag);
 }

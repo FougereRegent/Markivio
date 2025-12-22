@@ -60,7 +60,7 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             if (t1 is null || t2 is null)
                 return false;
 
-            return t1.Name == t2.Name;
+            return t1.Id == t2.Id;
         });
 
         List<Tag> dbTags = tagRepository.GetAll()

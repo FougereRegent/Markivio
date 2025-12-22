@@ -9,8 +9,7 @@ public class TagInformation
 }
 
 public record TagCreateArticle(
-    Guid Id,
-    string Name
+    Guid Id
 );
 
 public record CreateTag(

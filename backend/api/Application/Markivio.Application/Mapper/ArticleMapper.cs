@@ -17,7 +17,6 @@ public partial class ArticleMapper
             ArticleContent = new ArticleContent
             {
                 Source = article.Source,
-                Tags = article.Tags.Select(pre => new SoftTag { Name = pre.Name }).ToList()
             },
             Title = article.Title,
         };
