@@ -28,7 +28,7 @@ public class QueryType : ObjectType<Query>
         descriptor
           .Field(f => f.GetUserById(default!, default!, default!))
           .Argument("id", args => args.Type<UuidType>())
-          .Type<UserType>();
+          .Type<UserInformationType>();
 
         descriptor
           .Field("me")
@@ -38,7 +38,7 @@ public class QueryType : ObjectType<Query>
               UserInformation result = userUseCase.CurrentUser;
               return result;
           })
-          .Type<UserType>();
+          .Type<UserInformationType>();
 
         descriptor
           .Field("users")
