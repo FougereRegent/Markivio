@@ -20,3 +20,17 @@ public class TagInformationType : ObjectType<TagInformation>
           .Type<StringType>();
     }
 }
+
+public class TagSoftInformationType : ObjectType<TagSoftInformation>
+{
+    protected override void Configure(IObjectTypeDescriptor<TagSoftInformation> descriptor)
+    {
+        descriptor
+          .Field(f => f.Name)
+          .Type<StringType>();
+
+        descriptor
+          .Field(f => f.Color)
+          .Type<StringType>();
+    }
+}

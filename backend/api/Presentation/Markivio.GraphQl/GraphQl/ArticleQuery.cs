@@ -21,6 +21,10 @@ public class ArticleInformationType : ObjectType<ArticleInformation>
         descriptor
           .Field(f => f.User)
           .Type<UserInformationType>();
+
+        descriptor
+          .Field(f => f.Tags)
+          .Type<ListType<TagSoftInformationType>>();
     }
 }
 
