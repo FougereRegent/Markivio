@@ -12,3 +12,9 @@ public partial class TagMapper
     public partial Tag CreateTagToTag(CreateTag tag);
     public partial SoftTag TagToSoftTag(Tag tag);
 }
+
+[Mapper]
+public static partial class TagMapperProjection
+{
+    public static partial IQueryable<TagInformation> ProjectionToDto(this IQueryable<Tag> tags);
+}

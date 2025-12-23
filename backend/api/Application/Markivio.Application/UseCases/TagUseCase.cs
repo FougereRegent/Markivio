@@ -13,10 +13,15 @@ public interface ITagUseCase
 {
     bool TagsExist(Tag[] tags);
     Result<TagInformation[]> CreateTag(CreateTag[] creatingTags);
+    IQueryable<TagInformation> GetAll();
 }
 
 public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITagUseCase
 {
+    public IQueryable<TagInformation> GetAll() =>
+      tagRepository.GetAll()
+          .ProjectionToDto();
+
     public Result<TagInformation[]> CreateTag(CreateTag[] creatingTags)
     {
         TagMapper mapper = new TagMapper();

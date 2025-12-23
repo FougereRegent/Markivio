@@ -62,12 +62,29 @@ public class QueryType : ObjectType<Query>
               MaxPageSize = 100,
               IncludeTotalCount = true,
               RequirePagingBoundaries = true,
-              AllowBackwardPagination = false
+              AllowBackwardPagination = false,
+              DefaultPageSize = 50
           })
           .Resolve(context =>
           {
               IArticleUseCase articleUseCase = context.Service<IArticleUseCase>();
               return articleUseCase.GetArticles();
           });
+
+        descriptor
+          .Field("tags")
+          .UseOffsetPaging(options: new PagingOptions()
+          {
+              MaxPageSize = 100,
+              IncludeTotalCount = true,
+              RequirePagingBoundaries = true,
+              AllowBackwardPagination = false,
+              DefaultPageSize = 50
+          })
+        .Resolve(context =>
+        {
+            ITagUseCase tagUseCase = context.Service<ITagUseCase>();
+            return tagUseCase.GetAll();
+        });
     }
 }
