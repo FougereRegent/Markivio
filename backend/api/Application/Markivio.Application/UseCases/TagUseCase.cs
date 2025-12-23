@@ -25,11 +25,8 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             if (tag1 is null || tag2 is null)
                 return false;
 
-            if (tag1.Name == tag2.Name)
-                return true;
-
-            return false;
-        }, tag => tag.GetHashCode());
+            return tag1.Name == tag2.Name;
+        }, tag => tag.Name.GetHashCode());
 
         Tag[] tags = creatingTags.Select(mapper.CreateTagToTag)
           .Select(pre => { pre.User = authUser.CurrentUser; return pre; })
@@ -51,7 +48,7 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
 
     public bool TagsExist(Tag[] tags)
     {
-        bool result = true;
+        bool result = false;
         EqualityComparer<Tag> comparer = EqualityComparer<Tag>.Create((t1, t2) =>
         {
             if (ReferenceEquals(t1, t2))
@@ -60,14 +57,14 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             if (t1 is null || t2 is null)
                 return false;
 
-            return t1.Id == t2.Id;
-        });
+            return t1.Id == t2.Id || t1.Name == t2.Name;
+        }, tag => tag.GetHashCode());
 
         List<Tag> dbTags = tagRepository.GetAll()
             .ToList();
 
         foreach (Tag tag in tags)
-            result &= dbTags.Contains(tag, comparer);
+            result |= dbTags.Contains(tag, comparer);
 
         return result;
     }
