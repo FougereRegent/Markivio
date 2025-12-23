@@ -1,4 +1,3 @@
-using System;
 using FluentResults;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
@@ -41,6 +40,9 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
 
         if (hash.Count != tags.Length)
             return Result.Fail(new DuplicatedItemsError());
+
+        if (TagsExist(tags))
+            return Result.Fail(new AlreadyExistError("Tag already exist"));
 
         Result result = hash.Select(pre => pre.Validate()).Merge();
         if (result.IsFailed)
