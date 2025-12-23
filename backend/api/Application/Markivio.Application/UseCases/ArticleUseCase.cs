@@ -51,13 +51,13 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (!CheckIfTagsExits(createArticle))
             return Result.Fail(new NotFoundError("A tag doesn't exist"));
 
-        Result result = article.Validate();
-        if (result.IsFailed)
-            return Result.Merge(result);
-
         TagMapper tagMapper = new TagMapper();
         article.ArticleContent.Tags = tagRepository.GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
           .Select(pre => tagMapper.TagToSoftTag(pre)).ToList();
+
+        Result result = article.Validate();
+        if (result.IsFailed)
+            return Result.Merge(result);
 
         Article resultArticle = articleRepository.Save(article);
         return mapper.ArticleToArticleInformation(resultArticle);
