@@ -10,32 +10,27 @@ namespace Markivio.Application.UseCases;
 
 public interface IArticleUseCase
 {
-    IQueryable<ArticleInformation> GetArticles();
     ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default);
-    ValueTask<Result<ArticleInformation>> GetByName(ArticleGetByName article, CancellationToken cancelationToken = default);
     ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
+    IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters);
 }
 
 public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository, IAuthUser authUser) : IArticleUseCase
 {
-    public IQueryable<ArticleInformation> GetArticles()
-    {
-        ArticleMapper articleInformation = new ArticleMapper();
-        return articleRepository
-          .GetAll()
-          .ProjectionToDto()
-          //.Select(pre => articleInformation.ArticleToArticleInformation(pre))
-          .AsQueryable();
-    }
-
     public ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public ValueTask<Result<ArticleInformation>> GetByName(ArticleGetByName article, CancellationToken cancelationToken = default)
+    public IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters)
     {
-        throw new NotImplementedException();
+        if (articleFilters is { Title: null, TagNames: null })
+            return articleRepository.GetAll()
+              .ProjectionToDto();
+
+        return articleRepository.Filter(articleFilters.Title, articleFilters.TagNames)
+          .ProjectionToDto();
+
     }
 
     public async ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default)
@@ -73,5 +68,4 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         return tagUseCase.TagsExist(tags);
     }
-
 }

@@ -65,10 +65,18 @@ public class QueryType : ObjectType<Query>
               AllowBackwardPagination = false,
               DefaultPageSize = 50
           })
+          .Argument("title", pre => pre.Type<StringType>())
+          .Argument("tags", pre => pre.Type<ListType<StringType>>())
           .Resolve(context =>
           {
+              string? title = context.ArgumentValue<string?>("title");
+              List<string>? tags = context.ArgumentValue<List<string>?>("tags");
               IArticleUseCase articleUseCase = context.Service<IArticleUseCase>();
-              return articleUseCase.GetArticles();
+
+              return articleUseCase.FindByFilter(new ArticleFilters(
+                    title,
+                    tags
+                    ));
           });
 
         descriptor

@@ -20,3 +20,9 @@ public record CreateArticle(
     string Source,
     TagCreateArticle[] Tags
     );
+
+
+public readonly record struct ArticleFilters(
+    string? Title,
+    List<string>? TagNames
+  );
