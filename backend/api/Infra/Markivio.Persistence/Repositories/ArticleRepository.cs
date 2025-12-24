@@ -19,8 +19,8 @@ public class ArticleRepository(MarkivioContext context) : GenericRepositpory<Art
         IQueryable<Article> resultFitler = (title, tagName) switch
         {
             (null, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name))),
-            (string t, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name)) && pre.Title == t),
-            (string t, _) => baseResult.Where(pre => pre.Title == t),
+            (string t, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name)) && EF.Functions.ILike(pre.Title, $"{title}%")),
+            (string t, _) => baseResult.Where(pre => EF.Functions.ILike(pre.Title, $"{title}%")),
             (_, _) => baseResult
         };
 
