@@ -1,3 +1,5 @@
+#pragma warning disable RMG020 
+#pragma warning disable RMG012 
 using Markivio.Application.Dto;
 using Markivio.Domain.Entities;
 using Riok.Mapperly.Abstractions;
@@ -16,5 +18,9 @@ public partial class TagMapper
 [Mapper]
 public static partial class TagMapperProjection
 {
-    public static partial IQueryable<TagInformation> ProjectionToDto(this IQueryable<Tag> tags);
+    public static partial IQueryable<TagInformation> ProjectionToTagInformation(this IQueryable<Tag> tags);
+    public static partial IQueryable<SoftTag> ProjectionToSoftTag(this IQueryable<Tag> tags);
 }
+
+#pragma warning restore RMG020 
+#pragma warning restore RMG012 

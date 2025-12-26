@@ -21,8 +21,17 @@ public record CreateArticle(
     TagCreateArticle[] Tags
     );
 
+public record AddTagsToArticle(
+    Guid articleId,
+    Guid[] tagIds
+);
+
+public record RemoveTagsToArticle(
+    Guid articleId,
+    Guid[] tagIds
+);
 
 public readonly record struct ArticleFilters(
     string? Title,
     List<string>? TagNames
-  );
+);

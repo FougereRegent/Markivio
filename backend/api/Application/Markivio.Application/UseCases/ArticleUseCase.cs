@@ -13,6 +13,9 @@ public interface IArticleUseCase
     ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default);
     ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
     IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters);
+
+    ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags);
+    ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
 }
 
 public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository, IAuthUser authUser) : IArticleUseCase
@@ -56,6 +59,44 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         Article resultArticle = articleRepository.Save(article);
         return mapper.ArticleToArticleInformation(resultArticle);
+    }
+
+    public async ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags)
+    {
+        ArticleMapper mapper = new ArticleMapper();
+        Article? article = await articleRepository.GetById(addTags.articleId);
+        if(article is null)
+            return Result.Fail(new NotFoundError("Article doesn't exist"));
+
+        SoftTag[] tags = tagRepository.GetByIds(addTags.tagIds)
+            .ProjectionToSoftTag()
+            .ToArray();
+
+        if(tags.Length != addTags.tagIds.Length)
+            return Result.Fail(new NotFoundError("Tags doesn't exist"));
+
+        article.ArticleContent.Tags.AddRange(tags);
+        Article res = articleRepository.Update(article);
+        return mapper.ArticleToArticleInformation(res);
+    }
+
+    public async ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags)
+    {
+        ArticleMapper mapper = new ArticleMapper();
+        Article? article = await articleRepository.GetById(removeTags.articleId);
+        if(article is null)
+            return Result.Fail(new NotFoundError("Article doesn't exist"));
+
+        SoftTag[] tags = tagRepository.GetByIds(removeTags.tagIds)
+            .ProjectionToSoftTag()
+            .ToArray();
+
+        if(tags.Length != removeTags.tagIds.Length)
+            return Result.Fail(new NotFoundError("Tags doesn't exist"));
+
+        article.ArticleContent.Tags.AddRange(tags);
+        Article res = articleRepository.Update(article);
+        return mapper.ArticleToArticleInformation(res);
     }
 
     private bool CheckIfTagsExits(CreateArticle createArticle)
