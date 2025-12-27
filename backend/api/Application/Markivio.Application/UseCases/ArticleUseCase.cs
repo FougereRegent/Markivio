@@ -76,6 +76,11 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
         article.ArticleContent.Tags.AddRange(tags);
+
+        Result resultArticleValidation = article.Validate();
+        if(resultArticleValidation.IsFailed)
+            return resultArticleValidation;
+
         Article res = articleRepository.Update(article);
         return mapper.ArticleToArticleInformation(res);
     }
@@ -100,6 +105,11 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         article.ArticleContent.Tags.Clear();
         article.ArticleContent.Tags.AddRange(tagsWithoutRemovedTags);
+
+        Result resultArticleValidation = article.Validate();
+        if(resultArticleValidation.IsFailed)
+            return resultArticleValidation;
+
         Article res = articleRepository.Update(article);
         return mapper.ArticleToArticleInformation(res);
     }
