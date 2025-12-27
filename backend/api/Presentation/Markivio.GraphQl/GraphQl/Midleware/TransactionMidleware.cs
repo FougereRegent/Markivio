@@ -4,7 +4,7 @@ namespace Markivio.Presentation.GraphQl.Midleware;
 
 internal static class TransactionMidleware
 {
-    internal static IObjectFieldDescriptor UseTransactionMildleware(this IObjectFieldDescriptor descriptor)
+    internal static IObjectFieldDescriptor UseTransactionMiddleware(this IObjectFieldDescriptor descriptor)
     {
         return descriptor.Use(next => async context =>
         {

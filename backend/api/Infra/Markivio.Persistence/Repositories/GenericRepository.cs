@@ -20,7 +20,7 @@ public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository
         return result;
     }
 
-    public IQueryable<T> GetByIds(List<Guid> ids)
+    public IQueryable<T> GetByIds(IEnumerable<Guid> ids)
     {
         return context.Set<T>()
           .Where(pre => ids.Contains(pre.Id));

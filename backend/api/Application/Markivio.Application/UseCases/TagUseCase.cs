@@ -19,7 +19,7 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
 {
     public IQueryable<TagInformation> GetAll() =>
       tagRepository.GetAll()
-          .ProjectionToSoftTag();
+          .ProjectionToTagInformation();
 
     public Result<TagInformation[]> CreateTag(CreateTag[] creatingTags)
     {

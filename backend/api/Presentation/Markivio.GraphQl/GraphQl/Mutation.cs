@@ -55,6 +55,36 @@ public class Mutation
 
         return resultCreate.Value;
     }
+
+    public async ValueTask<ArticleInformation> AddTags(IArticleUseCase articleUseCase,
+        AddTagsToArticle addTagsToArticle)
+    {
+        FluentResults.Result<ArticleInformation> resultAddTags = await articleUseCase.AddTags(addTagsToArticle);
+        if (resultAddTags.IsFailed)
+        {
+            throw new GraphQLException(
+                ErrorBuilder
+                .New()
+                .SetMessage(string.Join(Environment.NewLine, resultAddTags.Errors.Select(pre => pre.Message)))
+                .Build());
+        }
+        return resultAddTags.Value;
+    }
+    public async ValueTask<ArticleInformation> RemoveTags(IArticleUseCase articleUseCase,
+        RemoveTagsToArticle removeTagsToArticle)
+    {
+        FluentResults.Result<ArticleInformation> resultRemoveTags = await articleUseCase.RemoveTags(removeTagsToArticle);
+        if (resultRemoveTags.IsFailed)
+        {
+            throw new GraphQLException(
+                ErrorBuilder
+                .New()
+                .SetMessage(string.Join(Environment.NewLine, resultRemoveTags.Errors.Select(pre => pre.Message)))
+                .Build());
+        }
+        return resultRemoveTags.Value;
+    }
+    
 }
 
 public class MutationType : ObjectType<Mutation>
@@ -65,20 +95,23 @@ public class MutationType : ObjectType<Mutation>
 
         descriptor
           .Field(f => f.UpdateMyUser(default!, default!, default!))
-          .UseTransactionMildleware()
+          .UseTransactionMiddleware()
           .Type<UserInformationType>();
 
         descriptor
           .Field(f => f.CreateArticle(default!, default!, default!))
-          .UseTransactionMildleware()
+          .UseTransactionMiddleware()
           .Type<ArticleInformationType>();
 
         descriptor
           .Field(f => f.CreateTags(default!, default!, default!))
-          .UseTransactionMildleware()
+          .UseTransactionMiddleware()
           .UsePaging()
           .Type<ListType<TagInformationType>>();
 
+        descriptor
+            .Field(f => f.AddTags(default!,default!))
+            .UseTransactionMiddleware()
+            .Type<ArticleInformationType>();
     }
-
 }

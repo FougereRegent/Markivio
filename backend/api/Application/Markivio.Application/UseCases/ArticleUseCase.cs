@@ -94,7 +94,12 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if(tags.Length != removeTags.tagIds.Length)
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
-        article.ArticleContent.Tags.AddRange(tags);
+        List<SoftTag> tagsWithoutRemovedTags = article.ArticleContent.Tags
+            .Where(pre => !tags.Select(pre => pre.Name).Contains(pre.Name))
+            .ToList();
+
+        article.ArticleContent.Tags.Clear();
+        article.ArticleContent.Tags.AddRange(tagsWithoutRemovedTags);
         Article res = articleRepository.Update(article);
         return mapper.ArticleToArticleInformation(res);
     }
