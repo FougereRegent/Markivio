@@ -49,6 +49,8 @@
   --surface-color-900-dark: #F8FAFC;
   --surface-color-950-dark: #FFFFFF;
 
+  //Chip
+  --p-chip-padding-y: 0.22rem;
 }
 
 @import "tailwindcss";
