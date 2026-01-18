@@ -22,6 +22,7 @@
     "@auth0/auth0-vue": "^2.4.0",
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/vite": "^4.1.17",
+    "@vueuse/core": "^14.1.0",
     "graphql": "^16.12.0",
     "pinia": "^3.0.4",
     "primevue": "^4.4.1",

@@ -8,16 +8,18 @@ authStore.init();
 
 <template>
   <div class="h-screen flex flex-col">
-    <header class="p-3">
+    <header class="p-3 h-3/32">
       <HeaderComponent />
     </header>
-    <div class="p-2 h-full">
-      <Splitter class="h-full" layout="horizontal">
+    <div class="px-2 h-29/32">
+      <Splitter class="h-full pb-2" layout="horizontal">
         <SplitterPanel :min-size=10 :size="15" class="bg-white">
           <NavBarComponent />
         </SplitterPanel>
-        <SplitterPanel :min-size=65 :size="85" class="bg-neutral-100">
-          <RouterView />
+        <SplitterPanel :min-size=65 :size="85" class="bg-neutral-100 h-full">
+          <ScrollPanel class="h-full">
+            <RouterView />
+          </ScrollPanel>
         </SplitterPanel>
       </Splitter>
     </div>
