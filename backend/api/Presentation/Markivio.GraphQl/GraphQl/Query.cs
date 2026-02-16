@@ -1,5 +1,4 @@
 using HotChocolate.Types.Pagination;
-using HotChocolate.Resolvers;
 using Markivio.Application.Dto;
 using Markivio.Application.UseCases;
 

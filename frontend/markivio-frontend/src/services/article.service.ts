@@ -5,7 +5,6 @@ import { GetArticles } from "@/graphql/article.queries";
 import { map, mergeMap, Subject } from "rxjs";
 
 export function getMyArticles() {
-
   const sub = new Subject<{ skip: number, take: number }>();
   return {
     subject: sub, observable: sub.pipe(
@@ -20,6 +19,7 @@ export function getMyArticles() {
             return {
               Id: src.id,
               Source: src.source,
+              Title: src.title,
               Tags: src.tags.map(tags => {
                 return {
                   Color: tags.color,
@@ -31,6 +31,7 @@ export function getMyArticles() {
         );
         const count = src?.articles.totalCount;
         const pageInfo = src?.articles.pageInfo;
+
         return {
           Data: data,
           Count: count,

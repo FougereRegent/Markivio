@@ -1,5 +1,5 @@
 <template>
-  <div ref="articles" class="flex flex-col gap-2 p-4">
+  <div ref="articles" class="flex flex-col gap-2 p-4 h-full overflow-y-scroll">
     <template v-for="item in src" :key="item.Id">
       <ArticleComponent v-bind="item" />
     </template>
@@ -8,30 +8,69 @@
 
 <script setup lang="ts">
 import ArticleComponent, { type ArticleProps } from '@/components/ArticleComponent.vue';
-import { ref, useTemplateRef } from 'vue';
+import { onActivated, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
-import type { ArticleInformation } from "@/domain/article.models";
-import type { OffsetPagination } from "@/domain/pagination.models";
-
+import type { Subscription } from 'rxjs';
+import { useAuthStore } from '@/stores/AuthStore';
 const { subject, observable } = getMyArticles();
 
-subject.next({ skip: 0, take: 10 });
-const articles = useTemplateRef("articles");
-const src = ref<Array<ArticleProps>>([]);
+const auth = useAuthStore();
 
-observable.subscribe(val => {
-  debugger;
-  const v = val as OffsetPagination<ArticleInformation>;
-  src.value.push(...v.Data);
+const articles = useTemplateRef("articles");
+const src = ref<ArticleProps[]>([]);
+const hasNext = ref(true);
+
+const take = 25;
+let page = 0;
+
+let subscription: Subscription | undefined;
+
+watch(() => auth.token, (token) => {
+  if(!token) return;
+
+  subject.next({skip: 0, take});
+  page++;
+}, {immediate: true});
+
+onMounted(() => {
+console.log("MOUNTED");
+  subscription = observable.subscribe(val => {
+    console.log("DATA RECEIVED", val);
+    const result = val.Data.map(pre => ({
+      Id: pre.Id,
+      Title: pre.Title,
+      Description: "test",
+      Tags: pre.Tags.map(tag => ({
+        Label: tag.Name,
+        Color: tag.Color
+      }))
+    }));
+
+    hasNext.value = val.HasNextPage;
+    src.value.push(...result);
+  });
 });
-const { reset } = useInfiniteScroll(articles,
+
+onActivated(() => {
+
+})
+
+onUnmounted(() => {
+  subscription?.unsubscribe();
+});
+
+useInfiniteScroll(
+  articles,
   () => {
-    subject.next({ skip: 0, take: 10 });
+    if (!hasNext.value) return;
+
+    subject.next({ skip: page * take, take });
+    page++;
   },
   {
-    distance: 5,
-    canLoadMore: () => true,
+    distance: 30,
+    canLoadMore: () => hasNext.value,
   }
-)
+);
 </script>
