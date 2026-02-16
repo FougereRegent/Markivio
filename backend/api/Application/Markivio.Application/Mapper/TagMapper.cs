@@ -22,5 +22,5 @@ public static partial class TagMapperProjection
     public static partial IQueryable<SoftTag> ProjectionToSoftTag(this IQueryable<Tag> tags);
 }
 
-#pragma warning restore RMG020 
-#pragma warning restore RMG012 
+#pragma warning restore RMG020
+#pragma warning restore RMG012

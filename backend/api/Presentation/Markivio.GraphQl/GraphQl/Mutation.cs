@@ -84,7 +84,7 @@ public class Mutation
         }
         return resultRemoveTags.Value;
     }
-    
+
 }
 
 public class MutationType : ObjectType<Mutation>
@@ -110,7 +110,7 @@ public class MutationType : ObjectType<Mutation>
           .Type<ListType<TagInformationType>>();
 
         descriptor
-            .Field(f => f.AddTags(default!,default!))
+            .Field(f => f.AddTags(default!, default!))
             .UseTransactionMiddleware()
             .Type<ArticleInformationType>();
     }

@@ -65,20 +65,20 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
     {
         ArticleMapper mapper = new ArticleMapper();
         Article? article = await articleRepository.GetById(addTags.articleId);
-        if(article is null)
+        if (article is null)
             return Result.Fail(new NotFoundError("Article doesn't exist"));
 
         SoftTag[] tags = tagRepository.GetByIds(addTags.tagIds)
             .ProjectionToSoftTag()
             .ToArray();
 
-        if(tags.Length != addTags.tagIds.Length)
+        if (tags.Length != addTags.tagIds.Length)
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
         article.ArticleContent.Tags.AddRange(tags);
 
         Result resultArticleValidation = article.Validate();
-        if(resultArticleValidation.IsFailed)
+        if (resultArticleValidation.IsFailed)
             return resultArticleValidation;
 
         Article res = articleRepository.Update(article);
@@ -89,14 +89,14 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
     {
         ArticleMapper mapper = new ArticleMapper();
         Article? article = await articleRepository.GetById(removeTags.articleId);
-        if(article is null)
+        if (article is null)
             return Result.Fail(new NotFoundError("Article doesn't exist"));
 
         SoftTag[] tags = tagRepository.GetByIds(removeTags.tagIds)
             .ProjectionToSoftTag()
             .ToArray();
 
-        if(tags.Length != removeTags.tagIds.Length)
+        if (tags.Length != removeTags.tagIds.Length)
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
         List<SoftTag> tagsWithoutRemovedTags = article.ArticleContent.Tags
@@ -107,7 +107,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         article.ArticleContent.Tags.AddRange(tagsWithoutRemovedTags);
 
         Result resultArticleValidation = article.Validate();
-        if(resultArticleValidation.IsFailed)
+        if (resultArticleValidation.IsFailed)
             return resultArticleValidation;
 
         Article res = articleRepository.Update(article);

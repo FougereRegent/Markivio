@@ -6,40 +6,39 @@ import { map, mergeMap, Subject } from "rxjs";
 
 export function getMyArticles() {
 
-    const observable = new Subject<{skip: number, take:number}>()
+  const observable = new Subject<{ skip: number, take: number }>()
     .pipe(
-        mergeMap(x => apolloClient.query({
+      mergeMap(x => apolloClient.query({
         query: GetArticles,
-        variables: {skip: x.skip, take: x.take}
-    })));
+        variables: { skip: x.skip, take: x.take }
+      })));
 
-    return
-        observable.pipe(
-        map(src => src.data),
-        map(src => {
-            const data = src?.articles.items.map(
-                src => {
-                    return {
-                        Id: src.id,
-                        Source: src.source,
-                        Tags: src.tags.map(tags => {
-                            return {
-                                Color: tags.color,
-                                Name: tags.name
-                            }
-                        })
-                    } as ArticleInformation
-                }
-            );
-            const count = src?.articles.totalCount; 
-            const pageInfo = src?.articles.pageInfo;
+  return observable.pipe(
+    map(src => src.data),
+    map(src => {
+      const data = src?.articles.items.map(
+        src => {
+          return {
+            Id: src.id,
+            Source: src.source,
+            Tags: src.tags.map(tags => {
+              return {
+                Color: tags.color,
+                Name: tags.name
+              }
+            })
+          } as ArticleInformation
+        }
+      );
+      const count = src?.articles.totalCount;
+      const pageInfo = src?.articles.pageInfo;
 
-            return  {
-                Data: data,
-                Count: count,
-                HasNextPage: pageInfo?.hasNextPage,
-                HasPreviousPage: pageInfo?.hasPreviousPage
-            } as OffsetPagination<ArticleInformation>
-        })
-    )
+      return {
+        Data: data,
+        Count: count,
+        HasNextPage: pageInfo?.hasNextPage,
+        HasPreviousPage: pageInfo?.hasPreviousPage
+      } as OffsetPagination<ArticleInformation>
+    })
+  )
 }
