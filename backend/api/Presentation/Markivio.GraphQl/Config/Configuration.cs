@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Markivio.Presentation.Config;
 
 public static class ConfigurationConfig
