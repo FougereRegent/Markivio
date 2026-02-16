@@ -1,5 +1,5 @@
 <template>
-  <div ref="articles" class="flex flex-col gap-2 p-4 h-full overflow-y-scroll">
+  <div ref="articles" class="flex flex-col gap-3 p-4 h-full overflow-y-scroll">
     <template v-for="item in src" :key="item.Id">
       <ArticleComponent v-bind="item" />
     </template>
@@ -34,13 +34,11 @@ watch(() => auth.token, (token) => {
 }, {immediate: true});
 
 onMounted(() => {
-console.log("MOUNTED");
   subscription = observable.subscribe(val => {
-    console.log("DATA RECEIVED", val);
     const result = val.Data.map(pre => ({
       Id: pre.Id,
       Title: pre.Title,
-      Description: "test",
+      Description: "Wikipédia est une encyclopédie en ligne collaborative et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de l'amender et de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les",
       Tags: pre.Tags.map(tag => ({
         Label: tag.Name,
         Color: tag.Color
