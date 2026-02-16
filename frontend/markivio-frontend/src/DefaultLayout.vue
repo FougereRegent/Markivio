@@ -2,8 +2,24 @@
 import HeaderComponent from './components/HeaderComponent.vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import NavBarComponent from './components/NavBarComponent.vue';
+import { useLoaderStore } from './stores/LoaderStore';
+import { watch } from 'vue';
+
 const authStore = useAuthStore();
+const loadingStore = useLoaderStore();
+
+loadingStore.start();
+watch(() => authStore.token, (token) => {
+if(!token) {
+return;
+}
+loadingStore.reset();
+console.log("init");
+}, {immediate: true});
+
 authStore.init();
+
+
 </script>
 
 <template>
@@ -17,9 +33,12 @@ authStore.init();
           <NavBarComponent />
         </SplitterPanel>
         <SplitterPanel :min-size=65 :size="85" class="bg-neutral-100 h-full">
-          <ScrollPanel class="h-full">
+          <ScrollPanel class="h-full" v-show="!loadingStore.isLoading">
             <RouterView />
           </ScrollPanel>
+          <div class="p-5 h-full flex flex-col justify-center" v-show="loadingStore.isLoading">
+            <ProgressSpinner />
+          </div>
         </SplitterPanel>
       </Splitter>
     </div>

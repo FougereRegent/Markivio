@@ -13,9 +13,11 @@ import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
 import type { Subscription } from 'rxjs';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useLoaderStore } from '@/stores/LoaderStore';
 const { subject, observable } = getMyArticles();
 
 const auth = useAuthStore();
+const loader = useLoaderStore();
 
 const articles = useTemplateRef("articles");
 const src = ref<ArticleProps[]>([]);
@@ -31,10 +33,12 @@ watch(() => auth.token, (token) => {
 
   subject.next({skip: 0, take});
   page++;
+  loader.start();
 }, {immediate: true});
 
 onMounted(() => {
   subscription = observable.subscribe(val => {
+  loader.stop();
     const result = val.Data.map(pre => ({
       Id: pre.Id,
       Title: pre.Title,
@@ -44,7 +48,6 @@ onMounted(() => {
         Color: tag.Color
       }))
     }));
-
     hasNext.value = val.HasNextPage;
     src.value.push(...result);
   });
@@ -64,6 +67,7 @@ useInfiniteScroll(
     if (!hasNext.value) return;
 
     subject.next({ skip: page * take, take });
+    loader.start();
     page++;
   },
   {

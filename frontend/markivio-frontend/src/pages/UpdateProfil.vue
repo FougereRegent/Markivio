@@ -1,8 +1,5 @@
 <template>
-  <div class="p-5 h-full flex flex-col justify-center" v-show="loading">
-    <ProgressSpinner />
-  </div>
-  <div class="p-5 h-full" v-show="!loading">
+  <div class="p-5 h-full">
     <div class="flex flex-row justify-between">
       <h1 class="text-4xl text-gray-900">Account Settings</h1>
       <Button size="large" label="Save" class="w-2/12" @click="savedClick.next();" />
@@ -35,10 +32,11 @@ import { getMe, updateUser } from '@/services/user.service';
 import { concatMap, debounceTime, Subject, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
 import { ValidationError } from '@/helpers/validation.helpers';
+import { useLoaderStore } from '@/stores/LoaderStore';
 
 const user = ref<UserInformation>({ FirstName: "", LastName: "", Email: "", Id: "" } as UserInformation);
-const loading = ref(true);
 const savedClick = new Subject<void>();
+const loadingStore = useLoaderStore();
 
 const invalidField = ref({
   invalidFirstNameField: false,
@@ -54,9 +52,10 @@ let subscribe: Subscription;
 let clickSubscribe: Subscription;
 
 onMounted(() => {
+debugger;
+  loadingStore.start();
   const onNext = (src: UserInformation) => {
     user.value = src;
-    loading.value = false;
   }
 
   subscribe = getMe()

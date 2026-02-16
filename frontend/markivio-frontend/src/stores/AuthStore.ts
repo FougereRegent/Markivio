@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { computed, ref } from 'vue';
+import { useLoaderStore } from './LoaderStore';
 
 export interface UserAuth {
   authId: string | undefined,
@@ -11,6 +12,7 @@ export interface UserAuth {
 
 export const useAuthStore = defineStore('auth', () => {
   const auth = useAuth0();
+  const loadingStore = useLoaderStore();
   const token = ref("")
   const isAuthenticated = computed(() => auth.isAuthenticated.value);
   const user = computed(() => auth.user.value)
