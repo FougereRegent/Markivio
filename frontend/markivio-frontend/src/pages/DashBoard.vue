@@ -11,35 +11,23 @@ import ArticleComponent, { type ArticleProps } from '@/components/ArticleCompone
 import { ref, useTemplateRef } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
+import type { ArticleInformation } from "@/domain/article.models";
+import type { OffsetPagination } from "@/domain/pagination.models";
 
-const val = getMyArticles();
+const { subject, observable } = getMyArticles();
 
+subject.next({ skip: 0, take: 10 });
 const articles = useTemplateRef("articles");
-const src = ref<Array<ArticleProps>>([
-  {
-    Id: "10",
-    Description: "Tes",
-    Title: "Test",
-    Tags: [
-      {
-        Label: "Info",
-        Color: "#FF00FF"
-      },
-      {
-        Label: "Math",
-        Color: "#FFFF00"
-      },
-      {
-        Label: "Français",
-        Color: "#000000"
-      }
-    ]
-  },
-]);
+const src = ref<Array<ArticleProps>>([]);
 
+observable.subscribe(val => {
+  debugger;
+  const v = val as OffsetPagination<ArticleInformation>;
+  src.value.push(...v.Data);
+});
 const { reset } = useInfiniteScroll(articles,
   () => {
-    src.value.push(src.value[0] as ArticleProps);
+    subject.next({ skip: 0, take: 10 });
   },
   {
     distance: 5,

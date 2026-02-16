@@ -53,7 +53,7 @@ services:
       watch:
         - action: rebuild
           path: ./backend/api
-          ignore: 
+          ignore:
             - ./backend/api/**/bin
             - ./backend/api/**/obj
 
@@ -75,8 +75,6 @@ services:
           target: /app
           ignore:
             - ./frontend/markivio-frontend/node_modules
-
-
 
 secrets:
   db_password_secret:

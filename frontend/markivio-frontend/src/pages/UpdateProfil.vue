@@ -32,7 +32,7 @@ import { FloatLabel, ProgressSpinner, Button } from 'primevue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { UserInformation } from '@/domain/user.models';
 import { getMe, updateUser } from '@/services/user.service';
-import { concatMap,  debounceTime,  Subject, type Subscription } from 'rxjs';
+import { concatMap, debounceTime, Subject, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
 import { ValidationError } from '@/helpers/validation.helpers';
 
@@ -74,7 +74,6 @@ onMounted(() => {
         pre.match()
           .when(ValidationError, err => {
             err.validationErrors.forEach(err => {
-              debugger;
               const val = err.properyName as string
               rec[val]?.call(null, true);
             })

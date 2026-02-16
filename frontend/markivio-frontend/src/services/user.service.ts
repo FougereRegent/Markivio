@@ -28,7 +28,6 @@ export function updateUser(user: UserInformation) {
   return of(user).pipe(
     switchMap(u => {
       const resultValidation = validateUser(u);
-      debugger;
       if (!resultValidation.ok)
         return of(Result.error(resultValidation.error));
 
