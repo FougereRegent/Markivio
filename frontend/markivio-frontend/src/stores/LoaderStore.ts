@@ -1,6 +1,6 @@
+import { CONST } from "@/config/constante.config";
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
-import { Subject } from "rxjs";
+import { ref } from "vue";
 
 export const useLoaderStore = defineStore('loader', () => {
   const nbrequest = ref(0);
@@ -27,12 +27,13 @@ export const useLoaderStore = defineStore('loader', () => {
     else
       clearTimeout(delayTimeout);
 
-    const elapsedTime = 300 - (Date.now() - startTime);
+    const elapsedTime = CONST.flickerTime - (Date.now() - startTime);
     if(elapsedTime <= 0)
     {
       isLoading.value = false;
     }else {
-      setTimeout(() => isLoading.value = false, elapsedTime);
+      let idTimeout: number;
+      idTimeout = setTimeout(() => {isLoading.value = false; clearTimeout(idTimeout)}, elapsedTime);
     }
 
   }
