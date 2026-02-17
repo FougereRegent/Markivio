@@ -11,7 +11,7 @@ import ArticleComponent, { type ArticleProps } from '@/components/ArticleCompone
 import { onActivated, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
-import type { Subscription } from 'rxjs';
+import { delay, type Subscription } from 'rxjs';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useLoaderStore } from '@/stores/LoaderStore';
 const { subject, observable } = getMyArticles();
@@ -29,16 +29,17 @@ let page = 0;
 let subscription: Subscription | undefined;
 
 watch(() => auth.token, (token) => {
-  if(!token) return;
+  if (!token) return;
 
-  subject.next({skip: 0, take});
+  subject.next({ skip: 0, take });
   page++;
   loader.start();
-}, {immediate: true});
+}, { immediate: true });
 
 onMounted(() => {
-  subscription = observable.subscribe(val => {
-  loader.stop();
+  subscription = observable
+  .subscribe(val => {
+    loader.stop();
     const result = val.Data.map(pre => ({
       Id: pre.Id,
       Title: pre.Title,
@@ -71,7 +72,7 @@ useInfiniteScroll(
     page++;
   },
   {
-    distance: 30,
+    distance: 15,
     canLoadMore: () => hasNext.value,
   }
 );

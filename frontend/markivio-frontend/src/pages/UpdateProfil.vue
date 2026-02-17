@@ -29,7 +29,7 @@ import { FloatLabel, ProgressSpinner, Button } from 'primevue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { UserInformation } from '@/domain/user.models';
 import { getMe, updateUser } from '@/services/user.service';
-import { concatMap, debounceTime, Subject, type Subscription } from 'rxjs';
+import { concatMap, debounceTime, Subject, tap, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
 import { ValidationError } from '@/helpers/validation.helpers';
 import { useLoaderStore } from '@/stores/LoaderStore';
@@ -52,13 +52,14 @@ let subscribe: Subscription;
 let clickSubscribe: Subscription;
 
 onMounted(() => {
-debugger;
-  loadingStore.start();
   const onNext = (src: UserInformation) => {
+    loadingStore.stop();
     user.value = src;
   }
 
+  loadingStore.start();
   subscribe = getMe()
+  .pipe()
     .subscribe({
       next: onNext,
       error: (err) => { console.error(err) }
@@ -66,6 +67,7 @@ debugger;
 
   clickSubscribe = savedClick
     .pipe(
+      tap(() => loadingStore.start()),
       debounceTime(CONST.debounceTime.buttonTime),
       concatMap(_ => updateUser(user.value))
     ).subscribe(pre => {
@@ -79,6 +81,7 @@ debugger;
           })
           .else(err => console.log(err))
           .run()
+        loadingStore.stop();
         return;
       }
 

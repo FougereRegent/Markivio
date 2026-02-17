@@ -8,12 +8,10 @@ import { watch } from 'vue';
 const authStore = useAuthStore();
 const loadingStore = useLoaderStore();
 
-loadingStore.start();
 watch(() => authStore.token, (token) => {
 if(!token) {
 return;
 }
-loadingStore.reset();
 console.log("init");
 }, {immediate: true});
 
