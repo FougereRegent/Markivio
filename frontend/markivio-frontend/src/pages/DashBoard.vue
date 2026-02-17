@@ -12,8 +12,8 @@ import { onActivated, onMounted, onUnmounted, ref, useTemplateRef, watch } from 
 import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
 import { delay, type Subscription } from 'rxjs';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useLoaderStore } from '@/stores/LoaderStore';
+import { useAuthStore } from '@/stores/auth-store';
+import { useLoaderStore } from '@/stores/loader-store';
 const { subject, observable } = getMyArticles();
 
 const auth = useAuthStore();

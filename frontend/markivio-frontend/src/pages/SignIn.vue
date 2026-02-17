@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import LogoComponent from '@/components/LogoComponent.vue';
 import { ref, watch } from 'vue';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/auth-store';
 
     const authStore = useAuthStore();
     const isDarkTheme = ref(false);

@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/auth-store';
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client/core'
 
 const authLink = new ApolloLink((operation, forward) => {

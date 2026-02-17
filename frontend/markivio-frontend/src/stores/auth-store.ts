@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { useAuth0 } from '@auth0/auth0-vue'
 import { computed, ref } from 'vue';
-import { useLoaderStore } from './LoaderStore';
+import { useLoaderStore } from './loader-store';
 
 export interface UserAuth {
   authId: string | undefined,

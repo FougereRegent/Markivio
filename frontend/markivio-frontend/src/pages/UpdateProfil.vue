@@ -32,7 +32,7 @@ import { getMe, updateUser } from '@/services/user.service';
 import { concatMap, debounceTime, Subject, tap, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
 import { ValidationError } from '@/helpers/validation.helpers';
-import { useLoaderStore } from '@/stores/LoaderStore';
+import { useLoaderStore } from '@/stores/loader-store';
 
 const user = ref<UserInformation>({ FirstName: "", LastName: "", Email: "", Id: "" } as UserInformation);
 const savedClick = new Subject<void>();

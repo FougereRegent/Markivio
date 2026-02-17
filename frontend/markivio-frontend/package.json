@@ -37,6 +37,7 @@
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
     "@parcel/watcher": "^2.5.1",
+    "@pinia/testing": "^1.0.3",
     "@primevue/auto-import-resolver": "^4.4.1",
     "@tsconfig/node22": "^22.0.2",
     "@types/jsdom": "^27.0.0",

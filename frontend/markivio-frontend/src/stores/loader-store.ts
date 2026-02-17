@@ -14,7 +14,7 @@ export const useLoaderStore = defineStore('loader', () => {
       delayTimeout = setTimeout(() => {
         isLoading.value = true;
         startTime = Date.now();
-      }, 300);
+      }, CONST.flickerTime);
     }
   }
 
