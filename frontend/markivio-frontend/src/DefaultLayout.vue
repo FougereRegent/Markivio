@@ -9,15 +9,13 @@ const authStore = useAuthStore();
 const loadingStore = useLoaderStore();
 
 watch(() => authStore.token, (token) => {
-if(!token) {
-return;
-}
-console.log("init");
-}, {immediate: true});
+  if (!token) {
+    return;
+  }
+  loadingStore.stop();
+}, { immediate: true });
 
 authStore.init();
-
-
 </script>
 
 <template>

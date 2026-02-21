@@ -33,7 +33,6 @@ watch(() => auth.token, (token) => {
 
   subject.next({ skip: 0, take });
   page++;
-  loader.start();
 }, { immediate: true });
 
 onMounted(() => {
