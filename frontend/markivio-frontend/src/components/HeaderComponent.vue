@@ -4,9 +4,11 @@ import { ref } from 'vue';
 import 'remixicon/fonts/remixicon.css';
 import UserIconComponent from './UserIconComponent.vue';
 import UserMenuComponent from './UserMenuComponent.vue';
+import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
 
 const op = ref();
 const data = ref(["Test1", "Test2", "Test3"]);
+const drawer = useAddEditDrawer();
 const search = () => {
   return [
     "Test1",
@@ -31,7 +33,7 @@ const clickIcon = () => {
       <AutoComplete size="small" placeholder="Search ..." @complete="search" :suggestions="data" class="w-full"
         input-class="w-full" />
     </IconField>
-    <Button label="Add Link" />
+    <Button label="Add Link" v-on:click="drawer.Open"/>
     <div class="h-7 border border-neutral-300"></div>
     <UserIconComponent @click-icon="clickIcon" class="mr-4" />
     <Popover ref="op">

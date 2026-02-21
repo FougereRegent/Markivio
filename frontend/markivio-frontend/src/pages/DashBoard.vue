@@ -4,6 +4,7 @@
       <ArticleComponent v-bind="item" />
     </template>
   </div>
+  <DrawerAddOrEdit />
 </template>
 
 <script setup lang="ts">
@@ -11,14 +12,14 @@ import ArticleComponent, { type ArticleProps } from '@/components/ArticleCompone
 import { onActivated, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
-import { delay, type Subscription } from 'rxjs';
+import { type Subscription } from 'rxjs';
 import { useAuthStore } from '@/stores/auth-store';
 import { useLoaderStore } from '@/stores/loader-store';
+import DrawerAddOrEdit from '@/components/DrawerAddOrEdit.vue';
 const { subject, observable } = getMyArticles();
 
 const auth = useAuthStore();
 const loader = useLoaderStore();
-
 const articles = useTemplateRef("articles");
 const src = ref<ArticleProps[]>([]);
 const hasNext = ref(true);
@@ -37,20 +38,20 @@ watch(() => auth.token, (token) => {
 
 onMounted(() => {
   subscription = observable
-  .subscribe(val => {
-    loader.stop();
-    const result = val.Data.map(pre => ({
-      Id: pre.Id,
-      Title: pre.Title,
-      Description: "Wikipédia est une encyclopédie en ligne collaborative et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de l'amender et de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les",
-      Tags: pre.Tags.map(tag => ({
-        Label: tag.Name,
-        Color: tag.Color
-      }))
-    }));
-    hasNext.value = val.HasNextPage;
-    src.value.push(...result);
-  });
+    .subscribe(val => {
+      loader.stop();
+      const result = val.Data.map(pre => ({
+        Id: pre.Id,
+        Title: pre.Title,
+        Description: "Wikipédia est une encyclopédie en ligne collaborative et multilingue créée par Jimmy Wales et Larry Sanger le 15 janvier 2001. Il s'agit d'une œuvre libre, c'est-à-dire que chacun est libre de l'amender et de la rediffuser. Gérée en wiki dans le site web wikipedia.org grâce au logiciel MediaWiki, elle permet à tous les",
+        Tags: pre.Tags.map(tag => ({
+          Label: tag.Name,
+          Color: tag.Color
+        }))
+      }));
+      hasNext.value = val.HasNextPage;
+      src.value.push(...result);
+    });
 });
 
 onActivated(() => {
