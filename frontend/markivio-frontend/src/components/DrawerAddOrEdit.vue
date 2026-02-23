@@ -28,12 +28,10 @@
             <Textarea id="description" v-model.trim="article.description" multiple="true" rows="6" />
           </div>
           <div class="flex flex-col">
-            <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-1 h-8">
               <template v-for="item of article.tags">
-                <TagField :value="item.name" :style="{
-                  backgroundColor: item.color, color:
-                    ContrasteColor(item.color), opacity: 0.55
-                }" />
+                <Chip :label="item.name" removable @remove="removeChip(item)"
+                        style="background-color:var(--color-blue-50)"/>
               </template>
             </div>
             <AutoComplete class="my-1" fluid id="tags" placeholder="Ajout tag ..." @complete="search" optionLabel="name"
@@ -57,7 +55,6 @@ import { computed, onActivated, onUnmounted, ref, watch, type Ref } from 'vue';
 import { type Article, type Tag, ArticleSchema } from '@/domain/article.models';
 import { useZodValidation } from '@/composables/zod.composable';
 import { getTags } from '@/services/tags.service';
-import { ContrasteColor } from '@/helpers/ui.helpers';
 
 const article = ref<Article>({
   id: null,
@@ -67,7 +64,8 @@ const article = ref<Article>({
   tags: []
 });
 
-const { validate, isValid, errors } = useZodValidation(ArticleSchema, article);
+const { validate, errors } = useZodValidation(ArticleSchema, article);
+
 const titleHasError = computed(() => errors.value?.title != undefined)
 const sourceHasError = computed(() => errors.value?.source != undefined);
 const drawer = useAddEditDrawer();
@@ -86,6 +84,10 @@ const search = () => {
 const selectedItems = (event: AutoCompleteOptionSelectEvent) => {
   const selectedElement = event.value as Tag;
   article.value.tags.push(selectedElement);
+};
+
+const removeChip = (tag: Tag) => {
+  article.value.tags = article.value.tags.filter(item => item != tag);
 };
 
 watch(() => drawer.drawerState, (current) => {
