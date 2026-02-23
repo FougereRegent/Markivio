@@ -10,7 +10,7 @@ export interface ArticleInformation {
     }>,
 }
 
-const Tag = z.object({
+export const TagSchema = z.object({
   name: z.string(),
   id: z.guid(),
   color: z.string(),
@@ -23,12 +23,12 @@ export const ArticleSchema = z.object({
     .regex(/^[a-zA-Z0-9]+$/),
   source: z.httpUrl(),
   description: z.string(),
-  tags: z.array(Tag)
+  tags: z.array(TagSchema)
 });
 
 
 export type Article = z.infer<typeof ArticleSchema>;
-export type Tag = z.infer<typeof Tag>;
+export type Tag = z.infer<typeof TagSchema>;
 
 export function validateArticle(article: Article): z.ZodSafeParseResult<Article> {
   return ArticleSchema.safeParse(article)

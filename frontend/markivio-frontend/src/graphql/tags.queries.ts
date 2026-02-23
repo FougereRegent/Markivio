@@ -1,0 +1,36 @@
+import { gql, type TypedDocumentNode } from "@apollo/client"
+
+
+export type GetTagsInformationQuery = {
+  tags: {
+    __typename: "tags",
+    items: Array<{
+      id: string,
+      name: string,
+      color: string
+    }>,
+    totalCount: number,
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage: boolean,
+    },
+  }
+};
+
+export const GetAllTAgs: TypedDocumentNode<GetTagsInformationQuery> = gql`
+query Tags($skip: Int!, $take: Int!) {
+  tags(skip: $skip, take: $take) {
+    __typename
+    totalCount
+    items {
+      id
+      name
+      color
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+`;

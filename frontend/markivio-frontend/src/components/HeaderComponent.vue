@@ -10,12 +10,8 @@ const op = ref();
 const data = ref(["Test1", "Test2", "Test3"]);
 const drawer = useAddEditDrawer();
 const search = () => {
-  return [
-    "Test1",
-    "Test2",
-    "Test3",
-    "Test4",
-  ]
+  data.value.push("test");
+
 };
 const clickIcon = () => {
   op.value.toggle(event);

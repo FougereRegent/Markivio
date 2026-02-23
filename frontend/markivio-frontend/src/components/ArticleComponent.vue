@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Tag } from 'primevue';
-import { ConstrasteColor as ContrastColor } from '@/helpers/ui.helpers';
+import { ContrasteColor } from '@/helpers/ui.helpers';
 
 export type ArticleProps = {
     Id: string,
@@ -25,7 +25,7 @@ const props = defineProps<ArticleProps>();
             <div class="flex flex-row flex-2 gap-3" >
                 <template v-for="item of props.Tags" :key="item.Label">
                     <Tag :value="item.Label" :style="{backgroundColor: item.Color, color:
-                    ContrastColor(item.Color), opacity: 0.55}"/>
+                    ContrasteColor(item.Color), opacity: 0.55}"/>
                 </template>
             </div>
         </div>
