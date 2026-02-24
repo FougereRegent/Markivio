@@ -5,6 +5,7 @@ export type Constante = {
         refetchTime: number
     },
     flickerTime:  number
+    toastTime: number,
 }
 
 export const CONST: Constante = {
@@ -13,4 +14,5 @@ export const CONST: Constante = {
         refetchTime: 200,
     },
     flickerTime: 300,
+    toastTime: 3000,
 };

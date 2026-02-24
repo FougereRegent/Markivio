@@ -24,6 +24,8 @@ authStore.init();
       <HeaderComponent />
     </header>
     <div class="px-2 h-29/32">
+      <Toast position="top-right" group="tr"/>
+      <Toast position="bottom-right" group="br"/>
       <Splitter class="h-full pb-2" layout="horizontal">
         <SplitterPanel :min-size=10 :size="15" class="bg-white">
           <NavBarComponent />

@@ -15,6 +15,7 @@ public class Mutation
         {
             throw new GraphQLException(ErrorBuilder
                 .New()
+                .SetCode(resultUpdate.Errors[0].GetType().Name)
                 .SetMessage(string.Join(Environment.NewLine, resultUpdate.Errors.Select(pre => pre.Message)))
                 .Build()
                 );
@@ -32,6 +33,7 @@ public class Mutation
             throw new GraphQLException(
                 ErrorBuilder
                 .New()
+                .SetCode(resultCreate.Errors[0].GetType().Name)
                 .SetMessage(string.Join(Environment.NewLine, resultCreate.Errors.Select(pre => pre.Message)))
                 .Build());
         }
@@ -49,6 +51,7 @@ public class Mutation
             throw new GraphQLException(
                 ErrorBuilder
                 .New()
+                .SetCode(resultCreate.Errors[0].GetType().Name)
                 .SetMessage(string.Join(Environment.NewLine, resultCreate.Errors.Select(pre => pre.Message)))
                 .Build());
         }
@@ -65,6 +68,7 @@ public class Mutation
             throw new GraphQLException(
                 ErrorBuilder
                 .New()
+                .SetCode(resultAddTags.Errors[0].GetType().Name)
                 .SetMessage(string.Join(Environment.NewLine, resultAddTags.Errors.Select(pre => pre.Message)))
                 .Build());
         }
@@ -79,6 +83,7 @@ public class Mutation
             throw new GraphQLException(
                 ErrorBuilder
                 .New()
+                .SetCode(resultRemoveTags.Errors[0].GetType().Name)
                 .SetMessage(string.Join(Environment.NewLine, resultRemoveTags.Errors.Select(pre => pre.Message)))
                 .Build());
         }

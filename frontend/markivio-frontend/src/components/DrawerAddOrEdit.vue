@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { Drawer, IconField, Textarea, Tag as TagField, type AutoCompleteOptionSelectEvent } from 'primevue';
+import { Drawer, IconField, Textarea, Tag as TagField, type AutoCompleteOptionSelectEvent, useToast } from 'primevue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
 import { computed, onActivated, onUnmounted, ref, toValue, watch, type Ref } from 'vue';
 import { type Article, type Tag, ArticleSchema } from '@/domain/article.models';
@@ -57,6 +57,11 @@ import { useZodValidation } from '@/composables/zod.composable';
 import { getTags } from '@/services/tags.service';
 import { createArticle } from '@/services/article.service';
 import type { Observable, Subscription } from 'rxjs';
+import { mapGraphqlError } from '@/errors/errors';
+import { CONST } from '@/config/constante.config';
+import type { CombinedGraphQLErrors } from '@apollo/client';
+
+const toast = useToast();
 
 const article = ref<Article>({
   id: null,
@@ -92,19 +97,27 @@ const removeChip = (tag: Tag) => {
   article.value.tags = article.value.tags.filter(item => item != tag);
 };
 
+
 const validateAndSend = () => {
 let sub: Subscription | null = null;
   if (validate()) {
-    debugger;
     sub = createArticle(toValue(article))
-    .subscribe(pre => {
-      if(pre.error != null) {
-        console.error(pre.error);
-      } else {
-        console.log(pre.data?.article.id);
+    .subscribe({
+      next: pre => {
         drawer.Close();
+          toast.add({severity: 'success', summary: 'Success', life:
+          CONST.toastTime, group:"tr"});
+        sub?.unsubscribe();
+      },
+      error: pre => {
+        const errs = pre as CombinedGraphQLErrors;
+        for(let err of errs.errors) {
+          const error = mapGraphqlError(err.extensions?.code as string);
+          toast.add({severity: 'error', summary: 'Error', detail: error.message, life:
+          CONST.toastTime, group:"tr"});
+        }
+        sub?.unsubscribe();
       }
-      sub?.unsubscribe();
     })
   }
 };

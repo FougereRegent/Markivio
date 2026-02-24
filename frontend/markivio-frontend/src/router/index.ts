@@ -1,4 +1,3 @@
-import UserMenuComponent from '@/components/UserMenuComponent.vue'
 import DefaultLayout from '@/DefaultLayout.vue'
 import CallBack from '@/pages/CallBack.vue'
 import DashBoard from '@/pages/DashBoard.vue'
