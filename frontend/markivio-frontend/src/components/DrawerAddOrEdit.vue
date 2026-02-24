@@ -31,14 +31,14 @@
             <div class="flex flex-row gap-1 h-8">
               <template v-for="item of article.tags">
                 <Chip :label="item.name" removable @remove="removeChip(item)"
-                        style="background-color:var(--color-blue-50)"/>
+                  style="background-color:var(--color-blue-50)" />
               </template>
             </div>
             <AutoComplete class="my-1" fluid id="tags" placeholder="Ajout tag ..." @complete="search" optionLabel="name"
               @option-select="selectedItems" :suggestions="refSuggestion" />
           </div>
           <div>
-            <Button @click="validate">
+            <Button @click="validateAndSend">
               Valider
             </Button>
           </div>
@@ -51,10 +51,12 @@
 <script setup lang="ts">
 import { Drawer, IconField, Textarea, Tag as TagField, type AutoCompleteOptionSelectEvent } from 'primevue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
-import { computed, onActivated, onUnmounted, ref, watch, type Ref } from 'vue';
+import { computed, onActivated, onUnmounted, ref, toValue, watch, type Ref } from 'vue';
 import { type Article, type Tag, ArticleSchema } from '@/domain/article.models';
 import { useZodValidation } from '@/composables/zod.composable';
 import { getTags } from '@/services/tags.service';
+import { createArticle } from '@/services/article.service';
+import type { Observable, Subscription } from 'rxjs';
 
 const article = ref<Article>({
   id: null,
@@ -88,6 +90,23 @@ const selectedItems = (event: AutoCompleteOptionSelectEvent) => {
 
 const removeChip = (tag: Tag) => {
   article.value.tags = article.value.tags.filter(item => item != tag);
+};
+
+const validateAndSend = () => {
+let sub: Subscription | null = null;
+  if (validate()) {
+    debugger;
+    sub = createArticle(toValue(article))
+    .subscribe(pre => {
+      if(pre.error != null) {
+        console.error(pre.error);
+      } else {
+        console.log(pre.data?.article.id);
+        drawer.Close();
+      }
+      sub?.unsubscribe();
+    })
+  }
 };
 
 watch(() => drawer.drawerState, (current) => {

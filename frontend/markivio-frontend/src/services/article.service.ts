@@ -1,8 +1,8 @@
 import { apolloClient } from "@/config/apollo.config";
-import type { ArticleInformation } from "@/domain/article.models";
+import type { Article, ArticleInformation } from "@/domain/article.models";
 import type { OffsetPagination } from "@/domain/pagination.models";
-import { GetArticles } from "@/graphql/article.queries";
-import { map, mergeMap, Subject } from "rxjs";
+import { AddArticles, GetArticles } from "@/graphql/article.queries";
+import { from, map, mergeMap, Subject } from "rxjs";
 
 export function getMyArticles() {
   const sub = new Subject<{ skip: number, take: number }>();
@@ -41,4 +41,19 @@ export function getMyArticles() {
       })
     )
   };
+}
+
+export function createArticle(article: Article) {
+  const tags = article.tags.length > 0 ? article.tags.map(pre => ({ id: pre.id })) : []
+  debugger;
+  return from(apolloClient.mutate({
+    mutation: AddArticles,
+    variables: {
+      input: {
+        source: article.source,
+        title: article.title,
+        tags: tags,
+      }
+    }
+  }))
 }

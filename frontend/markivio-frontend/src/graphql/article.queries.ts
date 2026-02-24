@@ -20,6 +20,12 @@ export type GetArticlesInformationQuery = {
     }
 };
 
+export type AddArticleReturn = {
+  article: {
+    id: string,
+  },
+};
+
 
 export const GetArticles : TypedDocumentNode<GetArticlesInformationQuery> = gql`
 query Articles($skip: Int!, $take: Int!) {
@@ -39,5 +45,13 @@ query Articles($skip: Int!, $take: Int!) {
             hasPreviousPage
         }
     }
+}
+`;
+
+export const AddArticles : TypedDocumentNode<AddArticleReturn> = gql`
+mutation AddArticles($input: CreateArticleInput!) {
+  createArticle(createArticle: $input) {
+    id
+  }
 }
 `;
