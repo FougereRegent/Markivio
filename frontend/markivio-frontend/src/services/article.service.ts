@@ -17,13 +17,14 @@ export function getMyArticles() {
         const data = src?.articles.items.map(
           src => {
             return {
-              Id: src.id,
-              Source: src.source,
-              Title: src.title,
-              Tags: src.tags.map(tags => {
+              id: src.id,
+              source: src.source,
+              title: src.title,
+              description: src.description,
+              tags: src.tags.map(tags => {
                 return {
-                  Color: tags.color,
-                  Name: tags.name
+                  color: tags.color,
+                  name: tags.name
                 }
               })
             } as ArticleInformation
@@ -45,7 +46,6 @@ export function getMyArticles() {
 
 export function createArticle(article: Article) {
   const tags = article.tags.length > 0 ? article.tags.map(pre => ({ id: pre.id })) : []
-  debugger;
   return from(apolloClient.mutate({
     mutation: AddArticles,
     variables: {
@@ -53,6 +53,7 @@ export function createArticle(article: Article) {
         source: article.source,
         title: article.title,
         tags: tags,
+        description: article.description,
       }
     }
   }))

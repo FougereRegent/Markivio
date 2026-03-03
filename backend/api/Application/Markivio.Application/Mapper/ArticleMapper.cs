@@ -17,6 +17,7 @@ public partial class ArticleMapper
             ArticleContent = new ArticleContent
             {
                 Source = article.Source,
+                Description = article.Description,
             },
             Title = article.Title,
         };

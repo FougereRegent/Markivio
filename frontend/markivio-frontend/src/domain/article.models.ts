@@ -1,12 +1,13 @@
 import * as z from 'zod';
 
 export interface ArticleInformation {
-    Id: string,
-    Title: string,
-    Source: string,
-    Tags: Array<{
-        Name: string,
-        Color: string,
+    id: string,
+    title: string,
+    source: string,
+    description?: string
+    tags: Array<{
+        name: string,
+        color: string,
     }>,
 }
 
@@ -20,7 +21,7 @@ export const ArticleSchema = z.object({
   id: z.guid()
     .nullable(),
   title: z.string()
-    .regex(/^[a-zA-Z0-9]+$/),
+  .nonempty(),
   source: z.httpUrl(),
   description: z.string(),
   tags: z.array(TagSchema)

@@ -106,7 +106,7 @@ let sub: Subscription | null = null;
       next: pre => {
         drawer.Close();
           toast.add({severity: 'success', summary: 'Success', life:
-          CONST.toastTime, group:"tr"});
+          CONST.toastTime, group:"tl"});
         sub?.unsubscribe();
       },
       error: pre => {
@@ -114,7 +114,7 @@ let sub: Subscription | null = null;
         for(let err of errs.errors) {
           const error = mapGraphqlError(err.extensions?.code as string);
           toast.add({severity: 'error', summary: 'Error', detail: error.message, life:
-          CONST.toastTime, group:"tr"});
+          CONST.toastTime, group:"tl"});
         }
         sub?.unsubscribe();
       }

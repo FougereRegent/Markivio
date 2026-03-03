@@ -7,6 +7,7 @@ export type GetArticlesInformationQuery = {
             id: string
             source: string
             title: string
+            description?: string,
             tags: Array<{
                 name: string,
                 color: string
@@ -34,6 +35,7 @@ query Articles($skip: Int!, $take: Int!) {
             id
             source
             title
+            description
             tags {
                 name
                 color
