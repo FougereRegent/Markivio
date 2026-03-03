@@ -10,7 +10,8 @@ export function getMyArticles() {
     subject: sub, observable: sub.pipe(
       mergeMap(x => apolloClient.query({
         query: GetArticles,
-        variables: { skip: x.skip, take: x.take }
+        variables: { skip: x.skip, take: x.take },
+        fetchPolicy: "network-only"
       })),
       map(src => src.data),
       map(src => {

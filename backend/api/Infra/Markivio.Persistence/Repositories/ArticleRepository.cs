@@ -24,6 +24,6 @@ public class ArticleRepository(MarkivioContext context) : GenericRepositpory<Art
             (_, _) => baseResult
         };
 
-        return resultFitler;
+        return resultFitler.OrderBy(pre => pre.Id);
     }
 }

@@ -12,14 +12,16 @@ import ArticleComponent, { type ArticleProps } from '@/components/ArticleCompone
 import { onActivated, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core'
 import { getMyArticles } from '@/services/article.service';
-import { type Subscription } from 'rxjs';
+import { skip, type Subscription } from 'rxjs';
 import { useAuthStore } from '@/stores/auth-store';
 import { useLoaderStore } from '@/stores/loader-store';
 import DrawerAddOrEdit from '@/components/DrawerAddOrEdit.vue';
+import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
 const { subject, observable } = getMyArticles();
 
 const auth = useAuthStore();
 const loader = useLoaderStore();
+const drawer = useAddEditDrawer();
 const articles = useTemplateRef("articles");
 const src = ref<ArticleProps[]>([]);
 const hasNext = ref(true);
@@ -35,6 +37,7 @@ watch(() => auth.token, (token) => {
   subject.next({ skip: 0, take });
   page++;
 }, { immediate: true });
+
 
 onMounted(() => {
   subscription = observable
@@ -54,17 +57,14 @@ onMounted(() => {
     });
 });
 
-onActivated(() => {
-
-})
-
 onUnmounted(() => {
   subscription?.unsubscribe();
 });
 
-useInfiniteScroll(
+const { reset } = useInfiniteScroll(
   articles,
   () => {
+    debugger;
     if (!hasNext.value) return;
 
     subject.next({ skip: page * take, take });
@@ -76,4 +76,11 @@ useInfiniteScroll(
     canLoadMore: () => hasNext.value,
   }
 );
+
+watch(() => drawer.drawerState, (state) => {
+    src.value = [];
+    page = 0;
+    hasNext.value = true;
+    reset();
+}, { immediate: true });
 </script>

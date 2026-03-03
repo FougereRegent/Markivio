@@ -42,7 +42,7 @@ public class ArticleTests
           .Returns(ValueTask.FromResult<Article?>(data));
 
         //Act 
-        FluentResults.Result<ArticleInformation> result = await articleUseCase.CreateArticle(new CreateArticle(default, default, new TagCreateArticle[0]));
+        FluentResults.Result<ArticleInformation> result = await articleUseCase.CreateArticle(new CreateArticle(default, default, default, new TagCreateArticle[0]));
 
         //Assert
         result.IsFailed.ShouldBeTrue();
@@ -55,7 +55,7 @@ public class ArticleTests
     {
         //Arrange
         Faker faker = new Faker("fr");
-        CreateArticle inputData = new CreateArticle(faker.Random.Word(), faker.Internet.Url(), new TagCreateArticle[] {
+        CreateArticle inputData = new CreateArticle(faker.Random.Word(), faker.Internet.Url(), faker.Lorem.Sentence(), new TagCreateArticle[] {
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
@@ -81,7 +81,7 @@ public class ArticleTests
     {
         //Arrange
         Faker faker = new Faker("fr");
-        CreateArticle inputData = new CreateArticle(faker.Random.Word(), "", new TagCreateArticle[] {
+        CreateArticle inputData = new CreateArticle(faker.Random.Word(), "", faker.Lorem.Sentence(), new TagCreateArticle[] {
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
@@ -107,7 +107,7 @@ public class ArticleTests
     {
         //Arrange
         Faker faker = new Faker("fr");
-        CreateArticle inputData = new CreateArticle(faker.Random.Word(), faker.Internet.Url(), new TagCreateArticle[] {
+        CreateArticle inputData = new CreateArticle(faker.Random.Word(), faker.Internet.Url(), faker.Lorem.Sentence(), new TagCreateArticle[] {
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
@@ -133,7 +133,7 @@ public class ArticleTests
         Faker faker = new Faker("fr");
         string title = faker.Random.Word();
         string url = faker.Internet.Url();
-        CreateArticle inputData = new CreateArticle(title, url, new TagCreateArticle[] {
+        CreateArticle inputData = new CreateArticle(title, url, faker.Lorem.Sentence(), new TagCreateArticle[] {
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),
             new TagCreateArticle(Guid.NewGuid()),

@@ -34,8 +34,11 @@
                   style="background-color:var(--color-blue-50)" />
               </template>
             </div>
-            <AutoComplete class="my-1" fluid id="tags" placeholder="Ajout tag ..." @complete="search" optionLabel="name"
-              @option-select="selectedItems" :suggestions="refSuggestion" />
+            <div class="flex flex-row gap-1 justify-center">
+              <AutoComplete class="my-1 flex-5" fluid id="tags" placeholder="Ajout tag ..." @complete="search" optionLabel="name"
+                @option-select="selectedItems" :suggestions="refSuggestion" />
+              <Button icon="ri-add-line" class="m-auto" variant="text" @click="openTagModal"/>
+            </div>
           </div>
           <div>
             <Button @click="validateAndSend">
@@ -97,6 +100,9 @@ const removeChip = (tag: Tag) => {
   article.value.tags = article.value.tags.filter(item => item != tag);
 };
 
+const openTagModal = () => {
+
+};
 
 const validateAndSend = () => {
 let sub: Subscription | null = null;

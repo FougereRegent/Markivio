@@ -12,7 +12,8 @@ public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository
 
     public IQueryable<T> GetAll() =>
         context.Set<T>()
-          .AsQueryable();
+          .AsQueryable()
+          .OrderBy(pre => pre.Id);
 
     public async ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
