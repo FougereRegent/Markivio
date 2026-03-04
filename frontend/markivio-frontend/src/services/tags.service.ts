@@ -1,39 +1,46 @@
-import { apolloClient } from "@/config/apollo.config";
-import type { Tag } from "@/domain/article.models";
-import type { OffsetPagination } from "@/domain/pagination.models";
-import { GetAllTAgs } from "@/graphql/tags.queries";
-import { map, mergeMap, Subject } from "rxjs";
+import { apolloClient } from '@/config/apollo.config';
+import type { Tag } from '@/domain/article.models';
+import type { OffsetPagination } from '@/domain/pagination.models';
+import { GetAllTags } from '@/graphql/tags.queries';
+import { catchError, EMPTY, map, mergeMap, Subject } from 'rxjs';
 
 export function getTags() {
-  const sub = new Subject<{skip: number, take: number}>();
+  const subject = new Subject<{ skip: number; take: number }>();
   return {
-    subject: sub,
-    observable: sub.pipe(
-      mergeMap(x => apolloClient.query({
-        query: GetAllTAgs,
-        variables: { skip: x.skip, take: x.take }
-      })),
-      map(src => src.data),
-      map(src => {
-        const data = src?.tags.items.map(
-          src => ({
-            id: src.id,
-            color: src.color,
-            name: src.name
-          } as Tag)
+    subject,
+    observable: subject.pipe(
+      mergeMap((params) =>
+        apolloClient.query({
+          query: GetAllTags,
+          variables: { skip: params.skip, take: params.take },
+        }),
+      ),
+      map((response) => response.data),
+      map((response) => {
+        const items = response?.tags.items ?? [];
+        const data = items.map(
+          (tag) =>
+            ({
+              id: tag.id,
+              color: tag.color,
+              name: tag.name,
+            }) as Tag,
         );
 
-        const count = src?.tags.totalCount;
-        const pageInfo = src?.tags.pageInfo;
+        const count = response?.tags.totalCount;
+        const pageInfo = response?.tags.pageInfo;
 
         return {
-          Data: data,
-          Count: count,
-          HasNextPage: pageInfo?.hasNextPage,
-          HasPreviousPage: pageInfo?.hasPreviousPage,
+          data,
+          count,
+          hasNextPage: pageInfo?.hasNextPage,
+          hasPreviousPage: pageInfo?.hasPreviousPage,
         } as OffsetPagination<Tag>;
-      })
+      }),
+      catchError((err) => {
+        console.error('Failed to fetch tags', err);
+        return EMPTY;
+      }),
     ),
   };
-};
-
+}

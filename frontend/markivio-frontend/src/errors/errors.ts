@@ -1,43 +1,42 @@
 export enum ErrType {
   auth,
   business,
-  forbiden,
+  forbidden,
   notfound,
-  unknow,
-};
+  unknown,
+}
 
 export interface Err {
-  type: ErrType,
-  message: string,
-};
+  type: ErrType;
+  message: string;
+}
 
 export function mapGraphqlError(errorCode: string): Err {
   switch (errorCode) {
-    case "AlreadyExistError":
+    case 'AlreadyExistError':
       return {
         type: ErrType.business,
-        message: "This item already exist"
+        message: 'This item already exist',
       };
-    case "DuplicatedItemsError":
+    case 'DuplicatedItemsError':
       return {
         type: ErrType.business,
-        message: "Duplicated items in your collections"
+        message: 'Duplicated items in your collections',
       };
-    case "NotFoundError":
+    case 'NotFoundError':
       return {
         type: ErrType.business,
-        message: "Item not found"
+        message: 'Item not found',
       };
-    case "UnauthorizedError":
+    case 'UnauthorizedError':
       return {
         type: ErrType.auth,
-        message: "Not connected",
+        message: 'Not connected',
       };
-
     default:
       return {
-        type: ErrType.unknow,
-        message: ""
-      }
+        type: ErrType.unknown,
+        message: 'An unexpected error occurred',
+      };
   }
-};
+}

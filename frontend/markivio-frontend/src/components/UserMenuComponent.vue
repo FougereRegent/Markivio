@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import router from '@/router';
+import { useAuthStore } from '@/stores/auth-store';
+
+const authStore = useAuthStore();
+
+const items = [
+  { label: 'Edit Profile', icon: 'ri-edit-line', command: () => router.push({ name: 'updateUser' }) },
+  { label: 'Logout', icon: 'ri-logout-box-line', command: async () => await authStore.logout() },
+];
+</script>
+
 <template>
   <Menu :model="items">
     <template #item="{ item, props }">
@@ -8,14 +20,3 @@
     </template>
   </Menu>
 </template>
-<script setup lang="ts">
-import router from '@/router';
-import { useAuthStore } from '@/stores/auth-store';
-import { ref } from 'vue';
-const authStore = useAuthStore();
-
-const items = ref([
-  { label: "Edit Profile", icon: "ri-edit-line", command: () => router.push({ name: "updateUser" }) },
-  { label: "Logout", icon: "ri-logout-box-line", command: async () => await authStore.logout() },
-])
-</script>

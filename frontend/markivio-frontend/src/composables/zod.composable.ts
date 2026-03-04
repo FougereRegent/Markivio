@@ -1,10 +1,11 @@
-import { groupBy } from "@/helpers/collection.helpers";
-import { ref, toValue, watch } from "vue";
-import * as z from "zod";
+import { groupBy } from '@/helpers/collection.helpers';
+import { ref, toValue, watch } from 'vue';
+import * as z from 'zod';
 
-export function useZodValidation<T extends z.ZodTypeAny,
+export function useZodValidation<
+  T extends z.ZodTypeAny,
   U = Record<string, unknown>,
-  V = Record<string, z.ZodError[]>
+  V = Record<string, z.ZodError[]>,
 >(schema: T, data: U) {
   const isValid = ref(true);
   const errors = ref<V | null>(null);
@@ -14,12 +15,22 @@ export function useZodValidation<T extends z.ZodTypeAny,
   };
 
   let unwatch: null | (() => void) = null;
-  const validateWatch = () => {
-    if(unwatch != null) return;
 
-    unwatch = watch(() => data, () => {
-      validate()
-    }, {deep: true});
+  const validateWatch = () => {
+    if (unwatch != null) return;
+
+    unwatch = watch(
+      () => data,
+      () => {
+        validate();
+      },
+      { deep: true },
+    );
+  };
+
+  const stopWatch = () => {
+    unwatch?.();
+    unwatch = null;
   };
 
   const validate = () => {
@@ -28,13 +39,12 @@ export function useZodValidation<T extends z.ZodTypeAny,
     const result = toValue(schema).safeParse(toValue(data));
     isValid.value = result.success;
 
-    if(!result.success){
-      errors.value = groupBy(result.error.issues, "path");
+    if (!result.success) {
+      errors.value = groupBy(result.error.issues, 'path');
       return false;
     }
     return true;
   };
 
-
-  return { validate, isValid, errors }
+  return { validate, isValid, errors, validateWatch, stopWatch };
 }

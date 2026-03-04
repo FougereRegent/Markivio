@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import LogoComponent from './LogoComponent.vue';
-import { ref } from 'vue';
+import LogoComponent from '@/components/LogoComponent.vue';
 import 'remixicon/fonts/remixicon.css';
-import UserIconComponent from './UserIconComponent.vue';
-import UserMenuComponent from './UserMenuComponent.vue';
+import UserIconComponent from '@/components/UserIconComponent.vue';
+import UserMenuComponent from '@/components/UserMenuComponent.vue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
+import { ref } from 'vue';
 
-const op = ref();
-const data = ref(["Test1", "Test2", "Test3"]);
+const popoverRef = ref();
 const drawer = useAddEditDrawer();
-const search = () => {
-  data.value.push("test");
 
-};
 const clickIcon = () => {
-  op.value.toggle(event);
+  popoverRef.value.toggle(event);
 };
-
 </script>
 
 <template>
@@ -26,13 +21,12 @@ const clickIcon = () => {
       <InputIcon class="w-full">
         <i class="ri-search-line text-neutral-700"></i>
       </InputIcon>
-      <AutoComplete size="small" placeholder="Search ..." @complete="search" :suggestions="data" class="w-full"
-        input-class="w-full" />
+      <AutoComplete size="small" placeholder="Search ..." class="w-full" input-class="w-full" />
     </IconField>
-    <Button label="Add Link" v-on:click="drawer.Open"/>
+    <Button label="Add Link" @click="drawer.open" />
     <div class="h-7 border border-neutral-300"></div>
     <UserIconComponent @click-icon="clickIcon" class="mr-4" />
-    <Popover ref="op">
+    <Popover ref="popoverRef">
       <UserMenuComponent />
     </Popover>
   </div>

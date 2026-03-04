@@ -1,21 +1,25 @@
 <script setup lang="ts">
-import HeaderComponent from './components/HeaderComponent.vue';
+import HeaderComponent from '@/components/HeaderComponent.vue';
 import { useAuthStore } from '@/stores/auth-store';
-import NavBarComponent from './components/NavBarComponent.vue';
-import { useLoaderStore } from './stores/loader-store';
-import { watch } from 'vue';
+import NavBarComponent from '@/components/NavBarComponent.vue';
+import { useLoaderStore } from '@/stores/loader-store';
+import { onMounted, watch } from 'vue';
 
 const authStore = useAuthStore();
 const loadingStore = useLoaderStore();
 
-watch(() => authStore.token, (token) => {
-  if (!token) {
-    return;
-  }
-  loadingStore.stop();
-}, { immediate: true });
+watch(
+  () => authStore.token,
+  (token) => {
+    if (!token) return;
+    loadingStore.stop();
+  },
+  { immediate: true },
+);
 
-authStore.init();
+onMounted(() => {
+  authStore.init();
+});
 </script>
 
 <template>
@@ -24,13 +28,13 @@ authStore.init();
       <HeaderComponent />
     </header>
     <div class="px-2 h-29/32">
-      <Toast position="top-right" group="tr"/>
-      <Toast position="bottom-right" group="br"/>
+      <Toast position="top-right" group="tr" />
+      <Toast position="bottom-right" group="br" />
       <Splitter class="h-full pb-2" layout="horizontal">
-        <SplitterPanel :min-size=10 :size="15" class="bg-white">
+        <SplitterPanel :min-size="10" :size="15" class="bg-white">
           <NavBarComponent />
         </SplitterPanel>
-        <SplitterPanel :min-size=65 :size="85" class="bg-neutral-100 h-full">
+        <SplitterPanel :min-size="65" :size="85" class="bg-neutral-100 h-full">
           <ScrollPanel class="h-full" v-show="!loadingStore.isLoading">
             <RouterView />
           </ScrollPanel>
@@ -42,5 +46,3 @@ authStore.init();
     </div>
   </div>
 </template>
-
-<style></style>
