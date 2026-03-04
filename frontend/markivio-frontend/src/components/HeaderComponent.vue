@@ -23,7 +23,7 @@ const clickIcon = () => {
       </InputIcon>
       <AutoComplete size="small" placeholder="Search ..." class="w-full" input-class="w-full" />
     </IconField>
-    <Button label="Add Link" @click="drawer.open" />
+    <Button label="Add Link" @click="drawer.open(false)" />
     <div class="h-7 border border-neutral-300"></div>
     <UserIconComponent @click-icon="clickIcon" class="mr-4" />
     <Popover ref="popoverRef">

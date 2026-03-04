@@ -15,7 +15,7 @@ const auth = useAuthStore();
 const loader = useLoaderStore();
 const drawer = useAddEditDrawer();
 const articlesRef = useTemplateRef('articles');
-const articles = ref<ArticleProps[]>([]);
+const articlesSrc = ref<ArticleProps[]>([]);
 const hasNext = ref(true);
 
 const take = 25;
@@ -45,8 +45,9 @@ onMounted(() => {
         color: tag.color,
       })),
     }));
+    debugger;
     hasNext.value = val.hasNextPage;
-    articles.value.push(...result);
+    articlesSrc.value.push(...result);
   });
 });
 
@@ -71,7 +72,7 @@ const { reset } = useInfiniteScroll(
 watch(
   () => drawer.drawerState,
   () => {
-    articles.value = [];
+    articlesSrc.value = [];
     page = 0;
     hasNext.value = true;
     reset();
@@ -82,7 +83,7 @@ watch(
 
 <template>
   <div ref="articles" class="flex flex-col gap-3 p-4 h-full overflow-y-scroll">
-    <template v-for="item in articles" :key="item.id">
+    <template v-for="item in articlesSrc" :key="item.id">
       <ArticleComponent v-bind="item" />
     </template>
   </div>

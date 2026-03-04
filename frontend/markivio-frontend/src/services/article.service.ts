@@ -2,7 +2,9 @@ import { apolloClient } from '@/config/apollo.config';
 import type { Article, ArticleInformation } from '@/domain/article.models';
 import type { OffsetPagination } from '@/domain/pagination.models';
 import { AddArticles, GetArticles } from '@/graphql/article.queries';
-import { catchError, EMPTY, from, map, mergeMap, Subject } from 'rxjs';
+import { type Err, ErrType, mapApolloError, mapGraphqlError } from '@/errors/errors';
+import { Result } from 'typescript-result';
+import { catchError, EMPTY, from, map, mergeMap, of, Subject } from 'rxjs';
 
 export function getMyArticles() {
   const subject = new Subject<{ skip: number; take: number }>();
@@ -64,5 +66,13 @@ export function createArticle(article: Article) {
         },
       },
     }),
+  ).pipe(
+    map((response) => {
+      if (response.error) {
+        return Result.error<Err[]>([{message: "", type: ErrType.unknown}]);
+      }
+      return Result.ok(response.data);
+    }),
+    catchError((err) => of(Result.error<Err[]>(mapApolloError(err)))),
   );
 }

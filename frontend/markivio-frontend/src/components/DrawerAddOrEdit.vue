@@ -6,10 +6,7 @@ import { type Article, type Tag, ArticleSchema } from '@/domain/article.models';
 import { useZodValidation } from '@/composables/zod.composable';
 import { getTags } from '@/services/tags.service';
 import { createArticle } from '@/services/article.service';
-import type { Subscription } from 'rxjs';
-import { mapGraphqlError } from '@/errors/errors';
 import { CONST } from '@/config/constante.config';
-import type { CombinedGraphQLErrors } from '@apollo/client';
 
 const toast = useToast();
 
@@ -26,6 +23,7 @@ const { validate, errors } = useZodValidation(ArticleSchema, article);
 const titleHasError = computed(() => errors.value?.title != undefined);
 const sourceHasError = computed(() => errors.value?.source != undefined);
 const drawer = useAddEditDrawer();
+const isSubmitting = ref(false);
 
 const refSuggestion = ref([] as Tag[]);
 
@@ -48,35 +46,31 @@ const removeChip = (tag: Tag) => {
 };
 
 const validateAndSend = () => {
-  let sub: Subscription | null = null;
-  if (validate()) {
-    sub = createArticle(toValue(article)).subscribe({
-      next: () => {
-        drawer.close();
+  if (!validate()) return;
+
+  isSubmitting.value = true;
+  createArticle(toValue(article)).subscribe((result) => {
+    isSubmitting.value = false;
+    if (result.ok) {
+      drawer.close();
+      toast.add({
+        severity: 'success',
+        summary: 'Article created',
+        life: CONST.toastTime,
+        group: 'tl',
+      });
+    } else {
+      for (const err of result.error) {
         toast.add({
-          severity: 'success',
-          summary: 'Success',
+          severity: 'error',
+          summary: 'Error',
+          detail: err.message,
           life: CONST.toastTime,
           group: 'tl',
         });
-        sub?.unsubscribe();
-      },
-      error: (err) => {
-        const errs = err as CombinedGraphQLErrors;
-        for (const error of errs.errors) {
-          const mapped = mapGraphqlError(error.extensions?.code as string);
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: mapped.message,
-            life: CONST.toastTime,
-            group: 'tl',
-          });
-        }
-        sub?.unsubscribe();
-      },
-    });
-  }
+      }
+    }
+  });
 };
 
 watch(
@@ -108,7 +102,7 @@ onUnmounted(() => {
         <div class="flex flex-row py-6 border-neutral-300 border-b justify-start">
           <div class="flex items-start">
             <IconField class="ri-pencil-line text-blue-500 text-3xl" />
-            <h2 class="text-neutral-600 text-3xl mx-3">Edit Article</h2>
+            <h2 class="text-neutral-600 text-3xl mx-3">{{ drawer.drawerTitle }}</h2>
           </div>
           <IconField
             class="ri-close-line text-neutral-600 text-3xl ml-auto hover:text-neutral-800 transition cursor-pointer"
@@ -136,7 +130,7 @@ onUnmounted(() => {
           </div>
           <div class="flex flex-col">
             <div class="flex flex-row gap-1 h-8">
-              <template v-for="item of article.tags">
+              <template v-for="item of article.tags" :key="item.id">
                 <Chip
                   :label="item.name"
                   removable
@@ -159,7 +153,9 @@ onUnmounted(() => {
             </div>
           </div>
           <div>
-            <Button @click="validateAndSend"> Valider </Button>
+            <Button @click="validateAndSend" :disabled="isSubmitting" :loading="isSubmitting">
+              Valider
+            </Button>
           </div>
         </div>
       </div>

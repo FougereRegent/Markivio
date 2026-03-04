@@ -9,8 +9,10 @@ export enum ActionDrawer {
 export const useAddEditDrawer = defineStore('add-edit-drawer', () => {
   const drawerType = ref(ActionDrawer.Create);
   const drawerState = ref(false);
+  const drawerTitle = ref("");
 
-  function open() {
+  function open(isEdit: boolean) {
+    drawerTitle.value =  isEdit ? "Edit" : "Create";
     drawerState.value = true;
   }
 
@@ -23,5 +25,6 @@ export const useAddEditDrawer = defineStore('add-edit-drawer', () => {
     close,
     drawerState,
     drawerType,
+    drawerTitle
   };
 });
