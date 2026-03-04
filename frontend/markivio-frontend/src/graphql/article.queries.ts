@@ -51,7 +51,7 @@ query Articles($skip: Int!, $take: Int!) {
 `;
 
 export const AddArticles : TypedDocumentNode<AddArticleReturn> = gql`
-mutation AddArticles($input: CreateArticleInput!) {
+mutation AddArticles($input: [CreateArticleInput]!) {
   createArticle(createArticle: $input) {
     id
   }

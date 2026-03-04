@@ -71,11 +71,14 @@ const { reset } = useInfiniteScroll(
 
 watch(
   () => drawer.drawerState,
-  () => {
-    articlesSrc.value = [];
-    page = 0;
-    hasNext.value = true;
-    reset();
+  (newState, oldState) => {
+    debugger;
+    if(!newState && oldState) {
+      articlesSrc.value = [];
+      page = 0;
+      hasNext.value = true;
+      reset();
+    }
   },
   { immediate: true },
 );

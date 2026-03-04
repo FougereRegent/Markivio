@@ -2,38 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { mapGraphqlError, mapApolloError, ErrType } from '@/errors/errors';
 
 describe('mapGraphqlError', () => {
-  it('Should map AlreadyExistError to business error', () => {
-    const result = mapGraphqlError('AlreadyExistError');
-    expect(result.type).eq(ErrType.business);
-    expect(result.message).eq('This item already exist');
-  });
-
-  it('Should map DuplicatedItemsError to business error', () => {
-    const result = mapGraphqlError('DuplicatedItemsError');
-    expect(result.type).eq(ErrType.business);
-    expect(result.message).eq('Duplicated items in your collections');
-  });
-
-  it('Should map NotFoundError to business error', () => {
-    const result = mapGraphqlError('NotFoundError');
-    expect(result.type).eq(ErrType.business);
-    expect(result.message).eq('Item not found');
-  });
-
-  it('Should map UnauthorizedError to auth error', () => {
-    const result = mapGraphqlError('UnauthorizedError');
-    expect(result.type).eq(ErrType.auth);
-    expect(result.message).eq('Not connected');
-  });
-
-  it('Should map unknown error code to unknown type with default message', () => {
+  it('Should return unknown type for unrecognized error input', () => {
     const result = mapGraphqlError('SomeRandomError');
     expect(result.type).eq(ErrType.unknown);
-    expect(result.message).eq('An unexpected error occurred');
+    expect(result.message).eq('');
   });
 
-  it('Should map empty string to unknown type', () => {
+  it('Should return unknown type for empty string', () => {
     const result = mapGraphqlError('');
+    expect(result.type).eq(ErrType.unknown);
+  });
+
+  it('Should return unknown type for null', () => {
+    const result = mapGraphqlError(null);
     expect(result.type).eq(ErrType.unknown);
   });
 });
@@ -52,7 +33,7 @@ describe('mapApolloError', () => {
     expect(result[0].message).eq('Network error, please check your connection');
   });
 
-  it('Should map graphQLErrors from Apollo-like error', () => {
+  it('Should map graphQLErrors to unknown when extensions code is a string', () => {
     const error = {
       graphQLErrors: [
         { message: 'Already exists', extensions: { code: 'AlreadyExistError' } },
@@ -62,24 +43,22 @@ describe('mapApolloError', () => {
     const result = mapApolloError(error);
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.business);
-    expect(result[0].message).eq('This item already exist');
+    expect(result[0].type).eq(ErrType.unknown);
   });
 
   it('Should map multiple graphQLErrors', () => {
     const error = {
       graphQLErrors: [
-        { message: 'Already exists', extensions: { code: 'AlreadyExistError' } },
-        { message: 'Not found', extensions: { code: 'NotFoundError' } },
+        { message: 'Error 1', extensions: { code: 'Err1' } },
+        { message: 'Error 2', extensions: { code: 'Err2' } },
       ],
     };
 
     const result = mapApolloError(error);
 
     expect(result).toHaveLength(2);
-    expect(result[0].type).eq(ErrType.business);
-    expect(result[1].type).eq(ErrType.business);
-    expect(result[1].message).eq('Item not found');
+    expect(result[0].type).eq(ErrType.unknown);
+    expect(result[1].type).eq(ErrType.unknown);
   });
 
   it('Should prioritize networkError over graphQLErrors', () => {

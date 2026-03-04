@@ -16,6 +16,14 @@ export type GetTagsInformationQuery = {
   };
 };
 
+export type TagsInformationQuery = {
+  nodes: Array<{
+    id: string,
+    name: string,
+    color: string,
+  }>
+};
+
 export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
   query Tags($skip: Int!, $take: Int!) {
     tags(skip: $skip, take: $take) {
@@ -32,4 +40,17 @@ export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
       }
     }
   }
+`;
+
+
+export const AddTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
+mutation CreateTag($input: CreateTagInput!) {
+  createTags(createTags: $input) {
+    nodes {
+        id
+        name
+        color
+      }
+  }
+}
 `;

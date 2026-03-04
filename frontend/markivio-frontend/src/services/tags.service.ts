@@ -1,8 +1,9 @@
 import { apolloClient } from '@/config/apollo.config';
 import type { Tag } from '@/domain/article.models';
 import type { OffsetPagination } from '@/domain/pagination.models';
-import { GetAllTags } from '@/graphql/tags.queries';
-import { catchError, EMPTY, map, mergeMap, Subject } from 'rxjs';
+import { AddArticles } from '@/graphql/article.queries';
+import { AddTags, GetAllTags } from '@/graphql/tags.queries';
+import { catchError, EMPTY, from, map, mergeMap, Subject } from 'rxjs';
 
 export function getTags() {
   const subject = new Subject<{ skip: number; take: number }>();
@@ -43,4 +44,19 @@ export function getTags() {
       }),
     ),
   };
+}
+
+export function CreateTag(tag: Tag) {
+  return from(apolloClient.mutate({
+    mutation: AddTags,
+    variables: {
+      input: [{
+        name: tag.name,
+        color: tag.color
+      }]
+    }
+  })).pipe(
+    map(response => response.data),
+    map(response => response?.tags.)
+  )
 }

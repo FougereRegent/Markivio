@@ -18,6 +18,7 @@ const user = ref<UserInformation>({
 const savedClick = new Subject<void>();
 const loadingStore = useLoaderStore();
 const toast = useToast();
+const isSubmitting = ref(false);
 
 const invalidField = ref({
   invalidFirstNameField: false,
@@ -47,17 +48,32 @@ onMounted(() => {
 
   clickSubscribe = savedClick
     .pipe(
-      tap(() => loadingStore.start()),
+      tap(() => {
+        loadingStore.start();
+        isSubmitting.value = true;
+      }),
       debounceTime(CONST.debounceTime.buttonTime),
       concatMap(() => updateUser(user.value)),
     )
     .subscribe((result) => {
+      isSubmitting.value = false;
+
       if (!result.ok) {
         const error = result.error;
-        if (error && 'issues' in error) {
+        if (error.kind === 'validation') {
           for (const issue of error.issues) {
             const fieldName = issue.path?.[0] as string;
             fieldValidationHandlers[fieldName]?.call(null, true);
+          }
+        } else {
+          for (const err of error.errors) {
+            toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: err.message,
+              life: CONST.toastTime,
+              group: 'tr',
+            });
           }
         }
         loadingStore.stop();
@@ -87,7 +103,7 @@ onUnmounted(() => {
   <div class="p-5 h-full">
     <div class="flex flex-row justify-between">
       <h1 class="text-4xl text-gray-900">Account Settings</h1>
-      <Button size="large" label="Save" class="w-2/12" @click="savedClick.next()" />
+      <Button size="large" label="Save" class="w-2/12" @click="savedClick.next()" :disabled="isSubmitting" :loading="isSubmitting" />
     </div>
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>

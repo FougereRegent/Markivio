@@ -2,7 +2,13 @@ import { validateUser, type UserInformation } from '@/domain/user.models';
 import { Result } from 'typescript-result';
 import { apolloClient } from '@/config/apollo.config';
 import { GetMe, UpdateUser } from '@/graphql/user.queries';
+import { type Err, mapApolloError, mapGraphqlError } from '@/errors/errors';
 import { catchError, from, map, of, switchMap } from 'rxjs';
+import type { z } from 'zod';
+
+export type UpdateUserError =
+  | { kind: 'validation'; issues: z.ZodIssue[] }
+  | { kind: 'api'; errors: Err[] };
 
 export function getMe() {
   const observable = from(
@@ -31,7 +37,12 @@ export function updateUser(user: UserInformation) {
     switchMap((u) => {
       const resultValidation = validateUser(u);
       if (!resultValidation.success)
-        return of(Result.error(resultValidation.error));
+        return of(
+          Result.error<UpdateUserError>({
+            kind: 'validation',
+            issues: resultValidation.error.issues,
+          }),
+        );
 
       return from(
         apolloClient.mutate({
@@ -40,8 +51,14 @@ export function updateUser(user: UserInformation) {
         }),
       ).pipe(
         map((response) => {
-          if (response.errors)
-            return Result.error(response.errors);
+          if (response.errors) {
+            return Result.error<UpdateUserError>({
+              kind: 'api',
+              errors: response.errors.map((e) =>
+                mapGraphqlError(e.extensions?.code as string),
+              ),
+            });
+          }
           return Result.ok({
             id: response.data?.me.id,
             firstName: response.data?.me.firstName,
@@ -49,7 +66,9 @@ export function updateUser(user: UserInformation) {
             email: response.data?.me.email,
           } as UserInformation);
         }),
-        catchError((err) => of(Result.error(err))),
+        catchError((err) =>
+          of(Result.error<UpdateUserError>({ kind: 'api', errors: mapApolloError(err) })),
+        ),
       );
     }),
   );

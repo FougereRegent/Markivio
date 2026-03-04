@@ -7,6 +7,7 @@ import { useZodValidation } from '@/composables/zod.composable';
 import { getTags } from '@/services/tags.service';
 import { createArticle } from '@/services/article.service';
 import { CONST } from '@/config/constante.config';
+import TagCreatorComponent from './TagCreatorComponent.vue';
 
 const toast = useToast();
 
@@ -150,11 +151,14 @@ onUnmounted(() => {
                 @option-select="selectedItems"
                 :suggestions="refSuggestion"
               />
+              <TagCreatorComponent />
             </div>
           </div>
           <div>
-            <Button @click="validateAndSend" :disabled="isSubmitting" :loading="isSubmitting">
-              Valider
+            <Button @click="validateAndSend" 
+              :disabled="isSubmitting" 
+              :loading="isSubmitting">
+              Submit
             </Button>
           </div>
         </div>
