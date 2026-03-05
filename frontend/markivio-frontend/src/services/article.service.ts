@@ -68,6 +68,7 @@ export function createArticle(article: Article) {
     }),
   ).pipe(
     map((response) => {
+      debugger;
       if (response.error) {
         return Result.error<Err[]>([{message: "", type: ErrType.unknown}]);
       }

@@ -57,6 +57,5 @@ export function CreateTag(tag: Tag) {
     }
   })).pipe(
     map(response => response.data),
-    map(response => response?.tags.)
   )
 }
