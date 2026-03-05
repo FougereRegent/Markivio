@@ -1,9 +1,10 @@
 import { apolloClient } from '@/config/apollo.config';
-import type { Tag } from '@/domain/article.models';
 import type { OffsetPagination } from '@/domain/pagination.models';
-import { AddArticles } from '@/graphql/article.queries';
+import type { Tag } from '@/domain/tag.models';
+import { ErrType, mapApolloError, type Err } from '@/errors/errors';
 import { AddTags, GetAllTags } from '@/graphql/tags.queries';
-import { catchError, EMPTY, from, map, mergeMap, Subject } from 'rxjs';
+import { catchError, EMPTY, from, map, mergeMap, of, Subject } from 'rxjs';
+import { Result } from 'typescript-result';
 
 export function getTags() {
   const subject = new Subject<{ skip: number; take: number }>();
@@ -54,8 +55,13 @@ export function CreateTag(tag: Tag) {
         name: tag.name,
         color: tag.color
       }]
-    }
+    },
   })).pipe(
-    map(response => response.data),
+    map(response => {
+      if(response.error)
+        return Result.error<Err[]>([{message: "", type: ErrType.unknown}]);
+      return Result.ok(response.data);
+    }),
+    catchError((err) => of(Result.error<Err[]>(mapApolloError(err))))
   )
 }

@@ -2,7 +2,8 @@
 import { Drawer, IconField, Textarea, type AutoCompleteOptionSelectEvent, useToast } from 'primevue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
 import { computed, onUnmounted, ref, toValue, watch } from 'vue';
-import { type Article, type Tag, ArticleSchema } from '@/domain/article.models';
+import { type Article, ArticleSchema } from '@/domain/article.models';
+import { type Tag } from '@/domain/tag.models';
 import { useZodValidation } from '@/composables/zod.composable';
 import { getTags } from '@/services/tags.service';
 import { createArticle } from '@/services/article.service';
@@ -107,8 +108,7 @@ onUnmounted(() => {
           </div>
           <IconField
             class="ri-close-line text-neutral-600 text-3xl ml-auto hover:text-neutral-800 transition cursor-pointer"
-            @click="drawer.close"
-          />
+            @click="drawer.close" />
         </div>
         <div class="flex flex-col mt-4 gap-4">
           <div class="flex flex-col">
@@ -131,33 +131,19 @@ onUnmounted(() => {
           </div>
           <div class="flex flex-col">
             <div class="flex flex-row gap-1 h-8">
-              <template v-for="item of article.tags" :key="item.id">
-                <Chip
-                  :label="item.name"
-                  removable
-                  @remove="removeChip(item)"
-                  style="background-color: var(--color-blue-50)"
-                />
+              <template v-for="item of article.tags">
+                <Chip :label="item.name" removable @remove="removeChip(item)"
+                  style="background-color: var(--color-blue-50)" />
               </template>
             </div>
             <div class="flex flex-row gap-1 justify-center">
-              <AutoComplete
-                class="my-1 flex-5"
-                fluid
-                id="tags"
-                placeholder="Ajout tag ..."
-                @complete="search"
-                optionLabel="name"
-                @option-select="selectedItems"
-                :suggestions="refSuggestion"
-              />
+              <AutoComplete class="my-1 flex-5" fluid id="tags" placeholder="Ajout tag ..." @complete="search"
+                optionLabel="name" @option-select="selectedItems" :suggestions="refSuggestion" />
               <TagCreatorComponent />
             </div>
           </div>
           <div>
-            <Button @click="validateAndSend" 
-              :disabled="isSubmitting" 
-              :loading="isSubmitting">
+            <Button @click="validateAndSend" :disabled="isSubmitting" :loading="isSubmitting">
               Submit
             </Button>
           </div>

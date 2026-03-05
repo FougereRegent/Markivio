@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { TagSchema } from './tag.models';
 
 export interface ArticleInformation {
   id: string;
@@ -11,11 +12,6 @@ export interface ArticleInformation {
   }>;
 }
 
-export const TagSchema = z.object({
-  name: z.string(),
-  id: z.guid(),
-  color: z.string(),
-});
 
 export const ArticleSchema = z.object({
   id: z.guid().nullable(),
@@ -26,8 +22,3 @@ export const ArticleSchema = z.object({
 });
 
 export type Article = z.infer<typeof ArticleSchema>;
-export type Tag = z.infer<typeof TagSchema>;
-
-export function validateArticle(article: Article): z.ZodSafeParseResult<Article> {
-  return ArticleSchema.safeParse(article);
-}

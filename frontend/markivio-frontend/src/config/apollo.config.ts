@@ -17,7 +17,8 @@ const httpLink = new HttpLink({
   uri: import.meta.env.VITE_MARKIVIO_GRAPHQL_API,
 });
 
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+});
 
 export const apolloClient = new ApolloClient({
   link: authLink.concat(httpLink),

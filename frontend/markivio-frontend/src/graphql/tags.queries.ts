@@ -44,7 +44,7 @@ export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
 
 
 export const AddTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
-mutation CreateTag($input: CreateTagInput!) {
+mutation CreateTag($input: [CreateTagInput!]!) {
   createTags(createTags: $input) {
     nodes {
         id

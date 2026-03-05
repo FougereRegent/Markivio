@@ -46,5 +46,14 @@ export function useZodValidation<
     return true;
   };
 
-  return { validate, isValid, errors, validateWatch, stopWatch };
+  const propertyIsValid = (propertyName: keyof U) => {
+    const errs = toValue(errors);
+    if(toValue(isValid)) {
+      return true;
+    }
+
+    return errs[propertyName] != undefined;
+  };
+
+  return { validate, isValid, errors, propertyIsValid ,validateWatch, stopWatch };
 }

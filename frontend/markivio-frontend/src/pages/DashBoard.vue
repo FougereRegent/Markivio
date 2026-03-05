@@ -45,7 +45,6 @@ onMounted(() => {
         color: tag.color,
       })),
     }));
-    debugger;
     hasNext.value = val.hasNextPage;
     articlesSrc.value.push(...result);
   });
@@ -72,7 +71,6 @@ const { reset } = useInfiniteScroll(
 watch(
   () => drawer.drawerState,
   (newState, oldState) => {
-    debugger;
     if(!newState && oldState) {
       articlesSrc.value = [];
       page = 0;
