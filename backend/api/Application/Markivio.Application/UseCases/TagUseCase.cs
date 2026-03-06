@@ -12,6 +12,7 @@ public interface ITagUseCase
 {
     bool TagsExist(Tag[] tags);
     Result<TagInformation[]> CreateTag(CreateTag[] creatingTags);
+	ValueTask<Result<TagInformation[]>> SearchTagsByName(string tagName, CancellationToken token = default);
     IQueryable<TagInformation> GetAll();
 }
 
@@ -74,5 +75,16 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             result |= dbTags.Contains(tag, comparer);
 
         return result;
+    }
+
+    public async ValueTask<Result<TagInformation[]>> SearchTagsByName(string tagName, CancellationToken token = default)
+    {
+		if(string.IsNullOrEmpty(tagName))
+			return Result.Fail("");
+
+		TagMapper mapper = new TagMapper();
+		List<Tag> tags = await tagRepository.SearchTagByName(tagName);
+	
+		return Result.Ok(tags.Select(pre => mapper.TagToTagInformation(pre)).ToArray());
     }
 }

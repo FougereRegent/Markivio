@@ -7,6 +7,7 @@ namespace Markivio.Persistence.Repositories;
 
 public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository<T> where T : Entity
 {
+	protected MarkivioContext _context = context;
     public void Delete(T entity) =>
         context.Remove(entity);
 

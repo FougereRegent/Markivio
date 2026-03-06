@@ -15,6 +15,15 @@ public class Query
 
         return result.Value;
     }
+
+	public async ValueTask<TagInformation[]> SearchTags(ITagUseCase tagUseCase, string tagName, CancellationToken cancellationToken = default) {
+		FluentResults.Result<TagInformation[]> result = await tagUseCase.SearchTagsByName(tagName, cancellationToken);
+
+		if(result.IsFailed)
+			throw new InvalidOperationException();
+
+		return result.Value;
+	}
 }
 
 public class QueryType : ObjectType<Query>
@@ -93,5 +102,10 @@ public class QueryType : ObjectType<Query>
             ITagUseCase tagUseCase = context.Service<ITagUseCase>();
             return tagUseCase.GetAll();
         });
+
+		descriptor
+			.Field(f => f.SearchTags(default!,default!, default!))
+			.Argument("tagName", pre => pre.Type<StringType>())
+			.Type<ListType<TagInformationType>>();
     }
 }

@@ -98,7 +98,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Drawer v-model:visible="drawer.drawerState" position="right" :closeOnEscape="false" class="!w-[35rem]">
+  <Drawer v-model:visible="drawer.drawerState" position="right" :closeOnEscape="false" class="w-140!">
     <template #container>
       <div class="flex flex-col pt-2 px-5">
         <div class="flex flex-row py-6 border-neutral-300 border-b justify-start">
