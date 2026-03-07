@@ -7,14 +7,14 @@ import { catchError, EMPTY, from, map, mergeMap, of, Subject } from 'rxjs';
 import { Result } from 'typescript-result';
 
 export function getTags() {
-  const subject = new Subject<{ skip: number; take: number }>();
+  const subject = new Subject<{ skip: number; take: number; tagName?: string }>();
   return {
     subject,
     observable: subject.pipe(
       mergeMap((params) =>
         apolloClient.query({
           query: GetAllTags,
-          variables: { skip: params.skip, take: params.take },
+          variables: { skip: params.skip, take: params.take, tagName: params.tagName },
         }),
       ),
       map((response) => response.data),

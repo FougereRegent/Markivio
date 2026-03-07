@@ -25,8 +25,8 @@ export type TagsInformationQuery = {
 };
 
 export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
-  query Tags($skip: Int!, $take: Int!) {
-    tags(skip: $skip, take: $take) {
+  query Tags($skip: Int!, $take: Int!, $tagName: String) {
+    tags(skip: $skip, take: $take, tagName: $tagName) {
       __typename
       totalCount
       items {

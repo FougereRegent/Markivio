@@ -26,21 +26,23 @@ const titleHasError = computed(() => errors.value?.title != undefined);
 const sourceHasError = computed(() => errors.value?.source != undefined);
 const drawer = useAddEditDrawer();
 const isSubmitting = ref(false);
-
+const tagName = ref("");
 const refSuggestion = ref([] as Tag[]);
 
 const { subject, observable } = getTags();
+
 const subscribe = observable.subscribe((page) => {
   refSuggestion.value = page.data;
 });
 
 const search = () => {
-  subject.next({ skip: 0, take: 15 });
+  subject.next({ skip: 0, take: 15, tagName:  toValue(tagName)});
 };
 
 const selectedItems = (event: AutoCompleteOptionSelectEvent) => {
   const selectedElement = event.value as Tag;
   article.value.tags.push(selectedElement);
+  tagName.value = "";
 };
 
 const removeChip = (tag: Tag) => {
@@ -137,7 +139,7 @@ onUnmounted(() => {
               </template>
             </div>
             <div class="flex flex-row gap-1 justify-center">
-              <AutoComplete class="my-1 flex-5" fluid id="tags" placeholder="Ajout tag ..." @complete="search"
+              <AutoComplete v-model="tagName" class="my-1 flex-5" fluid id="tags" placeholder="Ajout tag ..." @complete="search"
                 optionLabel="name" @option-select="selectedItems" :suggestions="refSuggestion" />
               <TagCreatorComponent />
             </div>
