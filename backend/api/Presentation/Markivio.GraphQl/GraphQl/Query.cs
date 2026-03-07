@@ -26,6 +26,9 @@ public class Query
 
         return result.Value;
     }
+
+	public IQueryable<TagInformation> Tags(ITagUseCase tagUseCase, string? tagName) =>
+		tagUseCase.GetAllTags(tagName ?? string.Empty);
 }
 
 public class QueryType : ObjectType<Query>
@@ -56,8 +59,7 @@ public class QueryType : ObjectType<Query>
           });
 
         descriptor
-          .Field("tags")
-		  .Argument("tagName", f => f.Type<StringType?>())
+          .Field(f => f.Tags(default!,default!))
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
@@ -65,12 +67,6 @@ public class QueryType : ObjectType<Query>
               RequirePagingBoundaries = true,
               AllowBackwardPagination = false,
               DefaultPageSize = 50
-          })
-        .Resolve(context =>
-        {
-			string tagName = context.ArgumentValue<string?>("tagName") ?? "";
-            ITagUseCase tagUseCase = context.Service<ITagUseCase>();
-            return tagUseCase.GetAllTags(tagName);
-        });
+          });
     }
 }
