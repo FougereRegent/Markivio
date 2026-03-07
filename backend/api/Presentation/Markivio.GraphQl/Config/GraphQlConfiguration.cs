@@ -1,3 +1,4 @@
+using Markivio.Persistence.Config;
 using Markivio.Presentation.GraphQl;
 using Markivio.Presentation.Interceptor;
 
@@ -8,9 +9,10 @@ public static class GraphQlConfiguration
     public static void GraphQlConfig(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddGraphQLServer()
+        .RegisterDbContextFactory<MarkivioContext>()
           .ModifyOptions(options =>
           {
-              options.DefaultQueryDependencyInjectionScope = DependencyInjectionScope.Request;
+              options.DefaultQueryDependencyInjectionScope = DependencyInjectionScope.Resolver;
               options.DefaultMutationDependencyInjectionScope = DependencyInjectionScope.Request;
           })
           .AddAuthorization()

@@ -7,6 +7,17 @@ namespace Markivio.Presentation.GraphQl;
 
 public class Query
 {
+	public UserInformation Me(IUserUseCase userUseCase) {
+		return userUseCase.CurrentUser;
+	}
+
+	public IQueryable<ArticleInformation> Articles(IArticleUseCase articleUseCase, string? title, List<string>? tags) {
+	  return articleUseCase.FindByFilter(new ArticleFilters(
+			title,
+			tags
+			));
+	}
+
     public async ValueTask<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id, CancellationToken cancellationToken = default)
     {
         FluentResults.Result<UserInformation> result = await userUseCase.GetUserInformationById(id, cancellationToken);
@@ -15,15 +26,6 @@ public class Query
 
         return result.Value;
     }
-
-	public async ValueTask<TagInformation[]> SearchTags(ITagUseCase tagUseCase, string tagName, CancellationToken cancellationToken = default) {
-		FluentResults.Result<TagInformation[]> result = await tagUseCase.SearchTagsByName(tagName, cancellationToken);
-
-		if(result.IsFailed)
-			throw new InvalidOperationException();
-
-		return result.Value;
-	}
 }
 
 public class QueryType : ObjectType<Query>
@@ -39,32 +41,11 @@ public class QueryType : ObjectType<Query>
           .Type<UserInformationType>();
 
         descriptor
-          .Field("me")
-          .Resolve(context =>
-          {
-              IUserUseCase userUseCase = context.Service<IUserUseCase>();
-              UserInformation result = userUseCase.CurrentUser;
-              return result;
-          })
+          .Field(f => f.Me(default!))
           .Type<UserInformationType>();
 
         descriptor
-          .Field("users")
-          .UseOffsetPaging(options: new PagingOptions()
-          {
-              MaxPageSize = 100,
-              IncludeTotalCount = true,
-              RequirePagingBoundaries = true,
-              AllowBackwardPagination = false
-          })
-          .Resolve(context =>
-          {
-              IUserUseCase userUseCase = context.Service<IUserUseCase>();
-              return userUseCase.GetUsers();
-          });
-
-        descriptor
-          .Field("articles")
+          .Field(f => f.Articles(default!, default!, default!))
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
@@ -72,23 +53,11 @@ public class QueryType : ObjectType<Query>
               RequirePagingBoundaries = true,
               AllowBackwardPagination = false,
               DefaultPageSize = 50
-          })
-          .Argument("title", pre => pre.Type<StringType>())
-          .Argument("tags", pre => pre.Type<ListType<StringType>>())
-          .Resolve(context =>
-          {
-              string? title = context.ArgumentValue<string?>("title");
-              List<string>? tags = context.ArgumentValue<List<string>?>("tags");
-              IArticleUseCase articleUseCase = context.Service<IArticleUseCase>();
-
-              return articleUseCase.FindByFilter(new ArticleFilters(
-                    title,
-                    tags
-                    ));
           });
 
         descriptor
           .Field("tags")
+		  .Argument("tagName", f => f.Type<StringType?>())
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
@@ -99,13 +68,9 @@ public class QueryType : ObjectType<Query>
           })
         .Resolve(context =>
         {
+			string tagName = context.ArgumentValue<string?>("tagName") ?? "";
             ITagUseCase tagUseCase = context.Service<ITagUseCase>();
-            return tagUseCase.GetAll();
+            return tagUseCase.GetAllTags(tagName);
         });
-
-		descriptor
-			.Field(f => f.SearchTags(default!,default!, default!))
-			.Argument("tagName", pre => pre.Type<StringType>())
-			.Type<ListType<TagInformationType>>();
     }
 }

@@ -12,15 +12,19 @@ public interface ITagUseCase
 {
     bool TagsExist(Tag[] tags);
     Result<TagInformation[]> CreateTag(CreateTag[] creatingTags);
-	ValueTask<Result<TagInformation[]>> SearchTagsByName(string tagName, CancellationToken token = default);
-    IQueryable<TagInformation> GetAll();
+    IQueryable<TagInformation> GetAllTags(string tagName);
 }
 
 public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITagUseCase
 {
-    public IQueryable<TagInformation> GetAll() =>
-      tagRepository.GetAll()
-          .ProjectionToTagInformation();
+    public IQueryable<TagInformation> GetAllTags(string tagName){
+		IQueryable<Tag> query = tagRepository.GetAll();
+		if(!(string.IsNullOrEmpty(tagName) && string.IsNullOrWhiteSpace(tagName))) {
+			query = query.Where(pre => pre.Name.StartsWith(tagName));
+		}
+
+		return query.ProjectionToTagInformation();
+	}
 
     public Result<TagInformation[]> CreateTag(CreateTag[] creatingTags)
     {
@@ -75,16 +79,5 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             result |= dbTags.Contains(tag, comparer);
 
         return result;
-    }
-
-    public async ValueTask<Result<TagInformation[]>> SearchTagsByName(string tagName, CancellationToken token = default)
-    {
-		if(string.IsNullOrEmpty(tagName))
-			return Result.Fail("");
-
-		TagMapper mapper = new TagMapper();
-		List<Tag> tags = await tagRepository.SearchTagByName(tagName);
-	
-		return Result.Ok(tags.Select(pre => mapper.TagToTagInformation(pre)).ToArray());
     }
 }
