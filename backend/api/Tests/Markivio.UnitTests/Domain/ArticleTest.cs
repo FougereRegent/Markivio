@@ -16,9 +16,12 @@ public class ArticleTests : BaseTests
         string url = faker.Internet.Url();
         Article article = new Article
         {
-            Source = url,
+            ArticleContent = new ArticleContent
+            {
+                Source = url,
+                Content = faker.Lorem.Paragraph(),
+            },
             Title = faker.Lorem.Slug(wordcount: 4),
-            Content = faker.Lorem.Paragraph(),
             User = null!,
         };
         //Act
@@ -42,9 +45,13 @@ public class ArticleTests : BaseTests
         //Arrange
         Article article = new Article
         {
-            Source = faker.Internet.Url(),
+            ArticleContent = new ArticleContent
+            {
+
+                Source = faker.Internet.Url(),
+                Content = faker.Lorem.Paragraph(),
+            },
             Title = title!,
-            Content = faker.Lorem.Paragraph(),
             User = new User { Id = Guid.NewGuid() }
         };
         //Act
@@ -66,9 +73,12 @@ public class ArticleTests : BaseTests
         //Arrange
         Article article = new Article
         {
-            Source = url!,
+            ArticleContent = new ArticleContent
+            {
+                Source = url!,
+                Content = faker.Lorem.Paragraph(),
+            },
             Title = faker.Lorem.Slug(wordcount: 4),
-            Content = faker.Lorem.Paragraph(),
             User = new User { Id = Guid.NewGuid() }
         };
         //Act
@@ -93,9 +103,12 @@ public class ArticleTests : BaseTests
         //Arrange
         Article article = new Article
         {
-            Source = url,
+            ArticleContent = new ArticleContent
+            {
+                Source = url,
+                Content = content,
+            },
             Title = title,
-            Content = content,
             User = new User { Id = Guid.NewGuid() }
         };
 

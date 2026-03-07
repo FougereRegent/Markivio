@@ -21,7 +21,7 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
 
     public void Dispose()
     {
-        transaction.Dispose();
+        transaction?.Dispose();
     }
 
     public async Task RollbackChangesAsync(CancellationToken token = default)

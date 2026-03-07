@@ -7,7 +7,6 @@ using Markivio.Extensions.HostingExtensions;
 using Markivio.Domain.Entities;
 using Markivio.DbUpdater.ModelGenerator;
 using Bogus;
-using System.Linq;
 using Markivio.Domain.Auth;
 
 namespace Markivio.DbUpdater;
@@ -24,6 +23,7 @@ public class Program
         IHost host = hostBuilder.Build();
 
         SeedDataBase(host);
+
 
         host.Run();
     }

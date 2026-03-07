@@ -1,54 +1,75 @@
-import { validateUser, type UserInformation } from "@/domain/user.models";
-import { Result } from "typescript-result";
-import { apolloClient } from "@/config/apollo.config";
-import { GetMe, UpdateUser } from "@/graphql/user.queries";
-import { catchError, from, map, of, switchMap } from "rxjs";
+import { validateUser, type UserInformation } from '@/domain/user.models';
+import { Result } from 'typescript-result';
+import { apolloClient } from '@/config/apollo.config';
+import { GetMe, UpdateUser } from '@/graphql/user.queries';
+import { type Err, mapApolloError, mapGraphqlError } from '@/errors/errors';
+import { catchError, from, map, of, switchMap } from 'rxjs';
+import type { z } from 'zod';
 
+export type UpdateUserError =
+  | { kind: 'validation'; issues: z.ZodIssue[] }
+  | { kind: 'api'; errors: Err[] };
 
 export function getMe() {
-  const observable = from(apolloClient.query({
-    query: GetMe,
-    fetchPolicy: "cache-first"
-  }));
+  const observable = from(
+    apolloClient.query({
+      query: GetMe,
+      fetchPolicy: 'cache-first',
+    }),
+  );
 
   return observable.pipe(
-    map(src => src.data),
-    map((src) => {
-      return {
-        Email: src?.me.email,
-        FirstName: src?.me.firstName,
-        LastName: src?.me.lastName,
-        Id: src?.me.id
-      } as UserInformation
-    }),
-  )
-};
+    map((response) => response.data),
+    map(
+      (data) =>
+        ({
+          email: data?.me.email,
+          firstName: data?.me.firstName,
+          lastName: data?.me.lastName,
+          id: data?.me.id,
+        }) as UserInformation,
+    ),
+  );
+}
 
 export function updateUser(user: UserInformation) {
   return of(user).pipe(
-    switchMap(u => {
+    switchMap((u) => {
       const resultValidation = validateUser(u);
-      debugger;
-      if (!resultValidation.ok)
-        return of(Result.error(resultValidation.error));
+      if (!resultValidation.success)
+        return of(
+          Result.error<UpdateUserError>({
+            kind: 'validation',
+            issues: resultValidation.error.issues,
+          }),
+        );
 
-      return from(apolloClient.mutate({
-        mutation: UpdateUser,
-        variables: { firstName: u.FirstName, lastName: u.LastName }
-      })).pipe(
-        map(data => {
-          if (data.error)
-            return Result.error(data.error)
-          return Result.ok({
-            Id: data.data?.me.id,
-            FirstName: data.data?.me.firstName,
-            LastName: data.data?.me.lastName,
-            Email: data.data?.me.email
-          } as UserInformation)
+      return from(
+        apolloClient.mutate({
+          mutation: UpdateUser,
+          variables: { firstName: u.firstName, lastName: u.lastName },
         }),
-        catchError(err => of(Result.error(err)))
-      )
+      ).pipe(
+        map((response) => {
+          if (response.errors) {
+            return Result.error<UpdateUserError>({
+              kind: 'api',
+              errors: response.errors.map((e) =>
+                mapGraphqlError(e.extensions?.code as string),
+              ),
+            });
+          }
+          return Result.ok({
+            id: response.data?.me.id,
+            firstName: response.data?.me.firstName,
+            lastName: response.data?.me.lastName,
+            email: response.data?.me.email,
+          } as UserInformation);
+        }),
+        catchError((err) =>
+          of(Result.error<UpdateUserError>({ kind: 'api', errors: mapApolloError(err) })),
+        ),
+      );
     }),
-  )
-};
-
+  );
+}

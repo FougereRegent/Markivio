@@ -2,7 +2,7 @@ using Markivio.Application.Dto;
 
 namespace Markivio.Presentation.GraphQl;
 
-public class ArticleType : ObjectType<ArticleInformation>
+public class ArticleInformationType : ObjectType<ArticleInformation>
 {
     protected override void Configure(IObjectTypeDescriptor<ArticleInformation> descriptor)
     {
@@ -20,7 +20,11 @@ public class ArticleType : ObjectType<ArticleInformation>
 
         descriptor
           .Field(f => f.User)
-          .Type<UserType>();
+          .Type<UserInformationType>();
+
+        descriptor
+          .Field(f => f.Tags)
+          .Type<ListType<TagSoftInformationType>>();
     }
 }
 

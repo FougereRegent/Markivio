@@ -1,78 +1,72 @@
-import { describe, expect, test } from "vitest";
-import { faker } from '@faker-js/faker'
+import { describe, expect, test } from 'vitest';
+import { faker } from '@faker-js/faker';
 import { validateUser, type UserInformation } from '@/domain/user.models';
-import { randomUUID } from "crypto";
+import { randomUUID } from 'crypto';
 
-
-describe.concurrent("Validate User", () => {
-  describe("First Name and Last Name match regex", () => {
+describe.concurrent('Validate User', () => {
+  describe('firstName and lastName match regex', () => {
     const singleNameValues = new Array<UserInformation>();
     for (let i = 0; i < 20; ++i) {
       singleNameValues.push({
-        Id: randomUUID(),
-        Email: faker.internet.email(),
-        FirstName: faker.person.firstName(),
-        LastName: faker.person.lastName(),
+        id: randomUUID(),
+        email: faker.internet.email(),
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
       });
     }
     const doubleNameValues = new Array<UserInformation>();
     for (let i = 0; i < 20; ++i) {
       doubleNameValues.push({
-        Id: randomUUID(),
-        Email: faker.internet.email(),
-        FirstName: `${faker.person.firstName()} ${faker.person.firstName()}`,
-        LastName: `${faker.person.lastName()} ${faker.person.lastName()}`,
+        id: randomUUID(),
+        email: faker.internet.email(),
+        firstName: `${faker.person.firstName()} ${faker.person.firstName()}`,
+        lastName: `${faker.person.lastName()} ${faker.person.lastName()}`,
       });
     }
-    test.each(singleNameValues)("Validate $FirstName $LastName", (user) => {
+
+    test.each(singleNameValues)('Validate $firstName $lastName', (user) => {
       const result = validateUser(user);
-      expect(result.ok).eq(true);
+      expect(result.success).eq(true);
     });
-    test.each(doubleNameValues)("Validate with double name $FirstName $LastName", (user) => {
+
+    test.each(doubleNameValues)('Validate with double name $firstName $lastName', (user) => {
       const result = validateUser(user);
-      expect(result.ok).eq(true);
+      expect(result.success).eq(true);
     });
   });
 
-  describe("First Name and Last Name doesn't match regex", () => {
-    test("First Name doesn't match regex should return bad result", () => {
+  describe("firstName and lastName doesn't match regex", () => {
+    test("firstName doesn't match regex should return bad result", () => {
       const user: UserInformation = {
-        Id: randomUUID(),
-        Email: faker.internet.email(),
-        FirstName: faker.string.hexadecimal(),
-        LastName: faker.person.lastName(),
+        id: randomUUID(),
+        email: faker.internet.email(),
+        firstName: faker.string.hexadecimal(),
+        lastName: faker.person.lastName(),
       };
       const result = validateUser(user);
-      expect(result.ok).eq(false);
-      expect(result.error?.type).eq("validation-errors")
-      expect(result.error?.validationErrors).toMatchSnapshot()
+      expect(result.success).eq(false);
     });
 
-    test("Last Name doesn't match regex should return bad result", () => {
+    test("lastName doesn't match regex should return bad result", () => {
       const user: UserInformation = {
-        Id: randomUUID(),
-        Email: faker.internet.email(),
-        FirstName: faker.person.firstName(),
-        LastName: faker.string.hexadecimal(),
+        id: randomUUID(),
+        email: faker.internet.email(),
+        firstName: faker.person.firstName(),
+        lastName: faker.string.hexadecimal(),
       };
       const result = validateUser(user);
-      expect(result.ok).eq(false);
-      expect(result.error?.type).eq("validation-errors")
-      expect(result.error?.validationErrors).toMatchSnapshot()
+      expect(result.success).eq(false);
     });
 
-    test("First Name and Last Name doesn't match with regex should return bad result", () => {
+    test("firstName and lastName don't match regex should return bad result", () => {
       const user: UserInformation = {
-        Id: randomUUID(),
-        Email: faker.internet.email(),
-        FirstName: faker.string.hexadecimal(),
-        LastName: faker.string.hexadecimal(),
+        id: randomUUID(),
+        email: faker.internet.email(),
+        firstName: faker.string.hexadecimal(),
+        lastName: faker.string.hexadecimal(),
       };
       const result = validateUser(user);
-      expect(result.ok).eq(false);
-      expect(result.ok).eq(false);
-      expect(result.error?.type).eq("validation-errors")
-      expect(result.error?.validationErrors).toMatchSnapshot()
+      expect(result.success).eq(false);
     });
-  })
+  });
 });

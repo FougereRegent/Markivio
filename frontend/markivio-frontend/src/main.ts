@@ -6,6 +6,8 @@ import PrimeVue from 'primevue/config'
 import MyPreset from './themes/themes';
 import './assets/style.css';
 import { createPinia } from 'pinia';
+import * as z from 'zod';
+import { ToastService } from 'primevue';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -14,8 +16,10 @@ const audience: string = import.meta.env.VITE_MARKIVIO_AUTH_AUDIENCE;
 const domain: string = import.meta.env.VITE_MARKIVIO_AUTH_DOMAIN;
 const clientId: string = import.meta.env.VITE_MARKIVIO_AUTH_CLIENT_ID;
 
+z.config(z.locales.fr());
 
 app.use(router)
+  .use(ToastService)
   .use(pinia)
   .use(
     createAuth0({

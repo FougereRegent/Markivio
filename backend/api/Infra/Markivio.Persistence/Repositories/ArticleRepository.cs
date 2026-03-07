@@ -9,7 +9,22 @@ public class ArticleRepository(MarkivioContext context) : GenericRepositpory<Art
 {
     public async ValueTask<Article?> GetByTitle(string title)
     {
-        return await context.Article.Where(pre => pre.Title == title)
+        return await _context.Article.Where(pre => pre.Title == title)
             .FirstOrDefaultAsync();
     }
+
+    public IQueryable<Article> Filter(string? title, List<string>? tagName)
+    {
+        IQueryable<Article> baseResult = _context.Article.AsQueryable();
+        IQueryable<Article> resultFitler = (title, tagName) switch
+        {
+            (null, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name))),
+            (string t, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name)) && EF.Functions.ILike(pre.Title, $"{title}%")),
+            (string t, _) => baseResult.Where(pre => EF.Functions.ILike(pre.Title, $"{title}%")),
+            (_, _) => baseResult
+        };
+
+        return resultFitler.OrderBy(pre => pre.Id);
+    }
+
 }

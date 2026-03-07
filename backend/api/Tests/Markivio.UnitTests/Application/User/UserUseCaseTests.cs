@@ -9,7 +9,7 @@ using Markivio.Domain.Repositories;
 using Moq;
 using Shouldly;
 
-namespace Markivio.UnitTests.Application.Users;
+namespace Markivio.UnitTests.Application;
 
 public class UserUseCaseTests
 {

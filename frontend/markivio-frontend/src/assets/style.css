@@ -56,26 +56,26 @@
 @theme {
   --color-neutral-50: var(--surface-color-50);
   --color-neutral-100: var(--surface-color-100);
-  --color-neutral-200: var(--surface-color-200);  
+  --color-neutral-200: var(--surface-color-200);
   --color-neutral-300: var(--surface-color-300);
-  --color-neutral-400: var(--surface-color-400);  
-  --color-neutral-500: var(--surface-color-500);  
-  --color-neutral-600: var(--surface-color-600);  
-  --color-neutral-700: var(--surface-color-700);  
-  --color-neutral-800: var(--surface-color-800);  
-  --color-neutral-900: var(--surface-color-900);  
+  --color-neutral-400: var(--surface-color-400);
+  --color-neutral-500: var(--surface-color-500);
+  --color-neutral-600: var(--surface-color-600);
+  --color-neutral-700: var(--surface-color-700);
+  --color-neutral-800: var(--surface-color-800);
+  --color-neutral-900: var(--surface-color-900);
   --color-neutral-950: var(--surface-color-950);
 
   --color-blue-50: var(--primary-color-50);
   --color-blue-100: var(--primary-color-100);
-  --color-blue-200: var(--primary-color-200);  
+  --color-blue-200: var(--primary-color-200);
   --color-blue-300: var(--primary-color-300);
-  --color-blue-400: var(--primary-color-400);  
-  --color-blue-500: var(--primary-color-500);  
-  --color-blue-600: var(--primary-color-600);  
-  --color-blue-700: var(--primary-color-700);  
-  --color-blue-800: var(--primary-color-800);  
-  --color-blue-900: var(--primary-color-900);  
+  --color-blue-400: var(--primary-color-400);
+  --color-blue-500: var(--primary-color-500);
+  --color-blue-600: var(--primary-color-600);
+  --color-blue-700: var(--primary-color-700);
+  --color-blue-800: var(--primary-color-800);
+  --color-blue-900: var(--primary-color-900);
   --color-blue-950: var(--primary-color-950);
 
   --breakpoint-3xl: 120rem;

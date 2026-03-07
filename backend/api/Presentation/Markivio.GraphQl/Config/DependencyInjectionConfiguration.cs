@@ -51,6 +51,7 @@ public static class DependencyInjectionConfiguration
         servicesCollection.AddScoped<IUserRepository, UserRepository>();
         servicesCollection.AddScoped<ITagRepository, TagRepository>();
         servicesCollection.AddScoped<IFolderRepository, FolderRepository>();
+        servicesCollection.AddScoped<ITagUseCase, TagUseCase>();
     }
 }
 

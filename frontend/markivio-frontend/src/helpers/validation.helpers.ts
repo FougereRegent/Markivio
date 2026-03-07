@@ -1,14 +1,12 @@
-
-
-interface ValErr {
-  properyName?: string | undefined,
-  errorMessage: string,
-};
+export interface ValErr {
+  propertyName?: string | undefined;
+  errorMessage: string;
+}
 
 type ValidationCallback = () => boolean;
 
 export class ValidationError extends Error {
-  readonly type: string = "validation-errors";
+  readonly type: string = 'validation-errors';
 
   validationErrors: Array<ValErr>;
 
@@ -26,7 +24,7 @@ export class Validation {
   }
 
   public IsValid(callback: ValidationCallback, err: ValErr): Validation {
-    if (callback() ?? true) {
+    if (callback()) {
       return this;
     }
     this._errors.push(err);
@@ -34,8 +32,7 @@ export class Validation {
   }
 
   public Throw() {
-    if (this.HasError)
-      throw new ValidationError(this._errors);
+    if (this.HasError) throw new ValidationError(this._errors);
   }
 }
 

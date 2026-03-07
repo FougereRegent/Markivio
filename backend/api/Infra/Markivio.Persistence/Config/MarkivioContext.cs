@@ -26,6 +26,6 @@ public class MarkivioContext : DbContext
         modelBuilder.ConfigureUser();
         modelBuilder.ConfigureArticle(authUser);
         modelBuilder.ConfigureFolder();
-        modelBuilder.ConfigureTag();
+        modelBuilder.ConfigureTag(authUser);
     }
 }

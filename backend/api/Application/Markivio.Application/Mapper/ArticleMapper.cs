@@ -7,12 +7,28 @@ namespace Markivio.Application.Mapper;
 [Mapper(AllowNullPropertyAssignment = true)]
 public partial class ArticleMapper
 {
+    [MapNestedProperties(nameof(Article.ArticleContent))]
     public partial ArticleInformation ArticleToArticleInformation(Article article);
-    public partial Article CreateArticleToArticle(CreateArticle article);
+
+    public Article CreateArticleToArticle(CreateArticle article)
+    {
+        return new Article
+        {
+            ArticleContent = new ArticleContent
+            {
+                Source = article.Source,
+                Description = article.Description,
+            },
+            Title = article.Title,
+        };
+    }
 }
 
 [Mapper]
 public static partial class ArticleMapperProjection
 {
     public static partial IQueryable<ArticleInformation> ProjectionToDto(this IQueryable<Article> articles);
+
+    [MapNestedProperties(nameof(Article.ArticleContent))]
+    private static partial ArticleInformation ArticleToArticleInformation(Article article);
 }

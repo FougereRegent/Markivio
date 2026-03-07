@@ -10,31 +10,30 @@ namespace Markivio.Application.UseCases;
 
 public interface IArticleUseCase
 {
-    IQueryable<ArticleInformation> GetArticles();
     ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default);
-    ValueTask<Result<ArticleInformation>> GetByName(ArticleGetByName article, CancellationToken cancelationToken = default);
     ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
+    IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters);
+
+    ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags);
+    ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
 }
 
-public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser authUser) : IArticleUseCase
+public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository, IAuthUser authUser) : IArticleUseCase
 {
-    public IQueryable<ArticleInformation> GetArticles()
-    {
-        ArticleMapper articleInformation = new ArticleMapper();
-        return articleRepository
-          .GetAll()
-          .ProjectionToDto()
-          .AsQueryable();
-    }
-
     public ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public ValueTask<Result<ArticleInformation>> GetByName(ArticleGetByName article, CancellationToken cancelationToken = default)
+    public IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters)
     {
-        throw new NotImplementedException();
+        if (articleFilters is { Title: null, TagNames: null })
+            return articleRepository.GetAll()
+              .ProjectionToDto();
+
+        return articleRepository.Filter(articleFilters.Title, articleFilters.TagNames)
+          .ProjectionToDto();
+
     }
 
     public async ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default)
@@ -47,6 +46,13 @@ public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser auth
         article = mapper.CreateArticleToArticle(createArticle);
         article.User = authUser.CurrentUser;
 
+        if (!CheckIfTagsExits(createArticle))
+            return Result.Fail(new NotFoundError("A tag doesn't exist"));
+
+        TagMapper tagMapper = new TagMapper();
+        article.ArticleContent.Tags = tagRepository.GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
+          .Select(pre => tagMapper.TagToSoftTag(pre)).ToList();
+
         Result result = article.Validate();
         if (result.IsFailed)
             return Result.Merge(result);
@@ -55,4 +61,67 @@ public class ArticleUseCase(IArticleRepository articleRepository, IAuthUser auth
         return mapper.ArticleToArticleInformation(resultArticle);
     }
 
+    public async ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags)
+    {
+        ArticleMapper mapper = new ArticleMapper();
+        Article? article = await articleRepository.GetById(addTags.articleId);
+        if (article is null)
+            return Result.Fail(new NotFoundError("Article doesn't exist"));
+
+        SoftTag[] tags = tagRepository.GetByIds(addTags.tagIds)
+            .ProjectionToSoftTag()
+            .ToArray();
+
+        if (tags.Length != addTags.tagIds.Length)
+            return Result.Fail(new NotFoundError("Tags doesn't exist"));
+
+        article.ArticleContent.Tags.AddRange(tags);
+
+        Result resultArticleValidation = article.Validate();
+        if (resultArticleValidation.IsFailed)
+            return resultArticleValidation;
+
+        Article res = articleRepository.Update(article);
+        return mapper.ArticleToArticleInformation(res);
+    }
+
+    public async ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags)
+    {
+        ArticleMapper mapper = new ArticleMapper();
+        Article? article = await articleRepository.GetById(removeTags.articleId);
+        if (article is null)
+            return Result.Fail(new NotFoundError("Article doesn't exist"));
+
+        SoftTag[] tags = tagRepository.GetByIds(removeTags.tagIds)
+            .ProjectionToSoftTag()
+            .ToArray();
+
+        if (tags.Length != removeTags.tagIds.Length)
+            return Result.Fail(new NotFoundError("Tags doesn't exist"));
+
+        List<SoftTag> tagsWithoutRemovedTags = article.ArticleContent.Tags
+            .Where(pre => !tags.Select(pre => pre.Name).Contains(pre.Name))
+            .ToList();
+
+        article.ArticleContent.Tags.Clear();
+        article.ArticleContent.Tags.AddRange(tagsWithoutRemovedTags);
+
+        Result resultArticleValidation = article.Validate();
+        if (resultArticleValidation.IsFailed)
+            return resultArticleValidation;
+
+        Article res = articleRepository.Update(article);
+        return mapper.ArticleToArticleInformation(res);
+    }
+
+    private bool CheckIfTagsExits(CreateArticle createArticle)
+    {
+        TagMapper tagMapper = new TagMapper();
+        if (createArticle.Tags is null || createArticle.Tags is { Length: 0 })
+            return true;
+        Tag[] tags = createArticle.Tags.Select(pre => tagMapper.TagCreateArticleToTag(pre))
+          .ToArray();
+
+        return tagUseCase.TagsExist(tags);
+    }
 }

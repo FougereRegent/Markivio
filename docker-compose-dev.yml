@@ -14,6 +14,8 @@ services:
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password_secret
       POSTGRES_DB: markivio
+    ports:
+      - 5432:5432
     volumes:
       - db_data_volume:/var/lib/postgresql
 
@@ -51,7 +53,7 @@ services:
       watch:
         - action: rebuild
           path: ./backend/api
-          ignore: 
+          ignore:
             - ./backend/api/**/bin
             - ./backend/api/**/obj
 
@@ -73,8 +75,6 @@ services:
           target: /app
           ignore:
             - ./frontend/markivio-frontend/node_modules
-
-
 
 secrets:
   db_password_secret:

@@ -7,17 +7,25 @@ namespace Markivio.Persistence.Repositories;
 
 public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository<T> where T : Entity
 {
+	protected MarkivioContext _context = context;
     public void Delete(T entity) =>
         context.Remove(entity);
 
     public IQueryable<T> GetAll() =>
         context.Set<T>()
-          .AsQueryable();
+          .AsQueryable()
+          .OrderBy(pre => pre.Id);
 
     public async ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         T? result = await context.Set<T>().FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
         return result;
+    }
+
+    public IQueryable<T> GetByIds(IEnumerable<Guid> ids)
+    {
+        return context.Set<T>()
+          .Where(pre => ids.Contains(pre.Id));
     }
 
     public T Save(T entity) =>
