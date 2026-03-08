@@ -1,8 +1,8 @@
 using Markivio.Persistence;
 
-namespace Markivio.Presentation.GraphQl.Midleware;
+namespace Markivio.Presentation.Middleware;
 
-internal static class TransactionMidleware
+internal static class TransactionMiddleware
 {
     internal static IObjectFieldDescriptor UseTransactionMiddleware(this IObjectFieldDescriptor descriptor)
     {

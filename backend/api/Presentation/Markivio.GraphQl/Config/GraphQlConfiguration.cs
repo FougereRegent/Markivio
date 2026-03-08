@@ -1,6 +1,7 @@
 using Markivio.Persistence.Config;
 using Markivio.Presentation.GraphQl;
 using Markivio.Presentation.Interceptor;
+using Markivio.Presentation.Midleware;
 
 namespace Markivio.Presentation.Config;
 
@@ -17,6 +18,8 @@ public static class GraphQlConfiguration
           })
           .AddAuthorization()
           .AddHttpRequestInterceptor<AuthUserInterceptor>()
+		  .UseField<AuthentificationMiddleware>()
+		  .RegisterDbContextFactory<MarkivioContext>()
         .AddQueryType<QueryType>()
         .AddMutationType<MutationType>()
         .ModifyRequestOptions(o =>

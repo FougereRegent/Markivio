@@ -3,6 +3,7 @@ using System;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Markivio.Persistence.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    partial class MarkivioContextModelSnapshot : ModelSnapshot
+    [Migration("20260308141828_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,12 +93,14 @@ namespace Markivio.Persistence.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(9)
+                        .HasColumnType("character varying(9)")
                         .HasColumnName("color");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
                         .HasColumnName("name");
 
                     b.Property<Guid>("UserId")
@@ -107,6 +112,10 @@ namespace Markivio.Persistence.Migrations
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("iX_tag_userId");
+
+                    b.HasIndex("Name", "UserId")
+                        .IsUnique()
+                        .HasDatabaseName("iX_tag_name_userId");
 
                     b.ToTable("tag", (string)null);
                 });

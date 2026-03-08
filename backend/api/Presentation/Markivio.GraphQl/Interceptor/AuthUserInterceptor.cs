@@ -7,7 +7,6 @@ using Markivio.Domain.Auth;
 using Markivio.Domain.Repositories;
 using Markivio.Extensions.Identity;
 using Markivio.Domain.Entities;
-
 namespace Markivio.Presentation.Interceptor;
 
 public class AuthUserInterceptor : DefaultHttpRequestInterceptor
@@ -37,17 +36,17 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
             }
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await SetCurrentUser(authUser, context.RequestServices, token, cancellationToken);
+            await SetCurrentUser(context, requestBuilder, token, cancellationToken);
         }
         await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
     }
 
-    private static async Task SetCurrentUser(IAuthUser authUser,
-        IServiceProvider serviceProvider,
+    private static async Task SetCurrentUser(HttpContext context,
+		HotChocolate.Execution.OperationRequestBuilder requestBuilder,
         string token,
         CancellationToken cancellationToken = default)
     {
-        IUserRepository userRepository = serviceProvider.GetRequiredService<IUserRepository>();
+        IUserRepository userRepository = context.RequestServices.GetRequiredService<IUserRepository>();
         JwtTokenInfo tokenInfo = JwtTokenExtentions.ParseToken(token);
         User? user = await userRepository.GetUserByAuthId(tokenInfo.Subject, cancellationToken);
         if (user is null)
@@ -56,6 +55,6 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
                   "User not found")
                 .Build());
 
-        authUser.CurrentUser = user;
+		requestBuilder.SetGlobalState("auth-user", user);
     }
 }
