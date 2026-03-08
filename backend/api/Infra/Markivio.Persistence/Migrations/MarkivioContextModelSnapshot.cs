@@ -3,42 +3,24 @@ using System;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Markivio.DbUpdater.Migrations
+namespace Markivio.Persistence.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    [Migration("20251020194413_AddUserTenancy")]
-    partial class AddUserTenancy
+    partial class MarkivioContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ArticleId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ArticleTag");
-                });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Article", b =>
                 {
@@ -46,18 +28,8 @@ namespace Markivio.DbUpdater.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(-1)
-                        .HasColumnType("text");
-
                     b.Property<Guid?>("FolderId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -71,8 +43,7 @@ namespace Markivio.DbUpdater.Migrations
 
                     b.HasIndex("FolderId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Article");
                 });
@@ -93,8 +64,7 @@ namespace Markivio.DbUpdater.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Folder");
                 });
@@ -120,7 +90,9 @@ namespace Markivio.DbUpdater.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("Name", "UserId")
                         .IsUnique();
 
                     b.ToTable("Tag");
@@ -131,6 +103,10 @@ namespace Markivio.DbUpdater.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("AuthId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -154,22 +130,9 @@ namespace Markivio.DbUpdater.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthId");
+
                     b.ToTable("User");
-                });
-
-            modelBuilder.Entity("ArticleTag", b =>
-                {
-                    b.HasOne("Markivio.Domain.Entities.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Markivio.Domain.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Article", b =>
@@ -179,9 +142,59 @@ namespace Markivio.DbUpdater.Migrations
                         .HasForeignKey("FolderId");
 
                     b.HasOne("Markivio.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Markivio.Domain.Entities.Article", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Markivio.Domain.Entities.ArticleContent", "ArticleContent", b1 =>
+                        {
+                            b1.Property<Guid>("ArticleId");
+
+                            b1.Property<string>("Content")
+                                .IsRequired();
+
+                            b1.Property<string>("Description");
+
+                            b1.Property<string>("Source")
+                                .IsRequired();
+
+                            b1.HasKey("ArticleId");
+
+                            b1.ToTable("Article");
+
+                            b1
+                                .ToJson("ArticleContent")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ArticleId");
+
+                            b1.OwnsMany("Markivio.Domain.Entities.SoftTag", "Tags", b2 =>
+                                {
+                                    b2.Property<Guid>("ArticleContentArticleId");
+
+                                    b2.Property<int>("__synthesizedOrdinal")
+                                        .ValueGeneratedOnAdd();
+
+                                    b2.Property<string>("Color")
+                                        .IsRequired();
+
+                                    b2.Property<string>("Name")
+                                        .IsRequired();
+
+                                    b2.HasKey("ArticleContentArticleId", "__synthesizedOrdinal");
+
+                                    b2.ToTable("Article");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ArticleContentArticleId");
+                                });
+
+                            b1.Navigation("Tags");
+                        });
+
+                    b.Navigation("ArticleContent")
                         .IsRequired();
 
                     b.Navigation("Folder");
@@ -192,8 +205,8 @@ namespace Markivio.DbUpdater.Migrations
             modelBuilder.Entity("Markivio.Domain.Entities.Folder", b =>
                 {
                     b.HasOne("Markivio.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Markivio.Domain.Entities.Folder", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -203,8 +216,8 @@ namespace Markivio.DbUpdater.Migrations
             modelBuilder.Entity("Markivio.Domain.Entities.Tag", b =>
                 {
                     b.HasOne("Markivio.Domain.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("Markivio.Domain.Entities.Tag", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
