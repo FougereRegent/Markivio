@@ -5,17 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markivio.Persistence.Repositories;
 
-public class GenericRepositpory<T>(MarkivioContext context, IDbContextFactory<MarkivioContext> factory) : IGenericRepository<T> where T : Entity
+public class GenericRepositpory<T>(MarkivioContext context) : IGenericRepository<T> where T : Entity
 {
 	protected MarkivioContext _context = context;
-	protected IDbContextFactory<MarkivioContext> _factory = factory;
 
     public void Delete(T entity) =>
         context.Remove(entity);
 
     public IQueryable<T> GetAll() {
-		MarkivioContext db = factory.CreateDbContext();
-        return db.Set<T>()
+        return _context.Set<T>()
 		 .AsNoTracking()
           .AsQueryable()
           .OrderBy(pre => pre.Id);
@@ -23,8 +21,7 @@ public class GenericRepositpory<T>(MarkivioContext context, IDbContextFactory<Ma
 
     public async ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-		using MarkivioContext db = factory.CreateDbContext();
-        T? result = await db.Set<T>()
+        T? result = await _context.Set<T>()
 			.AsNoTracking()
 			.FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
         return result;
@@ -32,8 +29,7 @@ public class GenericRepositpory<T>(MarkivioContext context, IDbContextFactory<Ma
 
     public IQueryable<T> GetByIds(IEnumerable<Guid> ids)
     {
-		MarkivioContext db = factory.CreateDbContext();
-        return db.Set<T>()
+        return _context.Set<T>()
 		.AsNoTracking()
           .Where(pre => ids.Contains(pre.Id));
     }

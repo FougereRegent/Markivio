@@ -31,11 +31,6 @@ public static class DependencyInjectionConfiguration
 			options.UseCamelCaseNamingConvention();
         });
 
-		servicesCollection.AddDbContextFactory<MarkivioContext>(options => {
-            options.UseNpgsql(config.ConnectionString);
-			options.UseCamelCaseNamingConvention();
-		}, ServiceLifetime.Scoped);
-
         servicesCollection.AddHttpClient();
         servicesCollection.AddMemoryCache();
 

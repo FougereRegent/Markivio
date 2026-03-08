@@ -15,7 +15,6 @@ public class AuthentificationMiddleware
 	public async Task InvokeAsync(IMiddlewareContext context) {
 		User user = context.GetGlobalState<User>("auth-user");
 		IAuthUser authService = context.Services.GetRequiredService<IAuthUser>();
-		Markivio.Persistence.Config.MarkivioContext db = context.Services.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
 		authService.CurrentUser = user;
 
 		_next?.Invoke(context);

@@ -18,8 +18,6 @@ public static class GraphQlConfiguration
           })
           .AddAuthorization()
           .AddHttpRequestInterceptor<AuthUserInterceptor>()
-		  .UseField<AuthentificationMiddleware>()
-		  .RegisterDbContextFactory<MarkivioContext>()
         .AddQueryType<QueryType>()
         .AddMutationType<MutationType>()
         .ModifyRequestOptions(o =>

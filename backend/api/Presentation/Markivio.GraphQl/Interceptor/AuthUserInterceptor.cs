@@ -26,6 +26,7 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
         {
             string token = authHeader.Substring("Bearer ".Length);
             requestBuilder.SetGlobalState("token", token);
+			Console.WriteLine("test 0");
             Result result = await userUseCase.CreateNewUserOnConnection(new UserConnectionDto(token), cancellationToken)!;
             if (result.IsFailed)
             {
@@ -48,6 +49,7 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
     {
         IUserRepository userRepository = context.RequestServices.GetRequiredService<IUserRepository>();
         JwtTokenInfo tokenInfo = JwtTokenExtentions.ParseToken(token);
+		Console.WriteLine("test 1");
         User? user = await userRepository.GetUserByAuthId(tokenInfo.Subject, cancellationToken);
         if (user is null)
             throw new GraphQLException(ErrorBuilder.New()
