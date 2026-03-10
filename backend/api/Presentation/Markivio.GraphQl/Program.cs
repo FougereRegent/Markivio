@@ -1,15 +1,18 @@
 using Scalar.AspNetCore;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
-using Markivio.Extensions.HostingExtensions;
 using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.Config();
-EnvConfig? config = builder.Configuration.BindEnvVariables<EnvConfig>();
 
-if (config is null) return;
+EnvConfig config = new EnvConfig(
+		Authority: builder.Configuration.GetValue<string>("MARKIVIO_AUTHORITY") ?? throw new ArgumentException(),
+		Audience: builder.Configuration.GetValue<string>("MARKIVIO_AUDIENCE") ?? throw new ArgumentException(),
+		ConnectionString: builder.Configuration.GetConnectionString("markivio") ?? throw new ArgumentException()
+		);
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 

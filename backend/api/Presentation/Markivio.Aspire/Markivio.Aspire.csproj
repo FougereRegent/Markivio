@@ -1,0 +1,21 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.2">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Markivio.GraphQl\Markivio.GraphQl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.1.2" />
+	<PackageReference Include="Aspire.Npgsql" Version="13.1.2" />
+	<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="*" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>10b4b924-0803-431a-8178-f9c99ae045b2</UserSecretsId>
+  </PropertyGroup>
+
+</Project>
