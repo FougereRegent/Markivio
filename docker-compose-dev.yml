@@ -25,16 +25,6 @@ services:
     ports:
       - 8085:8080
 
-  db-updater:
-    build:
-      context: ./backend/api/
-      dockerfile: Dockerfile.DbUpdater
-    container_name: "updater"
-    env_file: ./backend/api/dev.env
-    depends_on:
-      db:
-        condition: service_healthy
-
   graphql_api:
     build:
       context: ./backend/api/
@@ -47,8 +37,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
     depends_on:
-      db-updater:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
     develop:
       watch:
         - action: rebuild

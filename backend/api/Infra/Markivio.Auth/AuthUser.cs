@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using Markivio.Domain.Auth;
+﻿using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
 using Microsoft.Extensions.Caching.Memory;
 using Markivio.Extensions.Identity;
@@ -13,10 +12,10 @@ public class AuthUser(
 {
     class UserInfoFromAuth
     {
-        public string GivenName { get; set; } = string.Empty;
-        public string FamilyName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string NickName { get; set; } = string.Empty;
+        public string? GivenName { get; set; } = string.Empty;
+        public string? FamilyName { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
+        public string? NickName { get; set; } = string.Empty;
     }
 
     public User CurrentUser { get; set; } = default!;
@@ -44,11 +43,12 @@ public class AuthUser(
             if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new InvalidOperationException();
 
-            return await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>(new System.Text.Json.JsonSerializerOptions
+			UserInfoFromAuth? userInfoFromAuth =  await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>(new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower,
             });
+			return userInfoFromAuth;
         });
 
         return new User

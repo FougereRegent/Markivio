@@ -1,6 +1,7 @@
 using Markivio.Persistence.Config;
 using Markivio.Presentation.GraphQl;
 using Markivio.Presentation.Interceptor;
+using Markivio.Presentation.Midleware;
 
 namespace Markivio.Presentation.Config;
 

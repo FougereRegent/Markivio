@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Markivio.Persistence.Config.ModelConfiguration;
 
-internal static class FolderDbConfiguration
+internal class FolderDbConfiguration : IEntityTypeConfiguration<Folder>
 {
-    internal static void ConfigureFolder(this ModelBuilder modelBuilder)
+    public void Configure(EntityTypeBuilder<Folder> builder)
     {
-        EntityTypeBuilder<Folder> builder = modelBuilder.Entity<Folder>();
-
         builder
           .HasKey(pre => pre.Id);
 

@@ -8,7 +8,9 @@ namespace Markivio.Persistence.Config;
 
 public class MarkivioContext : DbContext
 {
-    private readonly IAuthUser authUser;
+    public readonly IAuthUser authUser;
+	public string CurrentUserId => authUser?.CurrentUser?.AuthId ?? "";
+
     public DbSet<User> User { get; set; }
     public DbSet<Article> Article { get; set; }
     public DbSet<Tag> Tag { get; set; }
@@ -16,16 +18,21 @@ public class MarkivioContext : DbContext
 
     public MarkivioContext(DbContextOptions options, IAuthUser authUser) : base(options)
     {
-        this.authUser = authUser;
+		this.authUser = authUser;
     }
-
-    public MarkivioContext() { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ConfigureUser();
-        modelBuilder.ConfigureArticle(authUser);
-        modelBuilder.ConfigureFolder();
-        modelBuilder.ConfigureTag(authUser);
+		new ArticleDbConfiguration()
+			.Configure(modelBuilder.Entity<Article>());
+		new FolderDbConfiguration()
+			.Configure(modelBuilder.Entity<Folder>());
+		new UserDbConfiguration()
+			.Configure(modelBuilder.Entity<User>());
+
+		modelBuilder.Entity<Tag>()
+			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
+		modelBuilder.Entity<Article>()
+			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
     }
 }

@@ -4,14 +4,13 @@ using Markivio.Extensions;
 
 namespace Markivio.Domain.Entities;
 
-public sealed class Tag : Entity, IModelValidation
+public sealed class Tag : EntityWithTenancy, IModelValidation
 {
     private const string REGEX_TAG_NAME = @"^[A-Za-zÀ-ÿà-ÿ\-\'’ 0-9 &#`\-_]{1,25}$";
     private const string REGEX_TAG_COLOR = @"^#[A-Fa-f0-9]{6}$";
 
     public string Name { get; set; } = string.Empty;
     public string Color { get; set; } = string.Empty;
-    public User User { get; set; } = null!;
 
     public Result Validate()
     {

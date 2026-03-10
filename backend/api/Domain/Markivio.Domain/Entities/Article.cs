@@ -4,13 +4,12 @@ using Markivio.Extensions;
 
 namespace Markivio.Domain.Entities;
 
-public sealed class Article : Entity, IModelValidation
+public sealed class Article : EntityWithTenancy, IModelValidation
 {
     private const string REGEX_SOURCE = @"^(?:http[s]?:\/\/.)?(?:www\.)?[-a-zA-ZÀ-ÿà-ÿ0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b(?:[-a-zA-ZÀ-ÿà-ÿ0-9@:%_\+.~#?&\/\/=]*)";
     private const int MAX_TAGS = 20;
 
     public string Title { get; set; } = string.Empty;
-    public User User { get; set; } = null!;
     public Folder? Folder { get; set; } = null;
     public ArticleContent ArticleContent { get; set; } = null!;
 

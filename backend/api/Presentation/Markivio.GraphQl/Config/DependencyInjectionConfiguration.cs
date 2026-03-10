@@ -24,12 +24,13 @@ public static class DependencyInjectionConfiguration
             });
         });
         servicesCollection.AddScoped<IAuthUser, AuthUser>();
+
         servicesCollection.AddDbContext<MarkivioContext>(options =>
         {
             options.UseNpgsql(config.ConnectionString);
-            //options.LogTo(Console.WriteLine, LogLevel.Debug)
-            //.EnableSensitiveDataLogging();
+			options.UseCamelCaseNamingConvention();
         });
+
         servicesCollection.AddHttpClient();
         servicesCollection.AddMemoryCache();
 
@@ -42,6 +43,7 @@ public static class DependencyInjectionConfiguration
     {
         servicesCollection.AddScoped<IUserUseCase, UserUseCase>();
         servicesCollection.AddScoped<IArticleUseCase, ArticleUseCase>();
+        servicesCollection.AddScoped<ITagUseCase, TagUseCase>();
     }
 
     private static void ConfigureRepositories(this IServiceCollection servicesCollection)
@@ -51,7 +53,6 @@ public static class DependencyInjectionConfiguration
         servicesCollection.AddScoped<IUserRepository, UserRepository>();
         servicesCollection.AddScoped<ITagRepository, TagRepository>();
         servicesCollection.AddScoped<IFolderRepository, FolderRepository>();
-        servicesCollection.AddScoped<ITagUseCase, TagUseCase>();
     }
 }
 

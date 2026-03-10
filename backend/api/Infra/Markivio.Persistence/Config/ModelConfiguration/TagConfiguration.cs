@@ -1,16 +1,14 @@
-using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Markivio.Persistence.Config.ModelConfiguration;
 
-internal static class TagDbConfiguration
+internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
 {
-    internal static void ConfigureTag(this ModelBuilder modelBuilder, IAuthUser authUser)
+    public void Configure(EntityTypeBuilder<Tag> builder)
     {
         const string nameFkUser = "UserId";
-        EntityTypeBuilder<Tag> builder = modelBuilder.Entity<Tag>();
 
         builder
           .HasKey(pre => pre.Id);
@@ -34,10 +32,10 @@ internal static class TagDbConfiguration
           .IsRequired();
 
         builder
-          .HasQueryFilter(pre => pre.User.AuthId == authUser.CurrentUser.AuthId);
-
-        builder
           .HasIndex(["Name", nameFkUser])
           .IsUnique();
+
+        builder
+          .HasQueryFilter(pre => pre.User.Id == EF.Property<Guid>(pre, "CurrentUserId"));
     }
 }

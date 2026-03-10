@@ -3,21 +3,24 @@ using System;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Markivio.DbUpdater.Migrations
+namespace Markivio.Persistence.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    partial class MarkivioContextModelSnapshot : ModelSnapshot
+    [Migration("20260308141828_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -26,172 +29,201 @@ namespace Markivio.DbUpdater.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<Guid?>("FolderId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("folderId");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("title");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userId");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pK_article");
 
-                    b.HasIndex("FolderId");
+                    b.HasIndex("FolderId")
+                        .HasDatabaseName("iX_article_folderId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("iX_article_userId");
 
-                    b.ToTable("Article");
+                    b.ToTable("article", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Folder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("name");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userId");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pK_folder");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("iX_folder_userId");
 
-                    b.ToTable("Folder");
+                    b.ToTable("folder", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Tag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(9)
-                        .HasColumnType("character varying(9)");
+                        .HasColumnType("character varying(9)")
+                        .HasColumnName("color");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("name");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("userId");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pK_tag");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("iX_tag_userId");
 
                     b.HasIndex("Name", "UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("iX_tag_name_userId");
 
-                    b.ToTable("Tag");
+                    b.ToTable("tag", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("AuthId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("authId");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("firstName");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("lastName");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("username");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pK_user");
 
-                    b.HasIndex("AuthId");
+                    b.HasIndex("AuthId")
+                        .HasDatabaseName("iX_user_authId");
 
-                    b.ToTable("User");
+                    b.ToTable("user", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Article", b =>
                 {
                     b.HasOne("Markivio.Domain.Entities.Folder", "Folder")
                         .WithMany("Articles")
-                        .HasForeignKey("FolderId");
+                        .HasForeignKey("FolderId")
+                        .HasConstraintName("fK_article_folder_folderId");
 
                     b.HasOne("Markivio.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fK_article_user_userId");
 
                     b.OwnsOne("Markivio.Domain.Entities.ArticleContent", "ArticleContent", b1 =>
                         {
-                            b1.Property<Guid>("ArticleId")
-                                .HasColumnType("uuid");
+                            b1.Property<Guid>("ArticleId");
 
                             b1.Property<string>("Content")
-                                .IsRequired()
-                                .HasColumnType("text");
+                                .IsRequired();
+
+                            b1.Property<string>("Description");
 
                             b1.Property<string>("Source")
-                                .IsRequired()
-                                .HasColumnType("text");
+                                .IsRequired();
 
                             b1.HasKey("ArticleId");
 
-                            b1.ToTable("Article");
+                            b1.ToTable("article");
 
-                            b1.ToJson("ArticleContent");
+                            b1
+                                .ToJson("articleContent")
+                                .HasColumnType("jsonb");
 
                             b1.WithOwner()
-                                .HasForeignKey("ArticleId");
+                                .HasForeignKey("ArticleId")
+                                .HasConstraintName("fK_article_article_id");
 
                             b1.OwnsMany("Markivio.Domain.Entities.SoftTag", "Tags", b2 =>
                                 {
-                                    b2.Property<Guid>("ArticleContentArticleId")
-                                        .HasColumnType("uuid");
+                                    b2.Property<Guid>("ArticleContentArticleId");
 
                                     b2.Property<int>("__synthesizedOrdinal")
-                                        .ValueGeneratedOnAdd()
-                                        .HasColumnType("integer");
+                                        .ValueGeneratedOnAdd();
 
                                     b2.Property<string>("Color")
-                                        .IsRequired()
-                                        .HasColumnType("text");
+                                        .IsRequired();
 
                                     b2.Property<string>("Name")
-                                        .IsRequired()
-                                        .HasColumnType("text");
+                                        .IsRequired();
 
-                                    b2.HasKey("ArticleContentArticleId", "__synthesizedOrdinal");
+                                    b2.HasKey("ArticleContentArticleId", "__synthesizedOrdinal")
+                                        .HasName("pK_article");
 
-                                    b2.ToTable("Article");
+                                    b2.ToTable("article");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("ArticleContentArticleId");
+                                        .HasForeignKey("ArticleContentArticleId")
+                                        .HasConstraintName("fK_article_article_ArticleContentArticleId");
                                 });
 
                             b1.Navigation("Tags");
@@ -211,7 +243,8 @@ namespace Markivio.DbUpdater.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fK_folder_user_userId");
 
                     b.Navigation("User");
                 });
@@ -222,7 +255,8 @@ namespace Markivio.DbUpdater.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fK_tag_user_userId");
 
                     b.Navigation("User");
                 });

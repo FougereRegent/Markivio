@@ -52,21 +52,27 @@ public class QueryType : ObjectType<Query>
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
-              IncludeTotalCount = true,
+              IncludeTotalCount = false,
               RequirePagingBoundaries = true,
               AllowBackwardPagination = false,
-              DefaultPageSize = 50
+              DefaultPageSize = 50,
           });
 
         descriptor
-          .Field(f => f.Tags(default!,default!))
+          .Field("tags")
+		  .Argument("tagName", f => f.Type<StringType?>())
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
-              IncludeTotalCount = true,
-              RequirePagingBoundaries = true,
+              IncludeTotalCount = false,
+              RequirePagingBoundaries = false,
               AllowBackwardPagination = false,
-              DefaultPageSize = 50
-          });
+              DefaultPageSize = 50,
+          })
+		.Resolve(context => {
+			string tagName = context.ArgumentValue<string?>("tagName") ?? string.Empty;
+			var tagUseCase = context.Services.GetRequiredService<ITagUseCase>();
+			return tagUseCase.GetAllTags(tagName);
+		});
     }
 }

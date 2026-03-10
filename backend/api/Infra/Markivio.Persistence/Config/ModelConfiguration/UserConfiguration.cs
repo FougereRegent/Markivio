@@ -1,15 +1,14 @@
 using Markivio.Domain.Entities;
+using Markivio.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Markivio.Persistence.Config.ModelConfiguration;
 
-internal static class UserDbConfiguration
+internal class UserDbConfiguration : IEntityTypeConfiguration<User>
 {
-    internal static void ConfigureUser(this ModelBuilder modelBuilder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-        EntityTypeBuilder<User> builder = modelBuilder.Entity<User>();
-
         builder
           .HasKey(pre => pre.Id);
 
