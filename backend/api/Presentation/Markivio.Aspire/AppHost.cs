@@ -13,4 +13,14 @@ var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
 					.WithEnvironment("MARKIVIO_AUTHORITY", env["MARKIVIO_AUTHORITY"])
 					.WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"]);
 
+var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-frontend")
+					.WithPnpm()
+					.WithRunScript("dev:custom")
+					.WithReference(graphqlApi)
+					.WithEndpoint("http", endpoint => endpoint.Port = 5173)
+					.WithEnvironment("VITE_MARKIVIO_AUTH_CLIENT_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
+					.WithEnvironment("VITE_MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
+					.WithEnvironment("VITE_MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
+					.WithEnvironment("VITE_MARKIVIO_GRAPHQL_API","https://localhost:8080/graphql");
+
 builder.Build().Run();

@@ -19,9 +19,5 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
-  },
-  "environmentVariables": {
-	  "MARKIVIO_AUTHORITY": "bite",
-	  "MARKIVIO_AUDIENCE": "bite"
   }
 }
