@@ -1,7 +1,7 @@
 using Markivio.Persistence.Config;
 using Markivio.Presentation.GraphQl;
 using Markivio.Presentation.Interceptor;
-using Markivio.Presentation.Midleware;
+using OpenTelemetry.Trace;
 
 namespace Markivio.Presentation.Config;
 
@@ -20,9 +20,19 @@ public static class GraphQlConfiguration
           .AddHttpRequestInterceptor<AuthUserInterceptor>()
         .AddQueryType<QueryType>()
         .AddMutationType<MutationType>()
+		.AddInstrumentation()
         .ModifyRequestOptions(o =>
         {
             o.IncludeExceptionDetails = true;
         });
+
+		serviceCollection.AddOpenTelemetry()
+			.WithTracing(tracing => {
+					tracing.AddHttpClientInstrumentation();
+					tracing.AddHotChocolateInstrumentation();
+					tracing.AddAspNetCoreInstrumentation();
+					tracing.AddEntityFrameworkCoreInstrumentation();
+					tracing.AddOtlpExporter();
+					});
     }
 }

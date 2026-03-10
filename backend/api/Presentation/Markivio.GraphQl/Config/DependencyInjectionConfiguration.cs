@@ -23,6 +23,7 @@ public static class DependencyInjectionConfiguration
                 .AllowAnyMethod();
             });
         });
+
         servicesCollection.AddScoped<IAuthUser, AuthUser>();
 
         servicesCollection.AddDbContext<MarkivioContext>(options =>
