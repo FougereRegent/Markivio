@@ -52,7 +52,7 @@ public class QueryType : ObjectType<Query>
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
-              IncludeTotalCount = false,
+              IncludeTotalCount = true,
               RequirePagingBoundaries = true,
               AllowBackwardPagination = false,
               DefaultPageSize = 50,
@@ -64,7 +64,7 @@ public class QueryType : ObjectType<Query>
           .UseOffsetPaging(options: new PagingOptions()
           {
               MaxPageSize = 100,
-              IncludeTotalCount = false,
+              IncludeTotalCount = true,
               RequirePagingBoundaries = false,
               AllowBackwardPagination = false,
               DefaultPageSize = 50,

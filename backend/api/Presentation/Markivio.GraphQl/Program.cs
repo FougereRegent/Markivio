@@ -17,7 +17,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config);
 builder.Services.ConfigureDependencyInjection(config);
 builder.Services.GraphQlConfig();
-builder.Services.AddGraphQLServer();
 
 var app = builder.Build();
 
