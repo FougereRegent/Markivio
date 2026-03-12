@@ -92,3 +92,6 @@ coverage
 
 # Vitest
 __screenshots__/
+/backend/api/Infra/Markivio.Persistence/bin\Debug/net10.0
+/backend/api/Infra/Markivio.Persistence/bin\Debug/net10.0
+/backend/api/Infra/Markivio.Persistence/bin\Debug/net10.0

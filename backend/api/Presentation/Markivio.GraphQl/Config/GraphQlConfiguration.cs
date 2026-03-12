@@ -1,4 +1,3 @@
-using Markivio.Persistence.Config;
 using Markivio.Presentation.GraphQl;
 using Markivio.Presentation.Interceptor;
 using OpenTelemetry.Trace;
@@ -12,7 +11,6 @@ public static class GraphQlConfiguration
     public static void GraphQlConfig(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddGraphQLServer()
-        .RegisterDbContextFactory<MarkivioContext>()
           .ModifyOptions(options =>
           {
               options.DefaultQueryDependencyInjectionScope = DependencyInjectionScope.Resolver;

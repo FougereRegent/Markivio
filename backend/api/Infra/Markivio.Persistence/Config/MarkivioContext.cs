@@ -16,9 +16,15 @@ public class MarkivioContext : DbContext
     public DbSet<Tag> Tag { get; set; }
     public DbSet<Folder> Folder { get; set; }
 
-    public MarkivioContext(DbContextOptions options, IAuthUser authUser) : base(options)
+    public MarkivioContext(DbContextOptions<MarkivioContext> options, IAuthUser authUser) : base(options)
     {
 		this.authUser = authUser;
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+		optionsBuilder.AddInterceptors(new DateTimeSaveUpdateIntercpetor());
+        base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
