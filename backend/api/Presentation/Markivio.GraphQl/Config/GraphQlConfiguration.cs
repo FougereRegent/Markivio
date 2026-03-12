@@ -2,6 +2,8 @@ using Markivio.Persistence.Config;
 using Markivio.Presentation.GraphQl;
 using Markivio.Presentation.Interceptor;
 using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Logs;
 
 namespace Markivio.Presentation.Config;
 
@@ -33,6 +35,14 @@ public static class GraphQlConfiguration
 					tracing.AddAspNetCoreInstrumentation();
 					tracing.AddEntityFrameworkCoreInstrumentation();
 					tracing.AddOtlpExporter();
+					})
+			.WithMetrics(metrics => {
+					metrics.AddAspNetCoreInstrumentation();
+					metrics.AddHttpClientInstrumentation();
+					metrics.AddOtlpExporter();
+					})
+			.WithLogging(logging => {
+					logging.AddOtlpExporter();
 					});
     }
 }
