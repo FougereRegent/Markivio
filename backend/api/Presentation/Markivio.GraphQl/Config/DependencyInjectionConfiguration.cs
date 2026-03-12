@@ -7,6 +7,7 @@ using Markivio.Persistence.Repositories;
 using Markivio.Presentation.Dto;
 using Microsoft.EntityFrameworkCore;
 using Markivio.Auth;
+using Serilog;
 
 namespace Markivio.Presentation.Config;
 
@@ -23,6 +24,12 @@ public static class DependencyInjectionConfiguration
                 .AllowAnyMethod();
             });
         });
+
+		servicesCollection.AddSerilog(opts =>
+				opts.WriteTo.Async(pre => {
+							pre.Console();
+							pre.OpenTelemetry();
+						}));
 
         servicesCollection.AddScoped<IAuthUser, AuthUser>();
 
