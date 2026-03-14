@@ -11,6 +11,8 @@ public sealed class User : Entity
 	public IdentityValueObject Identity {get;set;} = null!;
     public string AuthId { get; set; } = string.Empty;
 
+	private User() {}
+
 	public User(IdentityValueObject identityValue, EmailValueObject emailValue) {
 		Email = emailValue;
 		Identity = identityValue;

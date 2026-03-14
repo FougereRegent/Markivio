@@ -6,7 +6,7 @@ namespace Markivio.Domain.ValueObject;
 public sealed class EmailValueObject : BaseValueObject
 {
     private const string REGEX_EMAIL = @"^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$";
-	public required string Email {get; init;}
+	public string Email {get; init;}
 
     public EmailValueObject(string email)
     {

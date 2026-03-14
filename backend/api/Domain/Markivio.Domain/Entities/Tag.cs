@@ -9,6 +9,8 @@ public sealed class Tag : EntityWithTenancy
 
 	public TagValueObject TagValue {get;set;} = null!;
 
+	private Tag() {}
+
 	public Tag(TagValueObject tagValue) {
 		TagValue = tagValue;
 	}

@@ -12,6 +12,8 @@ public sealed class Article : EntityWithTenancy
     public Folder? Folder { get; set; } = null;
     public ArticleContent ArticleContent { get; set; } = null!;
 
+	private Article() {}
+
 	public Article(ArticleContent articleContent, string title) {
 		if(string.IsNullOrEmpty(title))
 			throw new EmptyException("title cannot be empty", "EMPTY_ARTICLETITLE");
