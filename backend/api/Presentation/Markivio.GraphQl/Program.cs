@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.Config();
+builder.Configuration.AddEnvironmentVariables();
 
 EnvConfig config = new EnvConfig(
 		Authority: builder.Configuration.GetValue<string>("MARKIVIO_AUTHORITY") ?? throw new ArgumentException(),
@@ -18,10 +18,13 @@ EnvConfig config = new EnvConfig(
 
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config);
+builder.ConfigDI(config);
+builder.ConfigGraphQl();
+
 
 var app = builder.Build();
-
 app.UseAuth();
+
 Action<ScalarOptions> scalarOptions = options =>
 {
     options.WithTitle("Markivio API");
@@ -36,17 +39,16 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", scalarOptions);
 }
 
-
 app.UseCors("AllowAllOrigins");
-
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseRouting();
+app.UseEndpoints(endpoints => {
+		endpoints.MapGraphQL();
+});
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
 	await db.Database.MigrateAsync();
 }
-
 app.Run();

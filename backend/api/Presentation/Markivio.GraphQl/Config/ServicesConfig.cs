@@ -1,0 +1,63 @@
+using Markivio.Auth;
+using Markivio.Domain.Auth;
+using Markivio.Domain.Repositories;
+using Markivio.Persistence.Config;
+using Markivio.Persistence;
+using Markivio.Persistence.Repositories;
+using Markivio.Application.UseCases;
+using Markivio.Presentation.Dto;
+using Microsoft.EntityFrameworkCore;
+
+namespace Markivio.Presentation.Config;
+
+public static class ConfigServiceInjection {
+	public static WebApplicationBuilder ConfigDI(this WebApplicationBuilder builder, EnvConfig config) {
+		builder.ConfigInfraServices()
+			.ConfigAuth()
+			.ConfigDB(config)
+			.ConfigRepository()
+			.ConfigServices();
+		return builder;
+	}
+
+	private static WebApplicationBuilder ConfigDB(this WebApplicationBuilder builder, EnvConfig config) {
+		builder.Services.AddDbContext<MarkivioContext>(options => {
+            options.UseNpgsql(config.ConnectionString)
+                          .UseCamelCaseNamingConvention();
+				});
+		return builder;
+	}
+
+	private static WebApplicationBuilder ConfigRepository(this WebApplicationBuilder builder) {
+		builder.Services.AddScoped<IUnitOfWork, UnitOfWork>()
+			.AddScoped<IUserRepository, UserRepository>()
+			.AddScoped<ITagRepository, TagRepository>()
+			.AddScoped<IArticleRepository, ArticleRepository>();
+		return builder;
+	}
+
+	private static WebApplicationBuilder ConfigServices(this WebApplicationBuilder builder) {
+		builder.Services.AddScoped<IUserUseCase, UserUseCase>()
+			.AddScoped<IArticleUseCase, ArticleUseCase>()
+			.AddScoped<ITagUseCase, TagUseCase>();
+		return builder;
+	}
+
+	private static WebApplicationBuilder ConfigAuth(this WebApplicationBuilder builder) {
+		builder.Services.AddScoped<IAuthUser, AuthUser>();
+		return builder;
+	}
+
+	private static WebApplicationBuilder ConfigInfraServices(this WebApplicationBuilder builder) {
+		builder.Services.AddCors(options => {
+				options.AddPolicy("AllowAllOrigins", builder => {
+						builder.AllowAnyOrigin()
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+						});
+				})
+		.AddMemoryCache()
+		.AddHttpClient();
+		return builder;
+	}
+}
