@@ -18,8 +18,6 @@ EnvConfig config = new EnvConfig(
 
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config);
-builder.Services.ConfigureDependencyInjection(config);
-builder.Services.GraphQlConfig();
 
 var app = builder.Build();
 
@@ -39,8 +37,6 @@ if (app.Environment.IsDevelopment())
 }
 
 
-//app.ConfigureStatusEndpoints();
-
 app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
@@ -53,5 +49,4 @@ using (var scope = app.Services.CreateScope())
 	await db.Database.MigrateAsync();
 }
 
-app.MapGraphQL();
 app.Run();
