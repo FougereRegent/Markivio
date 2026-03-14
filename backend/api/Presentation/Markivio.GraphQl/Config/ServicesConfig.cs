@@ -7,6 +7,7 @@ using Markivio.Persistence.Repositories;
 using Markivio.Application.UseCases;
 using Markivio.Presentation.Dto;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Markivio.Presentation.Config;
 
@@ -57,7 +58,13 @@ public static class ConfigServiceInjection {
 						});
 				})
 		.AddMemoryCache()
-		.AddHttpClient();
+		.AddHttpClient()
+		.AddSerilog(options => {
+				options.WriteTo.Async(pre => {
+						pre.Console();
+						pre.OpenTelemetry();
+						});
+				});
 		return builder;
 	}
 }
