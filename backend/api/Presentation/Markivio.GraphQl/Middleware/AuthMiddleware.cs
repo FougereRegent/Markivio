@@ -17,6 +17,6 @@ internal class AuthMiddleware {
 		User user = context.GetGlobalState<User>("auth-user");
 		IAuthUser authService = context.Services.GetRequiredService<IAuthUser>();
 		authService.CurrentUser = user;
-		_next?.Invoke(context);
+		await _next(context);
     }
 }
