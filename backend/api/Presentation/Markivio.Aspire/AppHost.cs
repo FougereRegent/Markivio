@@ -3,7 +3,9 @@ var builder = DistributedApplication.CreateBuilder(args);
 var env = builder.Configuration.GetSection("environmentVariables");
 
 var postgres = builder.AddPostgres("postgres")
-						.WithPgWeb();
+						.WithPgAdmin(configureContainer: opts => {
+								opts.WithEndpoint("http", endpoint => endpoint.Port = 8085);
+								});
 
 var db = postgres.AddDatabase("markivio");
 
