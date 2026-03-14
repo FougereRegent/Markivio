@@ -17,13 +17,13 @@ internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
           .Property(pre => pre.Id)
           .ValueGeneratedOnAdd();
 
-        builder
-          .Property(pre => pre.Name)
-          .HasMaxLength(32);
-
-        builder
-          .Property(pre => pre.Color)
-          .HasMaxLength(9);
+		builder
+			.ComplexProperty(pre => pre.TagValue, buildAction => {
+					buildAction.Property(pre => pre.Name)
+						.HasMaxLength(32);
+					buildAction.Property(pre => pre.Color)
+						.HasMaxLength(9);
+					});
 
         builder
           .HasOne(pre => pre.User)

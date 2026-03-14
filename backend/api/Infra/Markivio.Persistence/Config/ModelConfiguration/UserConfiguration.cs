@@ -1,5 +1,4 @@
 using Markivio.Domain.Entities;
-using Markivio.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -16,24 +15,25 @@ internal class UserDbConfiguration : IEntityTypeConfiguration<User>
           .Property(pre => pre.Id)
           .ValueGeneratedOnAdd();
 
-        builder
-          .Property(pre => pre.Email)
-          .HasMaxLength(128);
+		builder.ComplexProperty(pre => pre.Email);
 
-        builder
-          .Property(pre => pre.Username)
-          .HasMaxLength(128);
-
-        builder
-          .Property(pre => pre.FirstName)
-          .HasMaxLength(128);
+        builder.ComplexProperty(pre => pre.Identity, buildAction =>
+        {
+            buildAction.Property(pre => pre.FirstName)
+            .HasMaxLength(128);
+            buildAction
+              .Property(pre => pre.FirstName)
+              .HasMaxLength(128);
+            buildAction
+              .Property(pre => pre.Username)
+              .HasMaxLength(128);
+            buildAction
+              .Property(pre => pre.LastName)
+              .HasMaxLength(128);
+        });
 
         builder
           .Property(pre => pre.AuthId);
-
-        builder
-          .Property(pre => pre.LastName)
-          .HasMaxLength(128);
 
         builder
           .HasIndex(pre => pre.AuthId);
