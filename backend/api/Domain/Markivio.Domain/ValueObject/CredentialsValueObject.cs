@@ -1,0 +1,37 @@
+using System.Text.RegularExpressions;
+using Markivio.Domain.Exceptions;
+
+namespace Markivio.Domain.ValueObject;
+
+public sealed class IdentityValueObject : BaseValueObject
+{
+    private const string REGEX_FIRSTNAME_AND_LASTNAME = @"^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$";
+
+	public required string Username {get; init;} = string.Empty;
+	public required string LastName {get; init;} = string.Empty;
+	public required string FirstName {get; init;} = string.Empty;
+
+    public IdentityValueObject(string userName, string firstName, string lastName)
+    {
+		if(string.IsNullOrEmpty(firstName))
+			throw new EmptyException("firstname cannot be empty", "EMPTY_FIRSTNAME");
+
+		if(string.IsNullOrEmpty(lastName))
+			throw new EmptyException("lastname cannot be empty", "EMPTY_LASTNAME");
+
+		if(!Regex.IsMatch(firstName, REGEX_FIRSTNAME_AND_LASTNAME))
+			throw new PatternException("regex not match", "FORMAT_FIRSTNAME");
+
+		if(!Regex.IsMatch(lastName, REGEX_FIRSTNAME_AND_LASTNAME))
+			throw new PatternException("regex not match", "FORMAT_LASTNAME");
+
+		Username = userName;
+		FirstName = firstName;
+		LastName = lastName;
+    }
+
+    protected override IEnumerable<object> GetAtomicValues()
+    {
+        throw new NotImplementedException();
+    }
+}
