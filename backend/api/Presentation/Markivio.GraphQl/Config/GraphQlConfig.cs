@@ -46,3 +46,4 @@ public static class GraphQlConfig
 					});
 		return builder;
 	}
+}

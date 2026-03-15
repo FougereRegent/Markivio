@@ -56,6 +56,8 @@ public class AuthUser(
                     firstName: userInfo?.GivenName ?? string.Empty,
                     lastName: userInfo?.FamilyName ?? string.Empty
                     ),
-                emailValue: new Domain.ValueObject.EmailValueObject(userInfo?.Email ?? string.Empty));
+                emailValue: new Domain.ValueObject.EmailValueObject(userInfo?.Email ?? string.Empty)) {
+			AuthId = authId,
+		};
     }
 }

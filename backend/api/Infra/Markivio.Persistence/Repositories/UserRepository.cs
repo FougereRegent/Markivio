@@ -9,6 +9,6 @@ namespace Markivio.Persistence.Repositories;
 public class UserRepository(MarkivioContext context) :GenericRepositpory<User>(context), IUserRepository
 {
     public async ValueTask<User?> GetUserByAuthId(string authId, CancellationToken token = default) {
-		return await _context.User.Where(pre => pre.AuthId == authId).FirstOrDefaultAsync(token);
+		return await _context.User.FirstOrDefaultAsync(pre => pre.AuthId == authId, token);
 	}
 }
