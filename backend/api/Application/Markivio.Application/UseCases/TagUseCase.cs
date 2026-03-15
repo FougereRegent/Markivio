@@ -5,6 +5,8 @@ using Markivio.Application.Dto;
 using Markivio.Application.Mapper;
 using Markivio.Domain.Auth;
 using Markivio.Application.Errors;
+using Markivio.Domain.Errors;
+using Markivio.Domain.Exceptions;
 
 namespace Markivio.Application.UseCases;
 
@@ -47,9 +49,20 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             return tag1.TagValue.Name == tag2.TagValue.Name;
         }, tag => tag.TagValue.Name.GetHashCode());
 
-        Tag[] tags = creatingTags.Select(mapper.Map)
-          .Select(pre => { pre.User = authUser.CurrentUser; return pre; })
-          .ToArray();
+        if (authUser.CurrentUser is null)
+            return Result.Fail(new NullFieldError("User"));
+
+        Tag[] tags;
+        try
+        {
+            tags = creatingTags.Select(mapper.Map)
+              .Select(pre => { pre.User = authUser.CurrentUser; return pre; })
+              .ToArray();
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(MapDomainException(ex));
+        }
 
         HashSet<Tag> hash = new HashSet<Tag>(tags, comparer);
 
@@ -72,6 +85,15 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
 			_ => throw new ArgumentException()
 		};
 
+    private static Error MapDomainException(DomainException ex) =>
+        ex.ErrorCode switch
+        {
+            "EMPTY_TAGNAME" => new ShouldNotBeEmptyError("Name"),
+            "EMPTY_COLORTAG" => new ShouldNotBeEmptyError("Color"),
+            "FORMAT_TAGNAME" => new FormatUnexpectedError("Name"),
+            "FORMAT_COLOTTAG" => new FormatUnexpectedError("Color"),
+            _ => new Error(ex.Message)
+        };
 
     private bool TagsExistByName(IEnumerable<string> tagNames)
     {

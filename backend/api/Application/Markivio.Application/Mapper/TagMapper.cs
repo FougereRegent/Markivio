@@ -16,12 +16,9 @@ public partial class TagMapper
 	[MapNestedProperties(nameof(Tag.TagValue))]
 	public partial TagSoftInformation MapToSoftInformation(Tag tag);
 
-	[MapProperty(nameof(CreateTag), "tagValue", Use = nameof(CreateTagToTagValueObject))]
-	public partial Tag Map(CreateTag createTag);
-
 	[UserMapping]
-	private static TagValueObject CreateTagToTagValueObject(CreateTag createTag) =>
-		new(createTag.Name, createTag.Color);
+	public Tag Map(CreateTag createTag) =>
+		new(new TagValueObject(createTag.Name, createTag.Color));
 }
 
 [Mapper]

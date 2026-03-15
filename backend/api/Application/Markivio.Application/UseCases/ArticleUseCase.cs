@@ -2,7 +2,10 @@ using FluentResults;
 using Markivio.Application.Dto;
 using Markivio.Application.Errors;
 using Markivio.Application.Mapper;
+using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
+using Markivio.Domain.Errors;
+using Markivio.Domain.Exceptions;
 using Markivio.Domain.Repositories;
 using Markivio.Domain.ValueObject;
 
@@ -18,7 +21,7 @@ public interface IArticleUseCase
     ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
 }
 
-public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository) : IArticleUseCase
+public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository, IAuthUser authUser) : IArticleUseCase
 {
     public ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default)
     {
@@ -50,7 +53,18 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
             .GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
             .Select(pre => pre.TagValue).ToList();
 
-        article = mapper.Map(createArticle, tags);
+        if (authUser.CurrentUser is null)
+            return Result.Fail(new NullFieldError("User"));
+
+        try
+        {
+            article = mapper.Map(createArticle, tags);
+            article.User = authUser.CurrentUser;
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(MapDomainException(ex));
+        }
 
         Article resultArticle = articleRepository.Save(article);
         return mapper.Map(resultArticle);
@@ -70,7 +84,14 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (tags.Count() != addTags.tagIds.Length)
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
-        article.ArticleContent.AddTags(tags);
+        try
+        {
+            article.ArticleContent.AddTags(tags);
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(MapDomainException(ex));
+        }
 
         Article res = articleRepository.Update(article);
         return mapper.Map(res);
@@ -90,7 +111,14 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (tags.Count != removeTags.tagIds.Length)
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
-        article.ArticleContent.RemoveTags(tags);
+        try
+        {
+            article.ArticleContent.RemoveTags(tags);
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(MapDomainException(ex));
+        }
 
 
         Article res = articleRepository.Update(article);
@@ -108,4 +136,14 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         return tagUseCase.TagsExist<Guid>(tags, TagExistConditionEnum.Id);
     }
+
+    private static Error MapDomainException(DomainException ex) =>
+        ex.ErrorCode switch
+        {
+            "EMPTY_ARTICLESOURCE" => new ShouldNotBeEmptyError("Source"),
+            "FORMAT_ARTICLE_SOURCE" => new FormatUnexpectedError("Source"),
+            "EMPTY_ARTICLETITLE" => new ShouldNotBeEmptyError("Title"),
+            "TAG_LIMIT_EXCEEDED" => new ExceedElementsError(20, "Tags"),
+            _ => new Error(ex.Message)
+        };
 }

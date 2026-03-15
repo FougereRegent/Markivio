@@ -5,6 +5,8 @@ using Markivio.Domain.Entities;
 using Markivio.Application.Mapper;
 using Markivio.Application.Errors;
 using Markivio.Domain.Auth;
+using Markivio.Domain.Errors;
+using Markivio.Domain.Exceptions;
 
 
 namespace Markivio.Application.UseCases;
@@ -81,9 +83,26 @@ public class UserUseCase : IUserUseCase
             return Result.Fail(new NotFoundError("Cannot found"));
 
 		UserMapper mapper = new UserMapper();
-		mapper.ApplyUpdate(updateUser, user);
+        try
+        {
+            mapper.ApplyUpdate(updateUser, user);
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(MapDomainException(ex));
+        }
 
         User returnUser = userRepository.Update(user);
         return mapper.UserToUserInformation(returnUser);
     }
+
+    private static Error MapDomainException(DomainException ex) =>
+        ex.ErrorCode switch
+        {
+            "EMPTY_FIRSTNAME" => new ShouldNotBeEmptyError("FirstName"),
+            "EMPTY_LASTNAME" => new ShouldNotBeEmptyError("LastName"),
+            "FORMAT_FIRSTNAME" => new FormatUnexpectedError("FirstName"),
+            "FORMAT_LASTNAME" => new FormatUnexpectedError("LastName"),
+            _ => new Error(ex.Message)
+        };
 }
