@@ -10,6 +10,7 @@ internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
     {
         const string nameFkUser = "UserId";
 
+		builder.ToTable("tags");
         builder
           .HasKey(pre => pre.Id);
 
@@ -17,25 +18,13 @@ internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
           .Property(pre => pre.Id)
           .ValueGeneratedOnAdd();
 
-        builder
-          .Property(pre => pre.Name)
-          .HasMaxLength(32);
 
-        builder
-          .Property(pre => pre.Color)
-          .HasMaxLength(9);
+		builder.ComplexProperty(pre => pre.TagValue);
 
         builder
           .HasOne(pre => pre.User)
           .WithMany()
           .HasForeignKey(nameFkUser)
           .IsRequired();
-
-        builder
-          .HasIndex(["Name", nameFkUser])
-          .IsUnique();
-
-        builder
-          .HasQueryFilter(pre => pre.User.Id == EF.Property<Guid>(pre, "CurrentUserId"));
     }
 }

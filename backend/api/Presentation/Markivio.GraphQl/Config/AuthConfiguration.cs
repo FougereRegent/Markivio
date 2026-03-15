@@ -5,7 +5,7 @@ namespace Markivio.Presentation.Config;
 
 public static class AuthConfiguration
 {
-    public static void AddAuth0(this IServiceCollection services, EnvConfig config)
+    public static void AddAuth0(this IServiceCollection services, EnvConfig config, bool validateAudience)
     {
         services.AddAuthentication(options =>
         {
@@ -17,7 +17,7 @@ public static class AuthConfiguration
             options.Audience = config.Audience;
             options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
             {
-                ValidateAudience = false,
+                ValidateAudience = validateAudience,
             };
         });
 

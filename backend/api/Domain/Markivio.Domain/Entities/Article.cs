@@ -1,32 +1,25 @@
-using FluentResults;
-using Markivio.Domain.Errors;
-using Markivio.Extensions;
+using Markivio.Domain.Exceptions;
 
 namespace Markivio.Domain.Entities;
 
-public sealed class Article : EntityWithTenancy, IModelValidation
+public sealed class Article : EntityWithTenancy
 {
     private const string REGEX_SOURCE = @"^(?:http[s]?:\/\/.)?(?:www\.)?[-a-zA-ZÀ-ÿà-ÿ0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b(?:[-a-zA-ZÀ-ÿà-ÿ0-9@:%_\+.~#?&\/\/=]*)";
     private const int MAX_TAGS = 20;
 
     public string Title { get; set; } = string.Empty;
+
     public Folder? Folder { get; set; } = null;
     public ArticleContent ArticleContent { get; set; } = null!;
 
-    public Result Validate()
-    {
-        Result resultSource = Result.Ok();
-        Result resultTags = Result.Ok();
-        Result resultUser = Result.FailIf(User is null, new NullFieldError(nameof(User)));
-        Result resultTitle = Result.FailIf(string.IsNullOrEmpty(Title), new ShouldNotBeEmptyError(nameof(Title)));
+	private Article() {}
 
-        if (ArticleContent != null)
-        {
-            resultSource = Result.FailIf(RegexExt.IsNotMatch(ArticleContent.Source, REGEX_SOURCE), new FormatUnexpectedError(nameof(ArticleContent.Source)));
-            resultTags = Result.Merge(
-                Result.FailIf(ArticleContent.Tags.Count > MAX_TAGS, new ExceedElementsError(MAX_TAGS, nameof(ArticleContent.Tags))));
-        }
+	public Article(ArticleContent articleContent, string title) {
+		ArticleContent = articleContent ?? throw new ArgumentNullException(nameof(articleContent));
 
-        return Result.Merge(resultUser, resultTitle, resultSource, resultTags);
-    }
+		if(string.IsNullOrEmpty(title))
+			throw new EmptyException("title cannot be empty", "EMPTY_ARTICLETITLE");
+
+		Title = title;
+	}
 }

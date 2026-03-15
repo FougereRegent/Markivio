@@ -3,8 +3,9 @@ using Markivio.Application.Dto;
 using FluentResults;
 using Markivio.Domain.Entities;
 using Markivio.Application.Mapper;
-using Markivio.Application.Errors;
 using Markivio.Domain.Auth;
+using Markivio.Domain.Exceptions;
+using Markivio.Application.Errors;
 
 
 namespace Markivio.Application.UseCases;
@@ -80,16 +81,17 @@ public class UserUseCase : IUserUseCase
         if (user is null)
             return Result.Fail(new NotFoundError("Cannot found"));
 
-        user.FirstName = updateUser.FirstName;
-        user.LastName = updateUser.LastName;
-
-        Result userValidation = user.Validate();
-        if (userValidation.IsFailed)
-            return userValidation;
+		UserMapper mapper = new UserMapper();
+        try
+        {
+            mapper.ApplyUpdate(updateUser, user);
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(DomainError.Create(ex));
+        }
 
         User returnUser = userRepository.Update(user);
-        UserMapper userMapper = new UserMapper();
-
-        return userMapper.UserToUserInformation(returnUser);
+        return mapper.UserToUserInformation(returnUser);
     }
 }

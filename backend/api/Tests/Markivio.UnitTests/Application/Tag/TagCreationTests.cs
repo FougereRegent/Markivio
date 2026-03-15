@@ -1,4 +1,3 @@
-
 using FluentResults;
 using Markivio.Application.Dto;
 using Markivio.Application.Errors;
@@ -18,8 +17,10 @@ public class TagCreationTests : BaseTagTests
           new CreateTag("Name", "#FFFFFF"),
           new CreateTag("Name", "#FFFFFF"),
         };
+        tagRepositoryMock.Setup(pre => pre.GetAll())
+          .Returns(Enumerable.Empty<Tag>().AsQueryable());
         authUserMock.Setup(pre => pre.CurrentUser)
-          .Returns(new User());
+          .Returns(CreateValidUser());
 
         // Act
         Result<TagInformation[]> result = useCase.CreateTag(input);
@@ -38,8 +39,10 @@ public class TagCreationTests : BaseTagTests
           new CreateTag("", "#FFFFFF"),
           new CreateTag("Test", "#FFFFFF"),
         };
+        tagRepositoryMock.Setup(pre => pre.GetAll())
+          .Returns(Enumerable.Empty<Tag>().AsQueryable());
         authUserMock.Setup(pre => pre.CurrentUser)
-          .Returns(new User());
+          .Returns(CreateValidUser());
 
         // Act
         Result<TagInformation[]> result = useCase.CreateTag(input);
@@ -47,6 +50,8 @@ public class TagCreationTests : BaseTagTests
         //Assert
         result.IsFailed.ShouldBeTrue();
         result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<DomainError>();
+        tagRepositoryMock.Verify(pre => pre.SaveInRange(It.IsAny<IEnumerable<Tag>>()), Times.Never());
     }
 
     [Fact]
@@ -57,8 +62,10 @@ public class TagCreationTests : BaseTagTests
           new CreateTag("Name", "#FFFFFF"),
           new CreateTag("Test", "#FFFFFF"),
         };
+        tagRepositoryMock.Setup(pre => pre.GetAll())
+          .Returns(Enumerable.Empty<Tag>().AsQueryable());
         authUserMock.Setup(pre => pre.CurrentUser)
-          .Returns(new User());
+          .Returns(CreateValidUser());
 
         tagRepositoryMock.Setup(pre => pre.SaveInRange(It.IsAny<IEnumerable<Tag>>()));
 
@@ -67,5 +74,27 @@ public class TagCreationTests : BaseTagTests
 
         //Assert
         result.IsSuccess.ShouldBeTrue();
+        result.Value.Length.ShouldBe(2);
+        tagRepositoryMock.Verify(pre => pre.SaveInRange(It.IsAny<IEnumerable<Tag>>()), Times.Once());
+    }
+
+    [Fact]
+    public void CreateTag_ShouldntCreate_WhenTagAlreadyExistsInDb()
+    {
+        // Arrange
+        CreateTag[] input = new[] { new CreateTag("Existing", "#FFFFFF") };
+
+        Tag existing = new Tag(new Markivio.Domain.ValueObject.TagValueObject("Existing", "#FFFFFF")) { Id = Guid.NewGuid() };
+        tagRepositoryMock.Setup(pre => pre.GetAll()).Returns(new[] { existing }.AsQueryable());
+        authUserMock.Setup(pre => pre.CurrentUser).Returns(CreateValidUser());
+
+        // Act
+        Result<TagInformation[]> result = useCase.CreateTag(input);
+
+        // Assert
+        result.IsFailed.ShouldBeTrue();
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<AlreadyExistError>();
+        tagRepositoryMock.Verify(pre => pre.SaveInRange(It.IsAny<IEnumerable<Tag>>()), Times.Never());
     }
 }

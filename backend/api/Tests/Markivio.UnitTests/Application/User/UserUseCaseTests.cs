@@ -6,128 +6,142 @@ using Markivio.Application.UseCases;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Repositories;
+using Markivio.Domain.ValueObject;
 using Moq;
 using Shouldly;
 
 namespace Markivio.UnitTests.Application;
 
-public class UserUseCaseTests
+public sealed class UserUseCaseTests : BaseTests
 {
-    public Mock<IUserRepository> userRepositoryMock;
-    public Mock<IAuthUser> authUserMock;
-    public UserUseCase useCase;
+    private readonly Mock<IUserRepository> userRepositoryMock = new();
+    private readonly Mock<IAuthUser> authUserMock = new();
+    private readonly UserUseCase useCase;
 
     public UserUseCaseTests()
     {
-        this.userRepositoryMock = new Mock<IUserRepository>();
-        this.authUserMock = new Mock<IAuthUser>();
-        this.useCase = new UserUseCase(this.userRepositoryMock.Object, this.authUserMock.Object);
+        useCase = new UserUseCase(userRepositoryMock.Object, authUserMock.Object);
+    }
+
+    private User CreateValidUser(string? authId = null)
+    {
+        var identity = new IdentityValueObject(
+            userName: faker.Internet.UserName(),
+            firstName: faker.Person.FirstName,
+            lastName: faker.Person.LastName);
+        var email = new EmailValueObject(faker.Internet.Email());
+        return new User(identity, email) { Id = Guid.NewGuid(), AuthId = authId ?? faker.Random.Guid().ToString() };
     }
 
     [Fact]
     public async ValueTask CreateNewUserOnConnection_ShouldReturnFailedResult_WhenTokenIsCorrupted()
     {
-        //Arrange
+        // Arrange
         authUserMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(null));
 
-        //Act
-        Result result = await useCase.CreateNewUserOnConnection(new Markivio.Application.Dto.UserConnectionDto(""));
+        // Act
+        Result result = await useCase.CreateNewUserOnConnection(new UserConnectionDto(""));
 
-        //Assert
+        // Assert
         result.IsFailed.ShouldBeTrue();
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<NotFoundError>();
         result.Errors[0].Message.ShouldBe("User not found");
     }
 
     [Fact]
     public async ValueTask CreateNewUserOnConnection_ShouldNotSaveUser_WhenUserExist()
     {
-        //Arrange
+        // Arrange
+        User userFromToken = CreateValidUser(authId: "auth0|token");
+        User userFromDb = CreateValidUser(authId: "auth0|token");
+
         authUserMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(new User()));
+          .Returns(ValueTask.FromResult<User?>(userFromToken));
+
         userRepositoryMock.Setup(pre => pre.GetUserByAuthId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(new User()));
-        userRepositoryMock.Setup(pre => pre.Save(It.IsAny<User>()));
+          .Returns(ValueTask.FromResult<User?>(userFromDb));
 
-        //Act
-        Result result = await useCase.CreateNewUserOnConnection(new Markivio.Application.Dto.UserConnectionDto(""));
+        // Act
+        Result result = await useCase.CreateNewUserOnConnection(new UserConnectionDto("token"));
 
-        //Assert
+        // Assert
         userRepositoryMock.Verify(pre => pre.Save(It.IsAny<User>()), Times.Never());
         result.IsSuccess.ShouldBeTrue();
-
+        authUserMock.VerifySet(pre => pre.CurrentUser = userFromDb, Times.Once());
     }
 
     [Fact]
     public async ValueTask CreateNewUserOnConnection_ShouldSave_WhenUserNotExist()
     {
-        //Arrange
+        // Arrange
+        User userFromToken = CreateValidUser(authId: "auth0|token");
+
         authUserMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(new User()));
+          .Returns(ValueTask.FromResult<User?>(userFromToken));
+
         userRepositoryMock.Setup(pre => pre.GetUserByAuthId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(null));
-        userRepositoryMock.Setup(pre => pre.Save(It.IsAny<User>()));
 
-        //Act
-        Result result = await useCase.CreateNewUserOnConnection(new Markivio.Application.Dto.UserConnectionDto(""));
+        // Act
+        Result result = await useCase.CreateNewUserOnConnection(new UserConnectionDto("token"));
 
-        //Assert
+        // Assert
         userRepositoryMock.Verify(pre => pre.Save(It.IsAny<User>()), Times.Once());
         result.IsSuccess.ShouldBeTrue();
-
     }
-
 
     [Fact]
     public async ValueTask UpdateCurrentUser_ShouldNotUpdate_WhenCurrentUserIsNotFound()
     {
-        //Arrange
-        authUserMock
-          .Setup(pre => pre.CurrentUser)
-          .Returns(new User
-          {
-              Id = Guid.NewGuid()
-          });
+        // Arrange
+        User currentUser = CreateValidUser(authId: "auth0|current");
+        authUserMock.Setup(pre => pre.CurrentUser).Returns(currentUser);
+
         userRepositoryMock
           .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
           .Returns(ValueTask.FromResult<User?>(null));
 
-        //Act
-        Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation());
+        // Act
+        Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation("John", "Doe"));
 
-        //Assert
+        // Assert
         result.IsFailed.ShouldBeTrue();
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<NotFoundError>();
         result.Errors[0].Message.ShouldBe("Cannot found");
-        result.Errors[0].GetType().ShouldBe(typeof(NotFoundError));
     }
 
-
-    public static IEnumerable<object[]> GetPersonUserName()
+    [Fact]
+    public async ValueTask UpdateCurrentUser_ShouldFail_WhenUpdateIsInvalid()
     {
-        for (int i = 0; i < 10; ++i)
-        {
-            Faker faker = new Faker("fr");
-            yield return new object[] { faker.Person.FirstName, faker.Person.LastName, faker.Person.Email };
-        }
+        // Arrange
+        User currentUser = CreateValidUser(authId: "auth0|current");
+        authUserMock.Setup(pre => pre.CurrentUser).Returns(currentUser);
+
+        userRepositoryMock
+          .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+          .Returns(ValueTask.FromResult<User?>(currentUser));
+
+        // Act
+        Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation("&^^", "Doe"));
+
+        // Assert
+        result.IsFailed.ShouldBeTrue();
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<DomainError>();
+        result.Errors[0].Metadata[ErrorCode.ERROR_CODE_PROPERTY_NAME].ShouldBe("FORMAT_FIRSTNAME");
+        userRepositoryMock.Verify(pre => pre.Update(It.IsAny<User>()), Times.Never());
     }
 
-    [Theory]
-    [MemberData(nameof(GetPersonUserName))]
-    public async ValueTask UpdateCurrentUser_ShouldUpdate(string firstName,
-        string lastName, string email)
+    [Fact]
+    public async ValueTask UpdateCurrentUser_ShouldUpdate_WhenInputsAreValid()
     {
-        //Arrange
-        Faker faker = new Faker("fr");
-        User currentUser = new User()
-        {
-            Id = Guid.NewGuid(),
-            Email = email,
-            FirstName = faker.Person.FirstName,
-            LastName = faker.Person.LastName
-        };
-        authUserMock
-          .Setup(pre => pre.CurrentUser)
-          .Returns(currentUser);
+        // Arrange
+        Faker localFaker = new Faker("fr");
+        User currentUser = CreateValidUser(authId: "auth0|current");
+        authUserMock.Setup(pre => pre.CurrentUser).Returns(currentUser);
 
         userRepositoryMock
           .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -135,15 +149,18 @@ public class UserUseCaseTests
 
         userRepositoryMock
           .Setup(pre => pre.Update(It.IsAny<User>()))
-          .Returns(currentUser);
+          .Returns((User u) => u);
 
-        //Act
+        string firstName = localFaker.Person.FirstName;
+        string lastName = localFaker.Person.LastName;
+
+        // Act
         Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation(firstName, lastName));
 
-        //Assert
+        // Assert
         result.IsSuccess.ShouldBeTrue();
-        UserInformation user = result.Value;
-        user.FirstName.ShouldBe(firstName);
-        user.LastName.ShouldBe(lastName);
+        result.Value.FirstName.ShouldBe(firstName);
+        result.Value.LastName.ShouldBe(lastName);
+        userRepositoryMock.Verify(pre => pre.Update(It.IsAny<User>()), Times.Once());
     }
 }

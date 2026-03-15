@@ -43,21 +43,21 @@ public class AuthUser(
             if (responseMessage.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new InvalidOperationException();
 
-			UserInfoFromAuth? userInfoFromAuth =  await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>(new System.Text.Json.JsonSerializerOptions
+            UserInfoFromAuth? userInfoFromAuth = await responseMessage.Content.ReadFromJsonAsync<UserInfoFromAuth>(new System.Text.Json.JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower,
             });
-			return userInfoFromAuth;
+            return userInfoFromAuth;
         });
 
-        return new User
-        {
-            AuthId = authId,
-            Email = userInfo?.Email ?? string.Empty,
-            FirstName = userInfo?.GivenName ?? string.Empty,
-            LastName = userInfo?.FamilyName ?? string.Empty,
-            Username = userInfo?.NickName ?? string.Empty
-        };
+        return new User(new Domain.ValueObject.IdentityValueObject(
+                    userName: userInfo?.NickName ?? string.Empty,
+                    firstName: userInfo?.GivenName ?? string.Empty,
+                    lastName: userInfo?.FamilyName ?? string.Empty
+                    ),
+                emailValue: new Domain.ValueObject.EmailValueObject(userInfo?.Email ?? string.Empty)) {
+			AuthId = authId,
+		};
     }
 }

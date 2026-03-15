@@ -23,7 +23,7 @@ public class MarkivioContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-		optionsBuilder.AddInterceptors(new DateTimeSaveUpdateIntercpetor());
+		optionsBuilder.AddInterceptors(new DateTimeSaveUpdateInterceptor());
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -35,10 +35,14 @@ public class MarkivioContext : DbContext
 			.Configure(modelBuilder.Entity<Folder>());
 		new UserDbConfiguration()
 			.Configure(modelBuilder.Entity<User>());
+		new TagDbConfiguration()
+			.Configure(modelBuilder.Entity<Tag>());
 
 		modelBuilder.Entity<Tag>()
 			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
 		modelBuilder.Entity<Article>()
+			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
+		modelBuilder.Entity<Folder>()
 			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
     }
 }

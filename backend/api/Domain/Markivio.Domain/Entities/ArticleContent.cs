@@ -1,18 +1,52 @@
-
-using FluentResults;
+using System.Text.RegularExpressions;
+using Markivio.Domain.Exceptions;
+using Markivio.Domain.ValueObject;
 
 namespace Markivio.Domain.Entities;
 
 public sealed class ArticleContent
 {
+    private const int TAGS_LIMIT = 20;
+    private const string REGEX_SOURCE = @"^(?:http[s]?:\/\/.)?(?:www\.)?[-a-zA-ZÀ-ÿà-ÿ0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b(?:[-a-zA-ZÀ-ÿà-ÿ0-9@:%_\+.~#?&\/\/=]*)";
+
     public string Source { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
-    public List<SoftTag> Tags { get; set; } = new List<SoftTag>();
+    public List<TagValueObject> Tags { get; set; } = new List<TagValueObject>();
     public string? Description { get; set; } = null;
-}
 
-public sealed class SoftTag
-{
-    public string Name { get; set; } = string.Empty;
-    public string Color { get; set; } = string.Empty;
+    private ArticleContent() { }
+
+    public ArticleContent(string source, string content, List<TagValueObject> tags, string? description)
+    {
+        if (string.IsNullOrEmpty(source))
+            throw new EmptyException("source cannot be empty", "EMPTY_ARTICLESOURCE");
+
+        if (!Regex.IsMatch(source, REGEX_SOURCE))
+            throw new PatternException($"{source} didn't fit with url format", "FORMAT_ARTICLE_SOURCE");
+
+        if (tags is { Count: > TAGS_LIMIT })
+            throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
+
+        Source = source;
+        Content = content;
+        Tags = tags;
+        Description = description;
+    }
+
+    public void AddTags(IReadOnlyList<TagValueObject> tags)
+    {
+        if (tags.Count + Tags.Count > 20)
+            throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
+
+        Tags.AddRange(tags);
+    }
+
+    public void RemoveTags(IReadOnlyList<TagValueObject> tags)
+    {
+		foreach(TagValueObject tag in tags) {
+			TagValueObject? removeTag = Tags.FirstOrDefault(pre => pre.Name == tag.Name);
+			if(removeTag != null)
+				Tags.Remove(removeTag);
+		}
+    }
 }

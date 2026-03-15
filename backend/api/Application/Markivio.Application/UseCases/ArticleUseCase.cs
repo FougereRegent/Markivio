@@ -4,7 +4,9 @@ using Markivio.Application.Errors;
 using Markivio.Application.Mapper;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
+using Markivio.Domain.Exceptions;
 using Markivio.Domain.Repositories;
+using Markivio.Domain.ValueObject;
 
 namespace Markivio.Application.UseCases;
 
@@ -43,22 +45,25 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is not null)
             return Result.Fail(new AlreadyExistError("This article already exist"));
 
-        article = mapper.CreateArticleToArticle(createArticle);
-        article.User = authUser.CurrentUser;
-
         if (!CheckIfTagsExits(createArticle))
             return Result.Fail(new NotFoundError("A tag doesn't exist"));
 
-        TagMapper tagMapper = new TagMapper();
-        article.ArticleContent.Tags = tagRepository.GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
-          .Select(pre => tagMapper.TagToSoftTag(pre)).ToList();
+        List<TagValueObject> tags = tagRepository
+            .GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
+            .Select(pre => pre.TagValue).ToList();
 
-        Result result = article.Validate();
-        if (result.IsFailed)
-            return Result.Merge(result);
+        try
+        {
+            article = mapper.Map(createArticle, tags);
+            article.User = authUser.CurrentUser;
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(DomainError.Create(ex));
+        }
 
         Article resultArticle = articleRepository.Save(article);
-        return mapper.ArticleToArticleInformation(resultArticle);
+        return mapper.Map(resultArticle);
     }
 
     public async ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags)
@@ -68,21 +73,24 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is null)
             return Result.Fail(new NotFoundError("Article doesn't exist"));
 
-        SoftTag[] tags = tagRepository.GetByIds(addTags.tagIds)
-            .ProjectionToSoftTag()
-            .ToArray();
+        IReadOnlyList<TagValueObject> tags = tagRepository.GetByIds(addTags.tagIds)
+            .Select(pre => pre.TagValue)
+            .ToList();
 
-        if (tags.Length != addTags.tagIds.Length)
+        if (tags.Count() != addTags.tagIds.Length)
             return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
-        article.ArticleContent.Tags.AddRange(tags);
-
-        Result resultArticleValidation = article.Validate();
-        if (resultArticleValidation.IsFailed)
-            return resultArticleValidation;
+        try
+        {
+            article.ArticleContent.AddTags(tags);
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(DomainError.Create(ex));
+        }
 
         Article res = articleRepository.Update(article);
-        return mapper.ArticleToArticleInformation(res);
+        return mapper.Map(res);
     }
 
     public async ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags)
@@ -92,26 +100,25 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is null)
             return Result.Fail(new NotFoundError("Article doesn't exist"));
 
-        SoftTag[] tags = tagRepository.GetByIds(removeTags.tagIds)
-            .ProjectionToSoftTag()
-            .ToArray();
-
-        if (tags.Length != removeTags.tagIds.Length)
-            return Result.Fail(new NotFoundError("Tags doesn't exist"));
-
-        List<SoftTag> tagsWithoutRemovedTags = article.ArticleContent.Tags
-            .Where(pre => !tags.Select(pre => pre.Name).Contains(pre.Name))
+        IReadOnlyList<TagValueObject> tags = tagRepository.GetByIds(removeTags.tagIds)
+            .Select(pre => pre.TagValue)
             .ToList();
 
-        article.ArticleContent.Tags.Clear();
-        article.ArticleContent.Tags.AddRange(tagsWithoutRemovedTags);
+        if (tags.Count != removeTags.tagIds.Length)
+            return Result.Fail(new NotFoundError("Tags doesn't exist"));
 
-        Result resultArticleValidation = article.Validate();
-        if (resultArticleValidation.IsFailed)
-            return resultArticleValidation;
+        try
+        {
+            article.ArticleContent.RemoveTags(tags);
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(DomainError.Create(ex));
+        }
+
 
         Article res = articleRepository.Update(article);
-        return mapper.ArticleToArticleInformation(res);
+        return mapper.Map(res);
     }
 
     private bool CheckIfTagsExits(CreateArticle createArticle)
@@ -119,9 +126,10 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         TagMapper tagMapper = new TagMapper();
         if (createArticle.Tags is null || createArticle.Tags is { Length: 0 })
             return true;
-        Tag[] tags = createArticle.Tags.Select(pre => tagMapper.TagCreateArticleToTag(pre))
+
+        Guid[] tags = createArticle.Tags.Select(pre => pre.Id)
           .ToArray();
 
-        return tagUseCase.TagsExist(tags);
+        return tagUseCase.TagsExist<Guid>(tags, TagExistConditionEnum.Id);
     }
 }

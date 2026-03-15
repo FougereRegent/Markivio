@@ -1,24 +1,14 @@
-using FluentResults;
-using Markivio.Domain.Errors;
-using Markivio.Extensions;
+using Markivio.Domain.ValueObject;
 
 namespace Markivio.Domain.Entities;
 
-public sealed class Tag : EntityWithTenancy, IModelValidation
+public sealed class Tag : EntityWithTenancy
 {
-    private const string REGEX_TAG_NAME = @"^[A-Za-zÀ-ÿà-ÿ\-\'’ 0-9 &#`\-_]{1,25}$";
-    private const string REGEX_TAG_COLOR = @"^#[A-Fa-f0-9]{6}$";
+	public TagValueObject TagValue {get;set;}
 
-    public string Name { get; set; } = string.Empty;
-    public string Color { get; set; } = string.Empty;
+	private Tag() {}
 
-    public Result Validate()
-    {
-        Result nameResult = Result.FailIf(RegexExt.IsNotMatch(Name, REGEX_TAG_NAME),
-            new FormatUnexpectedError(propertyName: nameof(Name)));
-        Result colorResult = Result.FailIf(RegexExt.IsNotMatch(Color, REGEX_TAG_COLOR),
-            new FormatUnexpectedError(propertyName: nameof(Color)));
-
-        return Result.Merge(nameResult, colorResult);
-    }
+	public Tag(TagValueObject tagValue) {
+		TagValue = tagValue ?? throw new ArgumentNullException(nameof(tagValue));
+	}
 }

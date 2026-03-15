@@ -24,7 +24,7 @@ public static class EndpointStatus
 
         app.MapGet("/health-check", [Authorize] () =>
         {
-            return Task.FromResult(Results.Ok(new HealtkCheckDto(EnumHealthStatus.Alive)));
+            return Task.FromResult(Results.Ok(new HealthCheckDto(EnumHealthStatus.Alive)));
         })
         .WithDisplayName("Health Check")
         .WithDescription("Get api health-check");

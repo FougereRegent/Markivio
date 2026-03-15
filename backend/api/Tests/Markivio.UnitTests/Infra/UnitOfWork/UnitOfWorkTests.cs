@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Shouldly;
 using Moq;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Markivio.Domain.Auth;
+using Markivio.Domain.Entities;
+using Markivio.Domain.ValueObject;
 
 namespace Markivio.UnitTests.Infra;
 
@@ -13,14 +17,27 @@ public class UnitOfWorkTests
     private Mock<MarkivioContext> dbContextMock;
     private Mock<IDbContextTransaction> dbContextTransactionMock;
     private Mock<DatabaseFacade> databaseFacadeMock;
+    private Mock<IAuthUser> authUserMock;
 
     public UnitOfWorkTests()
     {
-        dbContextMock = new Mock<MarkivioContext>(MockBehavior.Loose);
+        authUserMock = new Mock<IAuthUser>(MockBehavior.Loose);
+        authUserMock.SetupProperty(pre => pre.CurrentUser, CreateValidUser());
+
+        // Moq needs a real constructor; we never use EF provider behavior in these tests.
+        DbContextOptions<MarkivioContext> options = new DbContextOptionsBuilder<MarkivioContext>().Options;
+        dbContextMock = new Mock<MarkivioContext>(options, authUserMock.Object) { };
         databaseFacadeMock = new Mock<DatabaseFacade>(dbContextMock.Object);
         dbContextMock.Setup(pre => pre.Database)
           .Returns(databaseFacadeMock.Object);
         dbContextTransactionMock = new Mock<IDbContextTransaction>();
+    }
+
+    private static User CreateValidUser()
+    {
+        var identity = new IdentityValueObject("u", "John", "Doe");
+        var email = new EmailValueObject("john.doe@example.com");
+        return new User(identity, email) { Id = Guid.NewGuid(), AuthId = "auth0|test" };
     }
 
     [Fact]

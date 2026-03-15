@@ -35,7 +35,7 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
     public async Task SaveChangesAsync(CancellationToken token = default)
     {
         if (transaction is null)
-            throw new InvalidOperationException("You cannot rollback a transaction when a transaction has not opened");
+            throw new InvalidOperationException("You cannot save changes when a transaction has not opened");
 
         await dbcontext.SaveChangesAsync(token);
         await transaction.CommitAsync(token);

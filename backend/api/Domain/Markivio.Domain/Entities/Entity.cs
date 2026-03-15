@@ -1,5 +1,3 @@
-using FluentResults;
-
 namespace Markivio.Domain.Entities;
 
 public abstract class Entity
@@ -9,7 +7,11 @@ public abstract class Entity
 	public DateTimeOffset CreatedAt { get; set; }
 }
 
+public class EntityWithTenancy : Entity {
+    public User User { get; set; } = null!;
+}
+
 public interface IModelValidation
 {
-    Result Validate();
+    void Validate();
 }
