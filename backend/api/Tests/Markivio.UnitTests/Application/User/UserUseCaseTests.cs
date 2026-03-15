@@ -5,7 +5,6 @@ using Markivio.Application.Errors;
 using Markivio.Application.UseCases;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
-using Markivio.Domain.Errors;
 using Markivio.Domain.Repositories;
 using Markivio.Domain.ValueObject;
 using Moq;
@@ -131,7 +130,8 @@ public sealed class UserUseCaseTests : BaseTests
         // Assert
         result.IsFailed.ShouldBeTrue();
         result.Errors.Count.ShouldBe(1);
-        result.Errors[0].ShouldBeOfType<FormatUnexpectedError>();
+        result.Errors[0].ShouldBeOfType<DomainError>();
+        result.Errors[0].Metadata[ErrorCode.ERROR_CODE_PROPERTY_NAME].ShouldBe("FORMAT_FIRSTNAME");
         userRepositoryMock.Verify(pre => pre.Update(It.IsAny<User>()), Times.Never());
     }
 
@@ -164,4 +164,3 @@ public sealed class UserUseCaseTests : BaseTests
         userRepositoryMock.Verify(pre => pre.Update(It.IsAny<User>()), Times.Once());
     }
 }
-

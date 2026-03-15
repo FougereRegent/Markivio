@@ -28,17 +28,7 @@ public class Mutation
         CancellationToken cancellationToken = default)
     {
         FluentResults.Result<ArticleInformation> resultCreate = await articleUseCase.CreateArticle(createArticle, cancellationToken);
-        if (resultCreate.IsFailed)
-        {
-            throw new GraphQLException(
-                ErrorBuilder
-                .New()
-                .SetCode(resultCreate.Errors[0].GetType().Name)
-                .SetMessage(string.Join(Environment.NewLine, resultCreate.Errors.Select(pre => pre.Message)))
-                .Build());
-        }
-
-        return resultCreate.Value;
+        return resultCreate.ThrowIfResultIsFailed();
     }
 
     public async ValueTask<TagInformation[]> CreateTags(ITagUseCase tagUseCase,
@@ -46,48 +36,20 @@ public class Mutation
         CancellationToken cancellationToken = default)
     {
         FluentResults.Result<TagInformation[]> resultCreate = tagUseCase.CreateTag(createTags.ToArray());
-        if (resultCreate.IsFailed)
-        {
-            throw new GraphQLException(
-                ErrorBuilder
-                .New()
-                .SetCode(resultCreate.Errors[0].GetType().Name)
-                .SetMessage(string.Join(Environment.NewLine, resultCreate.Errors.Select(pre => pre.Message)))
-                .Build());
-        }
-
-        return resultCreate.Value;
+        return resultCreate.ThrowIfResultIsFailed();
     }
 
     public async ValueTask<ArticleInformation> AddTags(IArticleUseCase articleUseCase,
         AddTagsToArticle addTagsToArticle)
     {
         FluentResults.Result<ArticleInformation> resultAddTags = await articleUseCase.AddTags(addTagsToArticle);
-        if (resultAddTags.IsFailed)
-        {
-            throw new GraphQLException(
-                ErrorBuilder
-                .New()
-                .SetCode(resultAddTags.Errors[0].GetType().Name)
-                .SetMessage(string.Join(Environment.NewLine, resultAddTags.Errors.Select(pre => pre.Message)))
-                .Build());
-        }
-        return resultAddTags.Value;
+        return resultAddTags.ThrowIfResultIsFailed();
     }
     public async ValueTask<ArticleInformation> RemoveTags(IArticleUseCase articleUseCase,
         RemoveTagsToArticle removeTagsToArticle)
     {
         FluentResults.Result<ArticleInformation> resultRemoveTags = await articleUseCase.RemoveTags(removeTagsToArticle);
-        if (resultRemoveTags.IsFailed)
-        {
-            throw new GraphQLException(
-                ErrorBuilder
-                .New()
-                .SetCode(resultRemoveTags.Errors[0].GetType().Name)
-                .SetMessage(string.Join(Environment.NewLine, resultRemoveTags.Errors.Select(pre => pre.Message)))
-                .Build());
-        }
-        return resultRemoveTags.Value;
+        return resultRemoveTags.ThrowIfResultIsFailed();
     }
 
 }

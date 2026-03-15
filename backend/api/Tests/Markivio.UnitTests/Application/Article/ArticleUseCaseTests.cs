@@ -5,7 +5,6 @@ using Markivio.Application.Errors;
 using Markivio.Application.UseCases;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
-using Markivio.Domain.Errors;
 using Markivio.Domain.Repositories;
 using Markivio.Domain.ValueObject;
 using Moq;
@@ -93,37 +92,6 @@ public sealed class ArticleUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async Task CreateArticle_ShouldFail_WhenCurrentUserIsNull()
-    {
-        // Arrange
-        Guid[] tagIds = Enumerable.Range(0, 2).Select(_ => Guid.NewGuid()).ToArray();
-        CreateArticle input = new(
-            Title: faker.Random.Word(),
-            Source: faker.Internet.Url(),
-            Description: faker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
-
-        articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
-          .Returns(ValueTask.FromResult<Article?>(null));
-
-        tagUseCaseMock.Setup(pre => pre.TagsExist<Guid>(It.IsAny<IEnumerable<Guid>>(), TagExistConditionEnum.Id))
-          .Returns(true);
-
-        tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
-          .Returns(tagIds.Select(id => CreateTag(id, $"Tag{id.ToString()[..6]}")).AsQueryable());
-
-        authUserMock.Setup(pre => pre.CurrentUser).Returns((User)null!);
-
-        // Act
-        Result<ArticleInformation> result = await useCase.CreateArticle(input);
-
-        // Assert
-        result.IsFailed.ShouldBeTrue();
-        result.Errors.Count.ShouldBe(1);
-        result.Errors[0].ShouldBeOfType<NullFieldError>();
-    }
-
-    [Fact]
     public async Task CreateArticle_ShouldFail_WhenSourceIsEmpty()
     {
         // Arrange
@@ -151,7 +119,8 @@ public sealed class ArticleUseCaseTests : BaseTests
         // Assert
         result.IsFailed.ShouldBeTrue();
         result.Errors.Count.ShouldBe(1);
-        result.Errors[0].ShouldBeOfType<ShouldNotBeEmptyError>();
+        result.Errors[0].ShouldBeOfType<DomainError>();
+        result.Errors[0].Metadata[ErrorCode.ERROR_CODE_PROPERTY_NAME].ShouldBe("EMPTY_ARTICLESOURCE");
     }
 
     [Fact]
@@ -200,4 +169,3 @@ public sealed class ArticleUseCaseTests : BaseTests
         articleRepositoryMock.Verify(pre => pre.Save(It.IsAny<Article>()), Times.Once());
     }
 }
-

@@ -4,6 +4,7 @@ using Markivio.Presentation.Middleware;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Logs;
+using Markivio.Presentation.ErrorFilters;
 
 namespace Markivio.Presentation.Config;
 
@@ -15,6 +16,7 @@ public static class GraphQlConfig
         .AddAuthorization()
         .AddHttpRequestInterceptor<AuthUserInterceptor>()
         .UseField<AuthMiddleware>()
+		.AddErrorFilter<DomainErrorFilter>()
         .AddQueryType<QueryType>()
         .AddMutationType<MutationType>()
 		.AddInstrumentation()

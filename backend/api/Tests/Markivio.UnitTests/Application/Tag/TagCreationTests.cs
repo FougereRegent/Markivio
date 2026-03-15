@@ -1,9 +1,7 @@
-
 using FluentResults;
 using Markivio.Application.Dto;
 using Markivio.Application.Errors;
 using Markivio.Domain.Entities;
-using Markivio.Domain.Errors;
 using Moq;
 using Shouldly;
 
@@ -52,7 +50,7 @@ public class TagCreationTests : BaseTagTests
         //Assert
         result.IsFailed.ShouldBeTrue();
         result.Errors.Count.ShouldBe(1);
-        result.Errors[0].ShouldBeOfType<ShouldNotBeEmptyError>();
+        result.Errors[0].ShouldBeOfType<DomainError>();
         tagRepositoryMock.Verify(pre => pre.SaveInRange(It.IsAny<IEnumerable<Tag>>()), Times.Never());
     }
 
