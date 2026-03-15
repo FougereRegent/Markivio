@@ -80,16 +80,10 @@ public class UserUseCase : IUserUseCase
         if (user is null)
             return Result.Fail(new NotFoundError("Cannot found"));
 
-        user.FirstName = updateUser.FirstName;
-        user.LastName = updateUser.LastName;
-
-        Result userValidation = user.Validate();
-        if (userValidation.IsFailed)
-            return userValidation;
+		UserMapper mapper = new UserMapper();
+		mapper.ApplyUpdate(updateUser, user);
 
         User returnUser = userRepository.Update(user);
-        UserMapper userMapper = new UserMapper();
-
-        return userMapper.UserToUserInformation(returnUser);
+        return mapper.UserToUserInformation(returnUser);
     }
 }

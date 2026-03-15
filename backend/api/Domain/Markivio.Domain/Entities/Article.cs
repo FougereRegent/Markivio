@@ -15,7 +15,11 @@ public sealed class Article : EntityWithTenancy
 	private Article() {}
 
 	public Article(ArticleContent articleContent, string title) {
+		ArticleContent = articleContent ?? throw new ArgumentNullException(nameof(articleContent));
+
 		if(string.IsNullOrEmpty(title))
 			throw new EmptyException("title cannot be empty", "EMPTY_ARTICLETITLE");
+
+		Title = title;
 	}
 }

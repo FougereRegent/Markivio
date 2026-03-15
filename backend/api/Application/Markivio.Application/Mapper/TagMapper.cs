@@ -2,24 +2,35 @@
 #pragma warning disable RMG012 
 using Markivio.Application.Dto;
 using Markivio.Domain.Entities;
+using Markivio.Domain.ValueObject;
 using Riok.Mapperly.Abstractions;
 
 namespace Markivio.Application.Mapper;
 
-[Mapper(AllowNullPropertyAssignment = true)]
+[Mapper(AllowNullPropertyAssignment = true, PreferParameterlessConstructors = false)]
 public partial class TagMapper
 {
-    public partial TagInformation TagToTagInformation(Tag tag);
-    public partial Tag TagCreateArticleToTag(TagCreateArticle tag);
-    public partial Tag CreateTagToTag(CreateTag tag);
-    public partial SoftTag TagToSoftTag(Tag tag);
+	[MapNestedProperties(nameof(Tag.TagValue))]
+    public partial TagInformation MapToTagInformation(Tag tag);
+
+	[MapNestedProperties(nameof(Tag.TagValue))]
+	public partial TagSoftInformation MapToSoftInformation(Tag tag);
+
+	[MapProperty(nameof(CreateTag), "tagValue", Use = nameof(CreateTagToTagValueObject))]
+	public partial Tag Map(CreateTag createTag);
+
+	[UserMapping]
+	private static TagValueObject CreateTagToTagValueObject(CreateTag createTag) =>
+		new(createTag.Name, createTag.Color);
 }
 
 [Mapper]
 public static partial class TagMapperProjection
 {
     public static partial IQueryable<TagInformation> ProjectionToTagInformation(this IQueryable<Tag> tags);
-    public static partial IQueryable<SoftTag> ProjectionToSoftTag(this IQueryable<Tag> tags);
+
+	[MapNestedProperties(nameof(Tag.TagValue))]
+	private static partial TagInformation TagToTagInformation(Tag tag);
 }
 
 #pragma warning restore RMG020

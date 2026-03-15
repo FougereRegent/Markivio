@@ -12,6 +12,6 @@ public sealed class Tag : EntityWithTenancy
 	private Tag() {}
 
 	public Tag(TagValueObject tagValue) {
-		TagValue = tagValue;
+		TagValue = tagValue ?? throw new ArgumentNullException(nameof(tagValue));
 	}
 }

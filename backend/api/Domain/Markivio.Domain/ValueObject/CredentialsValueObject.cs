@@ -32,6 +32,8 @@ public sealed class IdentityValueObject : BaseValueObject
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        throw new NotImplementedException();
+		yield return Username;
+		yield return FirstName;
+		yield return LastName;
     }
 }

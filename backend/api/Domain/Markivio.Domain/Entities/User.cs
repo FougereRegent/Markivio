@@ -14,7 +14,7 @@ public sealed class User : Entity
 	private User() {}
 
 	public User(IdentityValueObject identityValue, EmailValueObject emailValue) {
-		Email = emailValue;
-		Identity = identityValue;
+		Identity = identityValue ?? throw new ArgumentNullException(nameof(identityValue));
+		Email = emailValue ?? throw new ArgumentNullException(nameof(emailValue));
 	}
 }

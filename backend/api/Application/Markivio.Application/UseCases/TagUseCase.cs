@@ -8,23 +8,33 @@ using Markivio.Application.Errors;
 
 namespace Markivio.Application.UseCases;
 
+public enum TagExistConditionEnum
+{
+    Id,
+    Name,
+}
+
 public interface ITagUseCase
 {
-    bool TagsExist(Tag[] tags);
+	bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum);
     Result<TagInformation[]> CreateTag(CreateTag[] creatingTags);
     IQueryable<TagInformation> GetAllTags(string tagName);
 }
 
 public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITagUseCase
 {
-    public IQueryable<TagInformation> GetAllTags(string tagName){
-		IQueryable<Tag> query = tagRepository.GetAll();
-		if(!(string.IsNullOrEmpty(tagName) && string.IsNullOrWhiteSpace(tagName))) {
-			query = query.Where(pre => pre.Name.StartsWith(tagName));
-		}
 
-		return query.ProjectionToTagInformation();
-	}
+    public IQueryable<TagInformation> GetAllTags(string tagName)
+    {
+        IQueryable<Tag> query = tagRepository.GetAll();
+
+        if (!(string.IsNullOrEmpty(tagName) && string.IsNullOrWhiteSpace(tagName)))
+        {
+            query = query.Where(pre => pre.TagValue.Name.StartsWith(tagName));
+        }
+
+        return query.ProjectionToTagInformation();
+    }
 
     public Result<TagInformation[]> CreateTag(CreateTag[] creatingTags)
     {
@@ -34,10 +44,10 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
             if (tag1 is null || tag2 is null)
                 return false;
 
-            return tag1.Name == tag2.Name;
-        }, tag => tag.Name.GetHashCode());
+            return tag1.TagValue.Name == tag2.TagValue.Name;
+        }, tag => tag.TagValue.Name.GetHashCode());
 
-        Tag[] tags = creatingTags.Select(mapper.CreateTagToTag)
+        Tag[] tags = creatingTags.Select(mapper.Map)
           .Select(pre => { pre.User = authUser.CurrentUser; return pre; })
           .ToArray();
 
@@ -46,38 +56,36 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
         if (hash.Count != tags.Length)
             return Result.Fail(new DuplicatedItemsError());
 
-        if (TagsExist(tags))
+        if (TagsExistByName(tags.Select(pre => pre.TagValue.Name).ToList()))
             return Result.Fail(new AlreadyExistError("Tag already exist"));
-
-        Result result = hash.Select(pre => pre.Validate()).Merge();
-        if (result.IsFailed)
-            return result;
 
         tagRepository.SaveInRange(hash);
 
-        return Result.Ok(hash.Select(pre => mapper.TagToTagInformation(pre)).ToArray());
+        return Result.Ok(hash.Select(pre => mapper.MapToTagInformation(pre))
+                .ToArray());
     }
 
-    public bool TagsExist(Tag[] tags)
+	public bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum) =>
+		conditionEnum switch {
+			TagExistConditionEnum.Id when typeof(T) == typeof(Guid) => TagExistByIds(values.Cast<Guid>()),
+			TagExistConditionEnum.Name when typeof(T) == typeof(string) => TagsExistByName(values.Cast<string>()),
+			_ => throw new ArgumentException()
+		};
+
+
+    private bool TagsExistByName(IEnumerable<string> tagNames)
     {
-        bool result = false;
-        EqualityComparer<Tag> comparer = EqualityComparer<Tag>.Create((t1, t2) =>
-        {
-            if (ReferenceEquals(t1, t2))
-                return true;
+        int nbTags = tagRepository.GetAll()
+           .Count(pre => tagNames.Contains(pre.TagValue.Name));
 
-            if (t1 is null || t2 is null)
-                return false;
+        return nbTags == tagNames.Count();
+    }
 
-            return t1.Id == t2.Id || t1.Name == t2.Name;
-        }, tag => tag.GetHashCode());
+    private bool TagExistByIds(IEnumerable<Guid> tagIds)
+    {
+        int nbTags = tagRepository.GetAll()
+           .Count(pre => tagIds.Contains(pre.Id));
 
-        List<Tag> dbTags = tagRepository.GetAll()
-            .ToList();
-
-        foreach (Tag tag in tags)
-            result |= dbTags.Contains(tag, comparer);
-
-        return result;
+        return nbTags == tagIds.Count();
     }
 }
