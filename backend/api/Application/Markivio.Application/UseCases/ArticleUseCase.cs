@@ -4,7 +4,6 @@ using Markivio.Application.Errors;
 using Markivio.Application.Mapper;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
-using Markivio.Domain.Errors;
 using Markivio.Domain.Exceptions;
 using Markivio.Domain.Repositories;
 using Markivio.Domain.ValueObject;
@@ -53,9 +52,6 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
             .GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
             .Select(pre => pre.TagValue).ToList();
 
-        if (authUser.CurrentUser is null)
-            return Result.Fail(new NullFieldError("User"));
-
         try
         {
             article = mapper.Map(createArticle, tags);
@@ -63,7 +59,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         }
         catch (DomainException ex)
         {
-            return Result.Fail(MapDomainException(ex));
+            return Result.Fail(DomainError.Create(ex));
         }
 
         Article resultArticle = articleRepository.Save(article);
@@ -90,7 +86,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         }
         catch (DomainException ex)
         {
-            return Result.Fail(MapDomainException(ex));
+            return Result.Fail(DomainError.Create(ex));
         }
 
         Article res = articleRepository.Update(article);
@@ -117,7 +113,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         }
         catch (DomainException ex)
         {
-            return Result.Fail(MapDomainException(ex));
+            return Result.Fail(DomainError.Create(ex));
         }
 
 
@@ -136,14 +132,4 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         return tagUseCase.TagsExist<Guid>(tags, TagExistConditionEnum.Id);
     }
-
-    private static Error MapDomainException(DomainException ex) =>
-        ex.ErrorCode switch
-        {
-            "EMPTY_ARTICLESOURCE" => new ShouldNotBeEmptyError("Source"),
-            "FORMAT_ARTICLE_SOURCE" => new FormatUnexpectedError("Source"),
-            "EMPTY_ARTICLETITLE" => new ShouldNotBeEmptyError("Title"),
-            "TAG_LIMIT_EXCEEDED" => new ExceedElementsError(20, "Tags"),
-            _ => new Error(ex.Message)
-        };
 }

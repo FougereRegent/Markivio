@@ -3,10 +3,9 @@ using Markivio.Application.Dto;
 using FluentResults;
 using Markivio.Domain.Entities;
 using Markivio.Application.Mapper;
-using Markivio.Application.Errors;
 using Markivio.Domain.Auth;
-using Markivio.Domain.Errors;
 using Markivio.Domain.Exceptions;
+using Markivio.Application.Errors;
 
 
 namespace Markivio.Application.UseCases;
@@ -89,20 +88,10 @@ public class UserUseCase : IUserUseCase
         }
         catch (DomainException ex)
         {
-            return Result.Fail(MapDomainException(ex));
+            return Result.Fail(DomainError.Create(ex));
         }
 
         User returnUser = userRepository.Update(user);
         return mapper.UserToUserInformation(returnUser);
     }
-
-    private static Error MapDomainException(DomainException ex) =>
-        ex.ErrorCode switch
-        {
-            "EMPTY_FIRSTNAME" => new ShouldNotBeEmptyError("FirstName"),
-            "EMPTY_LASTNAME" => new ShouldNotBeEmptyError("LastName"),
-            "FORMAT_FIRSTNAME" => new FormatUnexpectedError("FirstName"),
-            "FORMAT_LASTNAME" => new FormatUnexpectedError("LastName"),
-            _ => new Error(ex.Message)
-        };
 }
