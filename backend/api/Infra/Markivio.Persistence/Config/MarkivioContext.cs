@@ -23,7 +23,7 @@ public class MarkivioContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-		optionsBuilder.AddInterceptors(new DateTimeSaveUpdateIntercpetor());
+		optionsBuilder.AddInterceptors(new DateTimeSaveUpdateInterpeptor());
         base.OnConfiguring(optionsBuilder);
     }
 

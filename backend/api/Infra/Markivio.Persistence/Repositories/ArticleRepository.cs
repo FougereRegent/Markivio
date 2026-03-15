@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markivio.Persistence.Repositories;
 
-public class ArticleRepository(MarkivioContext context) : GenericRepositpory<Article>(context), IArticleRepository
+public class ArticleRepository(MarkivioContext context) : GenericRepository<Article>(context), IArticleRepository
 {
     public async ValueTask<Article?> GetByTitle(string title)
     {

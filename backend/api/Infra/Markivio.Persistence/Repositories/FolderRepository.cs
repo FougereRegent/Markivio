@@ -5,6 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markivio.Persistence.Repositories;
 
-public class FolderRepository(MarkivioContext context) : GenericRepositpory<Folder>(context), IFolderRepository
+public class FolderRepository(MarkivioContext context) : GenericRepository<Folder>(context), IFolderRepository
 {
 }
