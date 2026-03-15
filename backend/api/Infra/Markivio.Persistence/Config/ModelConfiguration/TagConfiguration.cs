@@ -26,8 +26,5 @@ internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
           .WithMany()
           .HasForeignKey(nameFkUser)
           .IsRequired();
-
-        builder
-          .HasQueryFilter(pre => pre.User.Id == EF.Property<Guid>(pre, "CurrentUserId"));
     }
 }

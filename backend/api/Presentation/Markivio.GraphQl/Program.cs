@@ -7,17 +7,23 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 
+string connectionString =
+    builder.Configuration.GetConnectionString("markivio")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration.GetValue<string>("MARKIVIO_CONNECTION_STRING")
+    ?? throw new ArgumentException("Missing connection string. Provide ConnectionStrings__markivio or MARKIVIO_CONNECTION_STRING.");
+
 EnvConfig config = new EnvConfig(
-		Authority: builder.Configuration.GetValue<string>("MARKIVIO_AUTHORITY") ?? throw new ArgumentException(),
-		Audience: builder.Configuration.GetValue<string>("MARKIVIO_AUDIENCE") ?? throw new ArgumentException(),
-		ConnectionString: builder.Configuration.GetConnectionString("markivio") ?? throw new ArgumentException()
-		);
+        Authority: builder.Configuration.GetValue<string>("MARKIVIO_AUTHORITY") ?? throw new ArgumentException("Missing MARKIVIO_AUTHORITY"),
+        Audience: builder.Configuration.GetValue<string>("MARKIVIO_AUDIENCE") ?? throw new ArgumentException("Missing MARKIVIO_AUDIENCE"),
+        ConnectionString: connectionString,
+		CorsOrigin: builder.Configuration.GetValue<string>("MARKIVIO_CORS_ORIGINS") ?? throw new ArgumentException("Missing MARKIVIO_CORS_ORIGINS")
+        );
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-
 builder.Services.AddOpenApi();
-builder.Services.AddAuth0(config);
+builder.Services.AddAuth0(config, !builder.Environment.IsDevelopment());
 builder.ConfigDI(config);
 builder.ConfigGraphQl();
 
@@ -49,6 +55,11 @@ app.UseEndpoints(endpoints => {
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
-	await db.Database.MigrateAsync();
+    bool runMigrations =
+        app.Environment.IsDevelopment()
+        || builder.Configuration.GetValue<bool>("MARKIVIO_RUN_MIGRATIONS");
+
+    if (runMigrations)
+        await db.Database.MigrateAsync();
 }
 app.Run();

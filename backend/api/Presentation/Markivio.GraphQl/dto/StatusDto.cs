@@ -4,11 +4,11 @@ internal enum EnumHealthStatus
 {
     Alive,
     Failed,
-    Unknow,
+    Unknown,
 }
 
 
-internal record HealtkCheckDto(
+internal record HealthCheckDto(
     EnumHealthStatus Status
     );
 
@@ -20,4 +20,3 @@ internal record VersionDto(
 internal record DefaultMessageDto(
     string Message
     );
-

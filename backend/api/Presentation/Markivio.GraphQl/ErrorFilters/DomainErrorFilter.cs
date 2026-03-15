@@ -22,7 +22,7 @@ public class DomainErrorFilter : IErrorFilter
 				.Build();
 		}
 		if(error.Exception is not null) {
-			_logger.LogError("Unhandle error : {error}, traceId : {traceId}", error.Exception.Message, traceId);
+			_logger.LogError("Unhandled error : {error}, traceId : {traceId}", error.Exception.Message, traceId);
 		}
 		return error;
     }

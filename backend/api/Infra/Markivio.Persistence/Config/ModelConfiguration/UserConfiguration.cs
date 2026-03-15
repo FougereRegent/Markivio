@@ -23,9 +23,6 @@ internal class UserDbConfiguration : IEntityTypeConfiguration<User>
             buildAction.Property(pre => pre.FirstName)
             .HasMaxLength(128);
             buildAction
-              .Property(pre => pre.FirstName)
-              .HasMaxLength(128);
-            buildAction
               .Property(pre => pre.Username)
               .HasMaxLength(128);
             buildAction

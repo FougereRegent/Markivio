@@ -13,7 +13,7 @@ namespace Markivio.Presentation.Config;
 
 public static class ConfigServiceInjection {
 	public static WebApplicationBuilder ConfigDI(this WebApplicationBuilder builder, EnvConfig config) {
-		builder.ConfigInfraServices()
+		builder.ConfigInfraServices(config.CorsOrigin)
 			.ConfigAuth()
 			.ConfigDB(config)
 			.ConfigRepository()
@@ -49,12 +49,19 @@ public static class ConfigServiceInjection {
 		return builder;
 	}
 
-	private static WebApplicationBuilder ConfigInfraServices(this WebApplicationBuilder builder) {
+	private static WebApplicationBuilder ConfigInfraServices(this WebApplicationBuilder builder, string corsOrigins) {
+		// In dev we keep a permissive policy; outside dev we expect explicit origins.
+		string[] origins = corsOrigins.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
 		builder.Services.AddCors(options => {
-				options.AddPolicy("AllowAllOrigins", builder => {
-						builder.AllowAnyOrigin()
-						.AllowAnyHeader()
-						.AllowAnyMethod();
+				options.AddPolicy("AllowAllOrigins", policyBuilder => {
+						if (builder.Environment.IsDevelopment()) {
+							policyBuilder.AllowAnyOrigin();
+						} else if (origins.Length > 0) {
+							policyBuilder.WithOrigins(origins);
+						}
+						policyBuilder.AllowAnyHeader()
+							.AllowAnyMethod();
 						});
 				})
 		.AddMemoryCache()

@@ -5,9 +5,9 @@ using Markivio.Domain.Entities;
 
 namespace Markivio.Persistence;
 
-public class DateTimeSaveUpdateInterpeptor : SaveChangesInterceptor
+public class DateTimeSaveUpdateInterceptor : SaveChangesInterceptor
 {
-    public DateTimeSaveUpdateInterpeptor()
+    public DateTimeSaveUpdateInterceptor()
     {
     }
 
