@@ -35,6 +35,8 @@ public class MarkivioContext : DbContext
 			.Configure(modelBuilder.Entity<Folder>());
 		new UserDbConfiguration()
 			.Configure(modelBuilder.Entity<User>());
+		new TagDbConfiguration()
+			.Configure(modelBuilder.Entity<Tag>());
 
 		modelBuilder.Entity<Tag>()
 			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);

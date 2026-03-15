@@ -6,8 +6,10 @@ namespace Markivio.Domain.ValueObject;
 
 public sealed class TagValueObject : BaseValueObject {
 
-	public string Name {get;set;} = string.Empty;
-	public string Color {get;set;} = string.Empty;
+	public string Name {get;set;}
+	public string Color {get;set;}
+
+	private TagValueObject() {}
 
 	public TagValueObject(string name, string color) {
 		if(string.IsNullOrEmpty(name))

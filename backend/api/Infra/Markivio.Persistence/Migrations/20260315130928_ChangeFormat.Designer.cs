@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Markivio.Persistence.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    partial class MarkivioContextModelSnapshot : ModelSnapshot
+    [Migration("20260315130928_ChangeFormat")]
+    partial class ChangeFormat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,15 +56,15 @@ namespace Markivio.Persistence.Migrations
                         .HasColumnName("userId");
 
                     b.HasKey("Id")
-                        .HasName("pK_articles");
+                        .HasName("pK_article");
 
                     b.HasIndex("FolderId")
-                        .HasDatabaseName("iX_articles_folderId");
+                        .HasDatabaseName("iX_article_folderId");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("iX_articles_userId");
+                        .HasDatabaseName("iX_article_userId");
 
-                    b.ToTable("articles", (string)null);
+                    b.ToTable("article", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Folder", b =>
@@ -90,12 +93,12 @@ namespace Markivio.Persistence.Migrations
                         .HasColumnName("userId");
 
                     b.HasKey("Id")
-                        .HasName("pK_folders");
+                        .HasName("pK_folder");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("iX_folders_userId");
+                        .HasDatabaseName("iX_folder_userId");
 
-                    b.ToTable("folders", (string)null);
+                    b.ToTable("folder", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Tag", b =>
@@ -133,12 +136,12 @@ namespace Markivio.Persistence.Migrations
                         });
 
                     b.HasKey("Id")
-                        .HasName("pK_tags");
+                        .HasName("pK_tag");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("iX_tags_userId");
+                        .HasDatabaseName("iX_tag_userId");
 
-                    b.ToTable("tags", (string)null);
+                    b.ToTable("tag", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.User", b =>
@@ -195,12 +198,12 @@ namespace Markivio.Persistence.Migrations
                         });
 
                     b.HasKey("Id")
-                        .HasName("pK_users");
+                        .HasName("pK_user");
 
                     b.HasIndex("AuthId")
-                        .HasDatabaseName("iX_users_authId");
+                        .HasDatabaseName("iX_user_authId");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("user", (string)null);
                 });
 
             modelBuilder.Entity("Markivio.Domain.Entities.Article", b =>
@@ -208,14 +211,14 @@ namespace Markivio.Persistence.Migrations
                     b.HasOne("Markivio.Domain.Entities.Folder", "Folder")
                         .WithMany("Articles")
                         .HasForeignKey("FolderId")
-                        .HasConstraintName("fK_articles_folder_folderId");
+                        .HasConstraintName("fK_article_folder_folderId");
 
                     b.HasOne("Markivio.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fK_articles_user_userId");
+                        .HasConstraintName("fK_article_user_userId");
 
                     b.OwnsOne("Markivio.Domain.Entities.ArticleContent", "ArticleContent", b1 =>
                         {
@@ -231,7 +234,7 @@ namespace Markivio.Persistence.Migrations
 
                             b1.HasKey("ArticleId");
 
-                            b1.ToTable("articles");
+                            b1.ToTable("article");
 
                             b1
                                 .ToJson("articleContent")
@@ -239,7 +242,7 @@ namespace Markivio.Persistence.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("ArticleId")
-                                .HasConstraintName("fK_articles_articles_id");
+                                .HasConstraintName("fK_article_article_id");
 
                             b1.OwnsMany("Markivio.Domain.ValueObject.TagValueObject", "Tags", b2 =>
                                 {
@@ -255,13 +258,13 @@ namespace Markivio.Persistence.Migrations
                                         .IsRequired();
 
                                     b2.HasKey("ArticleContentArticleId", "__synthesizedOrdinal")
-                                        .HasName("pK_articles");
+                                        .HasName("pK_article");
 
-                                    b2.ToTable("articles");
+                                    b2.ToTable("article");
 
                                     b2.WithOwner()
                                         .HasForeignKey("ArticleContentArticleId")
-                                        .HasConstraintName("fK_articles_articles_ArticleContentArticleId");
+                                        .HasConstraintName("fK_article_article_ArticleContentArticleId");
                                 });
 
                             b1.Navigation("Tags");
@@ -282,7 +285,7 @@ namespace Markivio.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fK_folders_user_userId");
+                        .HasConstraintName("fK_folder_user_userId");
 
                     b.Navigation("User");
                 });
@@ -294,7 +297,7 @@ namespace Markivio.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fK_tags_users_userId");
+                        .HasConstraintName("fK_tag_user_userId");
 
                     b.Navigation("User");
                 });

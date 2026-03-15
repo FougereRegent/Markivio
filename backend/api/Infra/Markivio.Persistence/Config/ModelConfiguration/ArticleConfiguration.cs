@@ -8,6 +8,7 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
 {
     public void Configure(EntityTypeBuilder<Article> builder)
     {
+		builder.ToTable("articles");
         builder
           .HasKey(pre => pre.Id);
 

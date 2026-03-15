@@ -7,9 +7,11 @@ public sealed class IdentityValueObject : BaseValueObject
 {
     private const string REGEX_FIRSTNAME_AND_LASTNAME = @"^[A-Za-zÀ-ÿà-ÿ\-\'’]+(?:\s[\.\'’\,A-Za-zÀ-ÿà-ÿ\-]+)*$";
 
-	public string Username {get; init;} = string.Empty;
-	public string LastName {get; init;} = string.Empty;
-	public string FirstName {get; init;} = string.Empty;
+	public string Username {get; set;} = string.Empty;
+	public string LastName {get; set;} = string.Empty;
+	public string FirstName {get; set;} = string.Empty;
+
+	private IdentityValueObject() {}
 
     public IdentityValueObject(string userName, string firstName, string lastName)
     {
