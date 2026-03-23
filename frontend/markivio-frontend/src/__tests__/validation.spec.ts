@@ -63,7 +63,7 @@ describe('Validations', () => {
       errorMessage: 'error message',
     });
 
-    expect(validation._errors[0].propertyName).eq('testField');
+    expect(validation._errors[0]?.propertyName).eq('testField');
   });
 });
 

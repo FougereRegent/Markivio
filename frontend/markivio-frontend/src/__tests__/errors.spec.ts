@@ -29,8 +29,8 @@ describe('mapApolloError', () => {
     const result = mapApolloError(error);
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.network);
-    expect(result[0].message).eq('Network error, please check your connection');
+    expect(result[0]!.type).eq(ErrType.network);
+    expect(result[0]!.message).eq('Network error, please check your connection');
   });
 
   it('Should map graphQLErrors to unknown when extensions code is a string', () => {
@@ -43,7 +43,7 @@ describe('mapApolloError', () => {
     const result = mapApolloError(error);
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.unknown);
+    expect(result[0]!.type).eq(ErrType.unknown);
   });
 
   it('Should map multiple graphQLErrors', () => {
@@ -57,8 +57,8 @@ describe('mapApolloError', () => {
     const result = mapApolloError(error);
 
     expect(result).toHaveLength(2);
-    expect(result[0].type).eq(ErrType.unknown);
-    expect(result[1].type).eq(ErrType.unknown);
+    expect(result[0]!.type).eq(ErrType.unknown);
+    expect(result[1]!.type).eq(ErrType.unknown);
   });
 
   it('Should prioritize networkError over graphQLErrors', () => {
@@ -72,28 +72,28 @@ describe('mapApolloError', () => {
     const result = mapApolloError(error);
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.network);
+    expect(result[0]!.type).eq(ErrType.network);
   });
 
   it('Should return unknown error for standard Error', () => {
     const result = mapApolloError(new Error('Something broke'));
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.unknown);
-    expect(result[0].message).eq('An unexpected error occurred');
+    expect(result[0]!.type).eq(ErrType.unknown);
+    expect(result[0]!.message).eq('An unexpected error occurred');
   });
 
   it('Should return unknown error for non-Error values', () => {
     const result = mapApolloError('string error');
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.unknown);
+    expect(result[0]!.type).eq(ErrType.unknown);
   });
 
   it('Should return unknown error for null', () => {
     const result = mapApolloError(null);
 
     expect(result).toHaveLength(1);
-    expect(result[0].type).eq(ErrType.unknown);
+    expect(result[0]!.type).eq(ErrType.unknown);
   });
 });

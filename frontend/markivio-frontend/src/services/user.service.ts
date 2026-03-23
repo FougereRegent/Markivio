@@ -51,12 +51,10 @@ export function updateUser(user: UserInformation) {
         }),
       ).pipe(
         map((response) => {
-          if (response.errors) {
+          if (response.error) {
             return Result.error<UpdateUserError>({
               kind: 'api',
-              errors: response.errors.map((e) =>
-                mapGraphqlError(e.extensions?.code as string),
-              ),
+              errors: []
             });
           }
           return Result.ok({
