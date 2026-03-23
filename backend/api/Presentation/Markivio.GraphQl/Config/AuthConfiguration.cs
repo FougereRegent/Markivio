@@ -13,8 +13,8 @@ public static class AuthConfiguration
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
-            options.Authority = config.Authority;
-            options.Audience = config.Audience;
+            options.Authority = config.MARKIVIO_AUTHORITY;
+            options.Audience = config.MARKIVIO_AUDIENCE;
             options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
             {
                 ValidateAudience = validateAudience,

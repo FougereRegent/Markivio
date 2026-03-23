@@ -1,9 +1,9 @@
 namespace Markivio.Presentation.Dto;
 
-public record EnvConfig(
-    string Authority,
-    string Audience,
-    string ConnectionString,
-	string CorsOrigin
-);
+public sealed class EnvConfig {
+    public string MARKIVIO_AUTHORITY {get;set;} = string.Empty;
+    public string MARKIVIO_AUDIENCE {get;set;} = string.Empty;
+    public string CONNECTION_STRING {get;set;} = string.Empty;
+	public string MARKIVIO_CORS_ORIGIN {get;set;} = string.Empty;
+}
 

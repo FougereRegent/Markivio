@@ -13,7 +13,7 @@ namespace Markivio.Presentation.Config;
 
 public static class ConfigServiceInjection {
 	public static WebApplicationBuilder ConfigDI(this WebApplicationBuilder builder, EnvConfig config) {
-		builder.ConfigInfraServices(config.CorsOrigin)
+		builder.ConfigInfraServices(config.MARKIVIO_CORS_ORIGIN)
 			.ConfigAuth()
 			.ConfigDB(config)
 			.ConfigRepository()
@@ -23,7 +23,7 @@ public static class ConfigServiceInjection {
 
 	private static WebApplicationBuilder ConfigDB(this WebApplicationBuilder builder, EnvConfig config) {
 		builder.Services.AddDbContext<MarkivioContext>(options => {
-            options.UseNpgsql(config.ConnectionString)
+            options.UseNpgsql(config.CONNECTION_STRING)
                           .UseCamelCaseNamingConvention();
 				});
 		return builder;

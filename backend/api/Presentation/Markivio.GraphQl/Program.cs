@@ -13,15 +13,12 @@ string connectionString =
     ?? builder.Configuration.GetValue<string>("MARKIVIO_CONNECTION_STRING")
     ?? throw new ArgumentException("Missing connection string. Provide ConnectionStrings__markivio or MARKIVIO_CONNECTION_STRING.");
 
-EnvConfig config = new EnvConfig(
-        Authority: builder.Configuration.GetValue<string>("MARKIVIO_AUTHORITY") ?? throw new ArgumentException("Missing MARKIVIO_AUTHORITY"),
-        Audience: builder.Configuration.GetValue<string>("MARKIVIO_AUDIENCE") ?? throw new ArgumentException("Missing MARKIVIO_AUDIENCE"),
-        ConnectionString: connectionString,
-		CorsOrigin: builder.Configuration.GetValue<string>("MARKIVIO_CORS_ORIGINS") ?? throw new ArgumentException("Missing MARKIVIO_CORS_ORIGINS")
-        );
 
+EnvConfig config = new EnvConfig();
+config.CONNECTION_STRING = connectionString;
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Configuration.Bind(config);
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config, !builder.Environment.IsDevelopment());
 builder.ConfigDI(config);

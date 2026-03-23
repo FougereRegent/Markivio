@@ -95,3 +95,4 @@ __screenshots__/
 /backend/api/Infra/Markivio.Persistence/bin\Debug/net10.0
 /backend/api/Infra/Markivio.Persistence/bin\Debug/net10.0
 /backend/api/Infra/Markivio.Persistence/bin\Debug/net10.0
+/backend/api/Presentation/Markivio.Aspire/appsettings.Development.json
