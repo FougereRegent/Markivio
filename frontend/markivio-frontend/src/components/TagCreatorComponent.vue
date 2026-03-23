@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useZodValidation } from '@/composables/zod.composable';
 import { type Tag, TagSchema } from '@/domain/tag.models';
-import { CreateTag } from '@/services/tags.service';
 import { InputText } from 'primevue';
 import { computed, ref, toValue, useTemplateRef } from 'vue';
 const popoverRef = useTemplateRef("popover");
@@ -21,17 +20,6 @@ const tagColor = computed({
 
 const { validate, errors, isValid } = useZodValidation(TagSchema, tag)
 
-const submit = () => {
-  if (!validate()) {
-    return;
-  }
-  CreateTag(toValue(tag))
-    .subscribe(data => {
-      if (!data.isResult)
-        return
-      popoverRef.value?.hide();
-    });
-};
 </script>
 <template>
   <Button icon="ri-add-large-line" variant="text" class="text-neutral-700"
@@ -48,7 +36,7 @@ const submit = () => {
         </div>
         <ColorPicker v-model="tagColor" inputId="cp-hex" format="hex" class="self-end ml-2 mb-1.5" />
       </div>
-      <Button label="Create" class="mt-2" @click="submit" />
+      <Button label="Create" class="mt-2" @click="() => {}" />
     </form>
   </Popover>
 </template>

@@ -5,8 +5,6 @@ import { computed, onUnmounted, ref, toValue, watch } from 'vue';
 import { type Article, ArticleSchema } from '@/domain/article.models';
 import { type Tag } from '@/domain/tag.models';
 import { useZodValidation } from '@/composables/zod.composable';
-import { getTags } from '@/services/tags.service';
-import { createArticle } from '@/services/article.service';
 import { CONST } from '@/config/constante.config';
 import TagCreatorComponent from './TagCreatorComponent.vue';
 
@@ -29,16 +27,6 @@ const isSubmitting = ref(false);
 const tagName = ref("");
 const refSuggestion = ref([] as Tag[]);
 
-const { subject, observable } = getTags();
-
-const subscribe = observable.subscribe((page) => {
-  refSuggestion.value = page.data;
-});
-
-const search = () => {
-  subject.next({ skip: 0, take: 15, tagName:  toValue(tagName)});
-};
-
 const selectedItems = (event: AutoCompleteOptionSelectEvent) => {
   const selectedElement = event.value as Tag;
   article.value.tags.push(selectedElement);
@@ -47,34 +35,6 @@ const selectedItems = (event: AutoCompleteOptionSelectEvent) => {
 
 const removeChip = (tag: Tag) => {
   article.value.tags = article.value.tags.filter((item) => item != tag);
-};
-
-const validateAndSend = () => {
-  if (!validate()) return;
-
-  isSubmitting.value = true;
-  createArticle(toValue(article)).subscribe((result) => {
-    isSubmitting.value = false;
-    if (result.ok) {
-      drawer.close();
-      toast.add({
-        severity: 'success',
-        summary: 'Article created',
-        life: CONST.toastTime,
-        group: 'tl',
-      });
-    } else {
-      for (const err of result.error) {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err.message,
-          life: CONST.toastTime,
-          group: 'tl',
-        });
-      }
-    }
-  });
 };
 
 watch(
@@ -94,9 +54,6 @@ watch(
   { immediate: true, deep: true },
 );
 
-onUnmounted(() => {
-  subscribe.unsubscribe();
-});
 </script>
 
 <template>
@@ -139,13 +96,16 @@ onUnmounted(() => {
               </template>
             </div>
             <div class="flex flex-row gap-1 justify-center">
-              <AutoComplete v-model="tagName" class="my-1 flex-5" fluid id="tags" placeholder="Ajout tag ..." @complete="search"
+              <AutoComplete v-model="tagName" class="my-1 flex-5" fluid id="tags" placeholder="Ajout
+                                                                                  tag ..."
+                                                                                  @complete="() =>
+                                                                                  {}"
                 optionLabel="name" @option-select="selectedItems" :suggestions="refSuggestion" />
               <TagCreatorComponent />
             </div>
           </div>
           <div>
-            <Button @click="validateAndSend" :disabled="isSubmitting" :loading="isSubmitting">
+            <Button @click="() => {}" :disabled="isSubmitting" :loading="isSubmitting">
               Submit
             </Button>
           </div>

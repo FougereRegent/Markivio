@@ -3,7 +3,6 @@ import InputText from 'primevue/inputtext';
 import { FloatLabel, Button } from 'primevue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { UserInformation } from '@/domain/user.models';
-import { getMe, updateUser } from '@/services/user.service';
 import { concatMap, debounceTime, Subject, tap, type Subscription } from 'rxjs';
 import { CONST } from '@/config/constante.config';
 import { useLoaderStore } from '@/stores/loader-store';
@@ -30,73 +29,6 @@ const fieldValidationHandlers: Record<string, (state: boolean) => void> = {
   lastName: (state: boolean) => (invalidField.value.invalidLastNameField = state),
 };
 
-let subscribe: Subscription;
-let clickSubscribe: Subscription;
-
-onMounted(() => {
-  loadingStore.start();
-  subscribe = getMe().subscribe({
-    next: (src) => {
-      loadingStore.stop();
-      user.value = src;
-    },
-    error: (err) => {
-      console.error(err);
-      loadingStore.stop();
-    },
-  });
-
-  clickSubscribe = savedClick
-    .pipe(
-      tap(() => {
-        loadingStore.start();
-        isSubmitting.value = true;
-      }),
-      debounceTime(CONST.debounceTime.buttonTime),
-      concatMap(() => updateUser(user.value)),
-    )
-    .subscribe((result) => {
-      isSubmitting.value = false;
-
-      if (!result.ok) {
-        const error = result.error;
-        if (error.kind === 'validation') {
-          for (const issue of error.issues) {
-            const fieldName = issue.path?.[0] as string;
-            fieldValidationHandlers[fieldName]?.call(null, true);
-          }
-        } else {
-          for (const err of error.errors) {
-            toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: err.message,
-              life: CONST.toastTime,
-              group: 'tr',
-            });
-          }
-        }
-        loadingStore.stop();
-        return;
-      }
-
-      fieldValidationHandlers['firstName']?.call(null, false);
-      fieldValidationHandlers['lastName']?.call(null, false);
-      user.value = result.value ?? user.value;
-      loadingStore.stop();
-      toast.add({
-        severity: 'success',
-        summary: 'Profile updated',
-        life: CONST.toastTime,
-        group: 'tr',
-      });
-    });
-});
-
-onUnmounted(() => {
-  subscribe?.unsubscribe();
-  clickSubscribe?.unsubscribe();
-});
 </script>
 
 <template>

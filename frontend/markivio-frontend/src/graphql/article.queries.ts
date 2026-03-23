@@ -1,4 +1,4 @@
-import { gql, type TypedDocumentNode } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@urql/vue";
 
 export type GetArticlesInformationQuery = {
     articles: {

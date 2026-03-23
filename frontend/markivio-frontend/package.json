@@ -8,23 +8,22 @@
   },
   "scripts": {
     "dev": "vite",
-	"dev:custom": "vite --port 5173 --host 0.0.0.0",
+    "dev:custom": "vite --port 5173 --host 0.0.0.0",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write src/",
-    "codegen": "graphql-codegen"
+    "format": "prettier --write src/"
   },
   "dependencies": {
-    "@apollo/client": "^4.0.9",
     "@auth0/auth0-vue": "^2.4.0",
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/vite": "^4.1.17",
+    "@urql/vue": "^2.0.0",
     "@vueuse/core": "^14.1.0",
-    "graphql": "^16.12.0",
+    "graphql": "^16.13.1",
     "pinia": "^3.0.4",
     "primevue": "^4.4.1",
     "remixicon": "^4.7.0",
