@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useCreateTags } from '@/composables/tag.graphql';
 import { useZodValidation } from '@/composables/zod.composable';
 import { type Tag, TagSchema } from '@/domain/tag.models';
 import { InputText } from 'primevue';
@@ -18,7 +19,15 @@ const tagColor = computed({
   }
 });
 
-const { validate, errors, isValid } = useZodValidation(TagSchema, tag)
+const { createTags } = useCreateTags(tag);
+const { validate, errors, isValid } = useZodValidation(TagSchema, tag);
+
+async function submit() {
+  debugger;
+  if(validate()) {
+    await createTags();
+  }
+}
 
 </script>
 <template>
@@ -36,7 +45,7 @@ const { validate, errors, isValid } = useZodValidation(TagSchema, tag)
         </div>
         <ColorPicker v-model="tagColor" inputId="cp-hex" format="hex" class="self-end ml-2 mb-1.5" />
       </div>
-      <Button label="Create" class="mt-2" @click="() => {}" />
+      <Button label="Create" class="mt-2" @click="submit" />
     </form>
   </Popover>
 </template>
