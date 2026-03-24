@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { Drawer, IconField, Textarea, type AutoCompleteOptionSelectEvent, useToast } from 'primevue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
-import { computed, onUnmounted, ref, toValue, watch } from 'vue';
+import { computed, ref, toValue, watch } from 'vue';
 import { type Article, ArticleSchema } from '@/domain/article.models';
 import { type Tag } from '@/domain/tag.models';
 import { useZodValidation } from '@/composables/zod.composable';
-import { CONST } from '@/config/constante.config';
 import TagCreatorComponent from './TagCreatorComponent.vue';
-
-const toast = useToast();
+import { useCreateArticle } from '@/composables/article.graphql';
 
 const article = ref<Article>({
   id: null,
@@ -19,23 +17,28 @@ const article = ref<Article>({
 });
 
 const { validate, errors } = useZodValidation(ArticleSchema, article);
+const { createArticle, fetching, error } = useCreateArticle(article);
 
 const titleHasError = computed(() => errors.value?.title != undefined);
 const sourceHasError = computed(() => errors.value?.source != undefined);
 const drawer = useAddEditDrawer();
-const isSubmitting = ref(false);
 const tagName = ref("");
 const refSuggestion = ref([] as Tag[]);
 
-const selectedItems = (event: AutoCompleteOptionSelectEvent) => {
+function selectedItems(event: AutoCompleteOptionSelectEvent) {
   const selectedElement = event.value as Tag;
   article.value.tags.push(selectedElement);
   tagName.value = "";
-};
+}
 
-const removeChip = (tag: Tag) => {
+function removeChip(tag: Tag) {
   article.value.tags = article.value.tags.filter((item) => item != tag);
-};
+}
+
+async function submit() {
+  if (validate())
+    await createArticle();
+}
 
 watch(
   () => drawer.drawerState,
@@ -97,15 +100,13 @@ watch(
             </div>
             <div class="flex flex-row gap-1 justify-center">
               <AutoComplete v-model="tagName" class="my-1 flex-5" fluid id="tags" placeholder="Ajout
-                                                                                  tag ..."
-                                                                                  @complete="() =>
-                                                                                  {}"
-                optionLabel="name" @option-select="selectedItems" :suggestions="refSuggestion" />
+                                                                                  tag ..." @complete="() => { }" optionLabel="name"
+                @option-select="selectedItems" :suggestions="refSuggestion" />
               <TagCreatorComponent />
             </div>
           </div>
           <div>
-            <Button @click="() => {}" :disabled="isSubmitting" :loading="isSubmitting">
+            <Button @click="submit" :disabled="fetching" :loading="fetching">
               Submit
             </Button>
           </div>
