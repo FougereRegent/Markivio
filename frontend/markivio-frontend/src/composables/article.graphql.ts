@@ -15,7 +15,7 @@ export function useGetArticles(offset: Ref<number>, limit: number) {
     id: pre.id,
     title: pre.title,
     description: pre.description,
-    tags: [],
+    tags: pre.tags.map(pre => ({color: pre.color, label: pre.name})),
   } as ArticleProps)));
 
   return { articles, error, fetching, hasNext, executeQuery };

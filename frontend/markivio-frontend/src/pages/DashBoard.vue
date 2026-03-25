@@ -38,7 +38,6 @@ watch(
   () => drawer.drawerState,
   (newState, oldState) => {
     if(!newState && oldState) {
-      debugger;
       articlesProps.value = [];
       reset();
       offset.value = 0;

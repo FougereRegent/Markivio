@@ -3,13 +3,13 @@ import { AddTags, GetAllTags } from "@/graphql/tags.queries";
 import { useMutation, useQuery } from "@urql/vue";
 import { computed, type Ref } from "vue";
 
-export function useGetAllTags(limit: number, offset: Ref<number>, tagName: Ref<string>) {
+export function useGetAllTags(tagName: Ref<string | null>) {
   const { data, fetching, error, executeQuery} = useQuery({
     query: GetAllTags,
     variables: computed(() => ({
-      skip: offset.value,
-      take: limit,
-      tagName: tagName.value
+      skip: 0,
+      take: 100,
+      tagName: tagName.value ?? ""
     }))
   });
 
