@@ -56,7 +56,9 @@ public class QueryType : ObjectType<Query>
               RequirePagingBoundaries = true,
               AllowBackwardPagination = false,
               DefaultPageSize = 50,
-          });
+          })
+		.UseFiltering()
+		.UseSorting();
 
         descriptor
 	        .Field("tags")

@@ -19,6 +19,8 @@ public static class GraphQlConfig
 		.AddErrorFilter<DomainErrorFilter>()
         .AddQueryType<QueryType>()
         .AddMutationType<MutationType>()
+		.AddFiltering()
+		.AddSorting()
 		.AddInstrumentation()
 #if DEBUG
         .ModifyRequestOptions(options =>
