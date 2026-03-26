@@ -8,6 +8,8 @@ import './assets/style.css';
 import { createPinia } from 'pinia';
 import * as z from 'zod';
 import { ToastService } from 'primevue';
+import { httpClient } from './config/urql.config';
+import urql from '@urql/vue';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -39,4 +41,6 @@ app.use(router)
         darkModeSelector: '.app-dark'
       }
     }
-  }).mount('#app')
+  })
+  .use(urql, httpClient)
+  .mount('#app')

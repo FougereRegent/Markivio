@@ -3,7 +3,7 @@ import HeaderComponent from '@/components/HeaderComponent.vue';
 import { useAuthStore } from '@/stores/auth-store';
 import NavBarComponent from '@/components/NavBarComponent.vue';
 import { useLoaderStore } from '@/stores/loader-store';
-import { onMounted, watch } from 'vue';
+import { watch } from 'vue';
 
 const authStore = useAuthStore();
 const loadingStore = useLoaderStore();
@@ -16,10 +16,6 @@ watch(
   },
   { immediate: true },
 );
-
-onMounted(() => {
-  authStore.init();
-});
 </script>
 
 <template>

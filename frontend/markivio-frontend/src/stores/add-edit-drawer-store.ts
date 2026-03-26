@@ -11,7 +11,7 @@ export const useAddEditDrawer = defineStore('add-edit-drawer', () => {
   const drawerState = ref(false);
   const drawerTitle = ref("");
 
-  function open(isEdit: boolean) {
+  function open(isEdit: boolean = false) {
     drawerTitle.value =  isEdit ? "Edit" : "Create";
     drawerState.value = true;
   }

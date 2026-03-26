@@ -84,7 +84,8 @@ public class UserUseCase : IUserUseCase
 		UserMapper mapper = new UserMapper();
         try
         {
-            mapper.ApplyUpdate(updateUser, user);
+			user.UpdateUser(firstName: updateUser.FirstName,
+					lastName: updateUser.LastName);
         }
         catch (DomainException ex)
         {

@@ -14,7 +14,6 @@ public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<
 
     public IQueryable<T> GetAll() {
         return _context.Set<T>()
-		 .AsNoTracking()
           .AsQueryable()
           .OrderBy(pre => pre.Id);
 	}
@@ -22,7 +21,6 @@ public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<
     public async ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         T? result = await _context.Set<T>()
-			.AsNoTracking()
 			.FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
         return result;
     }
@@ -30,7 +28,6 @@ public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<
     public IQueryable<T> GetByIds(IEnumerable<Guid> ids)
     {
         return _context.Set<T>()
-		.AsNoTracking()
           .Where(pre => ids.Contains(pre.Id));
     }
 
@@ -43,12 +40,10 @@ public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<
 	}
 
     public T Update(T entity) {
-	  context.Attach(entity);
       return context.Update<T>(entity).Entity;
 	}
 
     public void UpdateInRange(IEnumerable<T> entities){
-	  context.AttachRange(entities);
       context.UpdateRange(entities);
 	}
 }

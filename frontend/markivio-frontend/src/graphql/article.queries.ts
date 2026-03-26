@@ -1,4 +1,4 @@
-import { gql, type TypedDocumentNode } from "@apollo/client";
+import { gql, type TypedDocumentNode } from "@urql/vue";
 
 export type GetArticlesInformationQuery = {
     articles: {
@@ -29,8 +29,8 @@ export type AddArticleReturn = {
 
 
 export const GetArticles : TypedDocumentNode<GetArticlesInformationQuery> = gql`
-query Articles($skip: Int!, $take: Int!) {
-    articles(skip: $skip, take: $take) {
+query Articles($offset: Int!, $limit: Int!) {
+    articles(skip: $offset, take: $limit) {
         items{
             id
             source

@@ -1,16 +1,17 @@
 <script setup lang="ts">
+import { useCreateTags } from '@/composables/tag.graphql';
 import { useZodValidation } from '@/composables/zod.composable';
 import { type Tag, TagSchema } from '@/domain/tag.models';
-import { CreateTag } from '@/services/tags.service';
 import { InputText } from 'primevue';
-import { computed, ref, toValue, useTemplateRef } from 'vue';
-const popoverRef = useTemplateRef("popover");
+import { computed, ref, toValue, useTemplateRef, watch } from 'vue';
 
-const tag = ref<Tag>({
+const popoverRef = useTemplateRef("popover");
+const emptyTag = () => ({
   id: null,
   name: "",
   color: "#ff00f0",
-})
+});
+const tag = ref<Tag>(emptyTag());
 
 const tagColor = computed({
   get: () => tag.value.color.replace('#', ''),
@@ -19,23 +20,25 @@ const tagColor = computed({
   }
 });
 
-const { validate, errors, isValid } = useZodValidation(TagSchema, tag)
+const { createTags } = useCreateTags(tag);
+const { validate, errors, isValid } = useZodValidation(TagSchema, tag);
 
-const submit = () => {
-  if (!validate()) {
-    return;
+async function submit() {
+  if(validate()) {
+    await createTags();
+    tag.value = emptyTag();
   }
-  CreateTag(toValue(tag))
-    .subscribe(data => {
-      if (!data.isResult)
-        return
-      popoverRef.value?.hide();
-    });
-};
+}
+
+function onClick(event: any) {
+  popoverRef.value?.toggle(event);
+  tag.value = emptyTag();
+}
+
 </script>
 <template>
   <Button icon="ri-add-large-line" variant="text" class="text-neutral-700"
-    @click="(event) => popoverRef?.toggle(event)" />
+    @click="onClick" />
   <Popover ref="popover" class="flex flex-row">
     <div class="border-b border-b-neutral-300">
       <h3 class="text">Create Tag</h3>

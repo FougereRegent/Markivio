@@ -6,7 +6,7 @@ export const UserSchema = z.object({
   id: z.string().optional(),
   firstName: z.string().regex(nameRegex, "firstName doesn't respect format"),
   lastName: z.string().regex(nameRegex, "lastName doesn't respect format"),
-  email: z.string().email(),
+  email: z.email(),
 });
 
 export type UserInformation = z.infer<typeof UserSchema>;

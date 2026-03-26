@@ -5,7 +5,8 @@ var env = builder.Configuration.GetSection("environmentVariables");
 var postgres = builder.AddPostgres("postgres")
 						.WithPgAdmin(configureContainer: opts => {
 								opts.WithEndpoint("http", endpoint => endpoint.Port = 8085);
-								});
+								})
+						.WithDataVolume("markivio-db");
 
 var db = postgres.AddDatabase("markivio");
 

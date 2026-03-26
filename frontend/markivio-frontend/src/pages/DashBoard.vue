@@ -1,90 +1,61 @@
 <script setup lang="ts">
 import ArticleComponent, { type ArticleProps } from '@/components/ArticleComponent.vue';
-import { onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import { onActivated, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core';
-import { getMyArticles } from '@/services/article.service';
-import type { Subscription } from 'rxjs';
-import { useAuthStore } from '@/stores/auth-store';
-import { useLoaderStore } from '@/stores/loader-store';
 import DrawerAddOrEdit from '@/components/DrawerAddOrEdit.vue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
+import { useGetArticles } from '@/composables/article.graphql';
 
-const { subject, observable } = getMyArticles();
-
-const auth = useAuthStore();
-const loader = useLoaderStore();
+let articlesProps = ref<ArticleProps[]>([]);
 const drawer = useAddEditDrawer();
 const articlesRef = useTemplateRef('articles');
-const articlesSrc = ref<ArticleProps[]>([]);
-const hasNext = ref(true);
+const offset = ref(0);
 
-const take = 25;
-let page = 0;
-
-let subscription: Subscription | undefined;
-
-watch(
-  () => auth.token,
-  (token) => {
-    if (!token) return;
-    subject.next({ skip: 0, take });
-    page++;
-  },
-  { immediate: true },
-);
-
-onMounted(() => {
-  subscription = observable.subscribe((val) => {
-    loader.stop();
-    const result = val.data.map((item) => ({
-      id: item.id,
-      title: item.title,
-      description: item.description,
-      tags: item.tags.map((tag) => ({
-        label: tag.name,
-        color: tag.color,
-      })),
-    }));
-    hasNext.value = val.hasNextPage;
-    articlesSrc.value.push(...result);
-  });
-});
-
-onUnmounted(() => {
-  subscription?.unsubscribe();
-});
-
+const { articles, hasNext, executeQuery } = useGetArticles(offset, 15);
 const { reset } = useInfiniteScroll(
   articlesRef,
   () => {
-    if (!hasNext.value) return;
-    subject.next({ skip: page * take, take });
-    loader.start();
-    page++;
+    offset.value = articlesProps.value.length;
   },
   {
-    distance: 15,
+    distance: 10,
     canLoadMore: () => hasNext.value,
   },
 );
+
+watch(articles, (newData) => {
+  if (!newData) return;
+
+  if (offset.value === 0) {
+    articlesProps.value = newData;
+  } else {
+    articlesProps.value.push(...newData);
+  }
+}, {immediate: true});
 
 watch(
   () => drawer.drawerState,
   (newState, oldState) => {
     if(!newState && oldState) {
-      articlesSrc.value = [];
-      page = 0;
-      hasNext.value = true;
+      articlesProps.value = [];
       reset();
+      offset.value = 0;
+      executeQuery({requestPolicy: 'network-only'});
     }
   },
   { immediate: true },
 );
+
+onMounted(() => {
+  debugger;
+  offset.value = 0;
+})
+
 </script>
 
 <template>
   <div ref="articles" class="flex flex-col gap-3 p-4 h-full overflow-y-scroll">
-    <template v-for="item in articlesSrc" :key="item.id">
+    <template v-for="item in articlesProps" :key="item.id">
       <ArticleComponent v-bind="item" />
     </template>
   </div>
