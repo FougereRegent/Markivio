@@ -2,16 +2,11 @@
 import InputText from 'primevue/inputtext';
 import { FloatLabel, Button } from 'primevue';
 import { computed } from 'vue';
-import { useLoaderStore } from '@/stores/loader-store';
-import { useToast } from 'primevue';
 import { useGetMyUser, useUpdateUserInformation } from '@/composables/user.graphql';
 import { useZodValidation } from '@/composables/zod.composable';
 import { UserSchema } from '@/domain/user.models';
 
-const loadingStore = useLoaderStore();
-const toast = useToast();
-
-const { userInfo, ex } = useGetMyUser();
+const { userInfo } = useGetMyUser();
 const { updateUser } = useUpdateUserInformation(userInfo);
 const { validate, errors } = useZodValidation(UserSchema, userInfo)
 

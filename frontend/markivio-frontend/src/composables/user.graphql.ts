@@ -21,12 +21,18 @@ export function useGetMyUser() {
 export function useUpdateUserInformation(user: Ref<UserInformation>) {
   const { executeMutation, fetching, error } = useMutation(UpdateUser);
 
-  const updateUser = () => {
+  const updateUser = async () => {
     const userToUpdate: UserInformation = toValue(user);
-    return executeMutation({
+    const result = await executeMutation({
       firstName: userToUpdate.firstName,
       lastName: userToUpdate.lastName
     });
+
+    if(result.data) {
+      user.value.firstName = result.data?.me.firstName;
+      user.value.lastName = result.data?.me.lastName;
+    }
+
   };
 
   return { updateUser, fetching, error }
