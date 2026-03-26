@@ -17,4 +17,9 @@ public sealed class User : Entity
 		Identity = identityValue ?? throw new ArgumentNullException(nameof(identityValue));
 		Email = emailValue ?? throw new ArgumentNullException(nameof(emailValue));
 	}
+
+	public void UpdateUser(string firstName, string lastName) {
+		Identity.UpdateFirstName(firstName);
+		Identity.UpdateLastName(lastName);
+	}
 }
