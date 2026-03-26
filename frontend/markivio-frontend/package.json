@@ -21,6 +21,7 @@
     "@auth0/auth0-vue": "^2.4.0",
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/vite": "^4.1.17",
+    "@urql/exchange-auth": "^3.0.0",
     "@urql/vue": "^2.0.0",
     "@vueuse/core": "^14.1.0",
     "graphql": "^16.13.1",

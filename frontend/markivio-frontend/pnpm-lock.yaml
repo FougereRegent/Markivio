@@ -17,6 +17,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.17
         version: 4.2.2(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0))
+      '@urql/exchange-auth':
+        specifier: ^3.0.0
+        version: 3.0.0(@urql/core@6.0.1(graphql@16.13.1))
       '@urql/vue':
         specifier: ^2.0.0
         version: 2.0.0(@urql/core@6.0.1(graphql@16.13.1))(vue@3.5.30(typescript@5.9.3))
@@ -1045,6 +1048,11 @@ packages:
 
   '@urql/core@6.0.1':
     resolution: {integrity: sha512-FZDiQk6jxbj5hixf2rEPv0jI+IZz0EqqGW8mJBEug68/zHTtT+f34guZDmyjJZyiWbj0vL165LoMr/TkeDHaug==}
+
+  '@urql/exchange-auth@3.0.0':
+    resolution: {integrity: sha512-tj09xiOR2f1J2h8TE9uZWjRZipCdmDoTewEytOacDQ+0Teo+yIZxm3ppHxolQtiA51OHrGYiNTkMte8HtfvaBw==}
+    peerDependencies:
+      '@urql/core': ^6.0.0
 
   '@urql/vue@2.0.0':
     resolution: {integrity: sha512-9eW8IfEPwnGHxvqfH2t8cBSI5eKPyLq2dizFVYIRGHi4ydMw5Q+vuMD+VP0I9zo0818zZ9b8TGLiyAmOzvyoAQ==}
@@ -3454,6 +3462,11 @@ snapshots:
       wonka: 6.3.5
     transitivePeerDependencies:
       - graphql
+
+  '@urql/exchange-auth@3.0.0(@urql/core@6.0.1(graphql@16.13.1))':
+    dependencies:
+      '@urql/core': 6.0.1(graphql@16.13.1)
+      wonka: 6.3.5
 
   '@urql/vue@2.0.0(@urql/core@6.0.1(graphql@16.13.1))(vue@3.5.30(typescript@5.9.3))':
     dependencies:
