@@ -17,7 +17,6 @@ const article = ref<Article>({
   description: '',
   tags: [],
 });
-const autocompleteRef = useTemplateRef("autocompleteRef");
 const { validate, errors } = useZodValidation(ArticleSchema, article);
 const { createArticle, fetching } = useCreateArticle(article);
 

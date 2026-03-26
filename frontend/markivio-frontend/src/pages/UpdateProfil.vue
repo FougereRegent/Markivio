@@ -1,33 +1,31 @@
 <script setup lang="ts">
 import InputText from 'primevue/inputtext';
 import { FloatLabel, Button } from 'primevue';
-import { onMounted, onUnmounted, ref } from 'vue';
-import type { UserInformation } from '@/domain/user.models';
-import { concatMap, debounceTime, Subject, tap, type Subscription } from 'rxjs';
-import { CONST } from '@/config/constante.config';
+import { computed } from 'vue';
 import { useLoaderStore } from '@/stores/loader-store';
 import { useToast } from 'primevue';
+import { useGetMyUser, useUpdateUserInformation } from '@/composables/user.graphql';
+import { useZodValidation } from '@/composables/zod.composable';
+import { UserSchema } from '@/domain/user.models';
 
-const user = ref<UserInformation>({
-  firstName: '',
-  lastName: '',
-  email: '',
-  id: '',
-});
-const savedClick = new Subject<void>();
 const loadingStore = useLoaderStore();
 const toast = useToast();
-const isSubmitting = ref(false);
 
-const invalidField = ref({
-  invalidFirstNameField: false,
-  invalidLastNameField: false,
-});
+const { userInfo, ex } = useGetMyUser();
+const { updateUser } = useUpdateUserInformation(userInfo);
+const { validate, errors } = useZodValidation(UserSchema, userInfo)
 
-const fieldValidationHandlers: Record<string, (state: boolean) => void> = {
-  firstName: (state: boolean) => (invalidField.value.invalidFirstNameField = state),
-  lastName: (state: boolean) => (invalidField.value.invalidLastNameField = state),
-};
+const showErrors = computed(() => ({
+  firstName: errors.value?.firstName != undefined,
+  lastName: errors.value?.lastName != undefined,
+  email: errors.value?.email != undefined
+}));
+
+async function submit() {
+  if (validate()) {
+    await updateUser();
+  }
+}
 
 </script>
 
@@ -35,33 +33,22 @@ const fieldValidationHandlers: Record<string, (state: boolean) => void> = {
   <div class="p-5 h-full">
     <div class="flex flex-row justify-between">
       <h1 class="text-4xl text-gray-900">Account Settings</h1>
-      <Button size="large" label="Save" class="w-2/12" @click="savedClick.next()" :disabled="isSubmitting" :loading="isSubmitting" />
+      <Button size="large" label="Save" class="w-2/12" @click="submit" />
     </div>
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
         <label for="firstName">First Name</label>
-        <InputText
-          id="firstName"
-          type="text"
-          v-model="user.firstName"
-          size="large"
-          class="w-6/12"
-          :invalid="invalidField.invalidFirstNameField"
-        />
+        <InputText id="firstName" type="text" v-model="userInfo.firstName" size="large" class="w-6/12"
+          :invalid="showErrors.firstName" />
       </FloatLabel>
       <FloatLabel>
         <label for="lastName">Last Name</label>
-        <InputText
-          id="lastName"
-          type="text"
-          v-model="user.lastName"
-          class="w-6/12"
-          :invalid="invalidField.invalidLastNameField"
-        />
+        <InputText id="lastName" type="text" v-model="userInfo.lastName" class="w-6/12"
+          :invalid="showErrors.lastName" />
       </FloatLabel>
       <FloatLabel>
         <label for="email">Email</label>
-        <InputText id="email" type="text" v-model="user.email" disabled size="large" class="w-6/12" />
+        <InputText id="email" type="text" v-model="userInfo.email" disabled size="large" class="w-6/12" />
       </FloatLabel>
     </form>
   </div>
