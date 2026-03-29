@@ -31,6 +31,7 @@ public static class ConfigServiceInjection {
 
 	private static WebApplicationBuilder ConfigRepository(this WebApplicationBuilder builder) {
 		builder.Services.AddScoped<IUnitOfWork, UnitOfWork>()
+			.AddHttpClient()
 			.AddScoped<IUserRepository, UserRepository>()
 			.AddScoped<ITagRepository, TagRepository>()
 			.AddScoped<IArticleRepository, ArticleRepository>();

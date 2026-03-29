@@ -47,7 +47,6 @@ watch(
 );
 
 onMounted(() => {
-  debugger;
   offset.value = 0;
 })
 

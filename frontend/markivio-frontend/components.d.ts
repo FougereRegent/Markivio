@@ -16,6 +16,7 @@ declare module 'vue' {
     Button: typeof import('primevue/button')['default']
     Chip: typeof import('primevue/chip')['default']
     ColorPicker: typeof import('primevue/colorpicker')['default']
+    DialogSource: typeof import('./src/components/DialogSource.vue')['default']
     DrawerAddOrEdit: typeof import('./src/components/DrawerAddOrEdit.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
     IconField: typeof import('primevue/iconfield')['default']

@@ -11,7 +11,7 @@ public partial class ArticleMapper
 	[MapNestedProperties(nameof(Article.ArticleContent))]
 	public partial ArticleInformation Map(Article article);
 
-	public Article Map(CreateArticle createArticle, List<TagValueObject> tags) {
+	public Article Map(CreateArticle createArticle, List<TagValueObject> tags, bool isFramable) {
 		return new Article(
 				articleContent: new ArticleContent(
 					source: createArticle.Source,
@@ -19,7 +19,8 @@ public partial class ArticleMapper
 					content: string.Empty,
 					tags: tags
 					),
-				title: createArticle.Title
+				title: createArticle.Title,
+				isFramable: isFramable
 				);
 	}
 }

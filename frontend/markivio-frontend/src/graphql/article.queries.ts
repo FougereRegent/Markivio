@@ -21,6 +21,16 @@ export type GetArticlesInformationQuery = {
     }
 };
 
+export type GetSourceUrlQuery = {
+  articles: {
+    items: Array<{
+      id: string,
+      source: string,
+      isFramable: boolean,
+    }>
+  }
+};
+
 export type AddArticleReturn = {
   article: {
     id: string,
@@ -55,5 +65,21 @@ mutation AddArticles($input: CreateArticleInput!) {
   createArticle(createArticle: $input) {
     id
   }
+}
+`;
+
+export const GetUrlByArticleId: TypedDocumentNode<GetSourceUrlQuery> = gql`
+query Articles($id: UUID!) {
+    articles(where:  {
+       id:  {
+          eq: $id
+       }
+    }, skip: 0, take: 1) {
+        items {
+            id
+            source
+            isFramable
+        }
+    }
 }
 `;

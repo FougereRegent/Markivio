@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markivio.Persistence.Repositories;
 
-public class ArticleRepository(MarkivioContext context) : GenericRepository<Article>(context), IArticleRepository
+public class ArticleRepository(MarkivioContext context, HttpClient httpClient) : GenericRepository<Article>(context), IArticleRepository
 {
-    public async ValueTask<Article?> GetByTitle(string title)
+    private readonly HttpClient _httpClient = httpClient;
+    public async ValueTask<Article?> GetByTitle(string title, CancellationToken token = default!)
     {
         return await _context.Article.Where(pre => pre.Title == title)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(token);
     }
 
     public IQueryable<Article> Filter(string? title, List<string>? tagName)
@@ -27,4 +28,10 @@ public class ArticleRepository(MarkivioContext context) : GenericRepository<Arti
         return resultFitler.OrderBy(pre => pre.Id);
     }
 
+    public async Task<bool> IsFramable(string url, CancellationToken token = default!)
+    {
+        const string framableHeader = "x-frame-options";
+        var result = await _httpClient.GetAsync(url, token);
+		return !result.Headers.Any(pre => pre.Key.Equals(framableHeader, StringComparison.InvariantCultureIgnoreCase));
+    }
 }
