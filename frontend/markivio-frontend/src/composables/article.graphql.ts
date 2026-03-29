@@ -1,8 +1,14 @@
 import type { ArticleProps } from "@/components/ArticleComponent.vue";
 import type { Article } from "@/domain/article.models";
-import { AddArticles, GetArticles } from "@/graphql/article.queries";
+import { AddArticles, GetArticles, GetUrlByArticleId } from "@/graphql/article.queries";
 import { useMutation, useQuery } from "@urql/vue";
 import { computed, toValue, type Ref } from "vue";
+
+
+export type UrlSource =  {
+  id: string,
+  source: string,
+};
 
 export function useGetArticles(offset: Ref<number>, limit: number) {
   const { data, error, fetching, executeQuery } = useQuery({
@@ -21,7 +27,6 @@ export function useGetArticles(offset: Ref<number>, limit: number) {
   return { articles, error, fetching, hasNext, executeQuery };
 }
 
-
 export function useCreateArticle(article: Ref<Article>) {
   const { executeMutation, error, data, fetching } = useMutation(AddArticles);
 
@@ -39,4 +44,27 @@ export function useCreateArticle(article: Ref<Article>) {
 
   const id = computed(() => data.value?.article.id)
   return { createArticle, error, id, fetching }
+}
+
+export function useGetSourceUrl(id:String) {
+  const { error, data, fetching, resume } = useQuery(
+    {
+      query: GetUrlByArticleId,
+      variables: {
+        id: id
+      },
+      pause: true
+    }
+  );
+
+  const getUrlSource = () => {
+    resume();
+  }
+
+  const urlSource = computed(() => ({
+    id: data.value?.articles.items[0]?.id,
+    source: data.value?.articles.items[0]?.source
+  } as UrlSource));
+
+  return { urlSource, error, fetching, getUrlSource }
 }

@@ -4,7 +4,6 @@ import { useAuthStore } from '@/stores/auth-store';
 
 async function initializeAuthState() {
   const auth = useAuthStore();
-  debugger;
   await auth.init();
   const token = auth.token;
   return token;

@@ -2,7 +2,8 @@
 import { Tag } from 'primevue';
 import { contrastColor } from '@/helpers/ui.helpers';
 import DialogSource from './DialogSource.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useGetSourceUrl } from '@/composables/article.graphql';
 
 export type ArticleProps = {
   id: string;
@@ -18,9 +19,13 @@ const props = withDefaults(defineProps<ArticleProps>(), {
   tags: () => [],
 });
 
+const { urlSource, getUrlSource } = useGetSourceUrl(props.id);
+
 const visible = ref(false);
 
 function showSourceArticle() {
+  debugger;
+  getUrlSource();
   visible.value = true;
 }
 
@@ -57,6 +62,7 @@ function editArticle() {
         </template>
       </div>
     </div>
-    <DialogSource v-model:visible="visible" :title="props.title"/>
+    <DialogSource v-model:visible="visible" :title="props.title" :id="props.id"
+    :source="urlSource.source"/>
   </div>
 </template>
