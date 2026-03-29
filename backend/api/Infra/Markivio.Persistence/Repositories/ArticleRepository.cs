@@ -30,7 +30,7 @@ public class ArticleRepository(MarkivioContext context, HttpClient httpClient) :
 
     public async Task<bool> IsFramable(string url, CancellationToken token = default!)
     {
-        const string framableHeader = "";
+        const string framableHeader = "x-frame-options";
         var result = await _httpClient.GetAsync(url, token);
 		return !result.Headers.Any(pre => pre.Key.Equals(framableHeader, StringComparison.InvariantCultureIgnoreCase));
     }

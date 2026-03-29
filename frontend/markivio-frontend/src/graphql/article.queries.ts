@@ -26,6 +26,7 @@ export type GetSourceUrlQuery = {
     items: Array<{
       id: string,
       source: string,
+      isFramable: boolean,
     }>
   }
 };
@@ -77,6 +78,7 @@ query Articles($id: UUID!) {
         items {
             id
             source
+            isFramable
         }
     }
 }
