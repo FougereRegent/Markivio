@@ -31,5 +31,9 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
               sa.ToJson();
               sa.OwnsMany(pre => pre.Tags);
           });
+
+		builder
+			.Property(pre => pre.IsFramable)
+			.HasDefaultValue(false);
     }
 }

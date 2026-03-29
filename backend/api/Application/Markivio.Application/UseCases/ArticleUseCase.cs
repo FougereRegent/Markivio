@@ -52,9 +52,11 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
             .GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
             .Select(pre => pre.TagValue).ToList();
 
+		bool isFramable = await articleRepository.IsFramable(createArticle.Source);
+
         try
         {
-            article = mapper.Map(createArticle, tags);
+            article = mapper.Map(createArticle, tags, isFramable);
             article.User = authUser.CurrentUser;
         }
         catch (DomainException ex)
