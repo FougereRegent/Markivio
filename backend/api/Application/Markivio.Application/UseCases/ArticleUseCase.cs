@@ -52,7 +52,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
             .GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
             .Select(pre => pre.TagValue).ToList();
 
-		bool isFramable = await articleRepository.IsFramable(createArticle.Source);
+        bool isFramable = await articleRepository.IsFramable(createArticle.Source);
 
         try
         {

@@ -8,21 +8,22 @@ namespace Markivio.Application.Mapper;
 [Mapper(AllowNullPropertyAssignment = true, PreferParameterlessConstructors = false)]
 public partial class ArticleMapper
 {
-	[MapNestedProperties(nameof(Article.ArticleContent))]
-	public partial ArticleInformation Map(Article article);
+    [MapNestedProperties(nameof(Article.ArticleContent))]
+    public partial ArticleInformation Map(Article article);
 
-	public Article Map(CreateArticle createArticle, List<TagValueObject> tags, bool isFramable) {
-		return new Article(
-				articleContent: new ArticleContent(
-					source: createArticle.Source,
-					description: createArticle.Description,
-					content: string.Empty,
-					tags: tags
-					),
-				title: createArticle.Title,
-				isFramable: isFramable
-				);
-	}
+    public Article Map(CreateArticle createArticle, List<TagValueObject> tags, bool isFramable)
+    {
+        return new Article(
+                articleContent: new ArticleContent(
+                    source: createArticle.Source,
+                    description: createArticle.Description,
+                    content: string.Empty,
+                    tags: tags
+                    ),
+                title: createArticle.Title,
+                isFramable: isFramable
+                );
+    }
 }
 
 [Mapper]

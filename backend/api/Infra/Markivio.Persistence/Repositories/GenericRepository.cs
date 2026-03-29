@@ -7,21 +7,22 @@ namespace Markivio.Persistence.Repositories;
 
 public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<T> where T : Entity
 {
-	protected MarkivioContext _context = context;
+    protected MarkivioContext _context = context;
 
     public void Delete(T entity) =>
         context.Remove(entity);
 
-    public IQueryable<T> GetAll() {
+    public IQueryable<T> GetAll()
+    {
         return _context.Set<T>()
           .AsQueryable()
           .OrderBy(pre => pre.Id);
-	}
+    }
 
     public async ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         T? result = await _context.Set<T>()
-			.FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
         return result;
     }
 
@@ -31,19 +32,23 @@ public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<
           .Where(pre => ids.Contains(pre.Id));
     }
 
-    public T Save(T entity) {
-      return context.Add<T>(entity).Entity;
-	}
+    public T Save(T entity)
+    {
+        return context.Add<T>(entity).Entity;
+    }
 
-    public void SaveInRange(IEnumerable<T> entities) {
-      context.AddRange(entities);
-	}
+    public void SaveInRange(IEnumerable<T> entities)
+    {
+        context.AddRange(entities);
+    }
 
-    public T Update(T entity) {
-      return context.Update<T>(entity).Entity;
-	}
+    public T Update(T entity)
+    {
+        return context.Update<T>(entity).Entity;
+    }
 
-    public void UpdateInRange(IEnumerable<T> entities){
-      context.UpdateRange(entities);
-	}
+    public void UpdateInRange(IEnumerable<T> entities)
+    {
+        context.UpdateRange(entities);
+    }
 }

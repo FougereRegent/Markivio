@@ -45,9 +45,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseEndpoints(endpoints => {
-		endpoints.MapGraphQL();
-});
+app.MapGraphQL();
 
 using (var scope = app.Services.CreateScope())
 {

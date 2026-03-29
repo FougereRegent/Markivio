@@ -44,12 +44,13 @@ public class UnitOfWorkTests
     public async Task BeginTransactionAsyncTest_Should_CreateTransaction()
     {
         //Arrange
+        CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
         databaseFacadeMock.Setup(pre => pre.BeginTransactionAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.FromResult(dbContextTransactionMock.Object));
 
         //Act
-        await unitOfWork.BeginTransactionAsync();
+        await unitOfWork.BeginTransactionAsync(token);
 
         //Assert
         IDbContextTransaction result = unitOfWork.GetPrivateField<UnitOfWork, IDbContextTransaction>("transaction")!;
@@ -60,27 +61,29 @@ public class UnitOfWorkTests
     public async Task RollbackChangesAsync_Should_Rollback()
     {
         //Arrange
+        CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
         databaseFacadeMock.Setup(pre => pre.BeginTransactionAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.FromResult(dbContextTransactionMock.Object));
         dbContextTransactionMock.Setup(pre => pre.RollbackAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.CompletedTask);
 
-        await unitOfWork.BeginTransactionAsync();
+        await unitOfWork.BeginTransactionAsync(token);
 
         //Act & Assert
-        await Should.NotThrowAsync(async () => await unitOfWork.RollbackChangesAsync());
+        await Should.NotThrowAsync(async () => await unitOfWork.RollbackChangesAsync(token));
     }
 
     [Fact]
     public async Task RollbackChangesAsync_Should_ThrowError_When_TransactionIsNull()
     {
+        CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
         dbContextTransactionMock.Setup(pre => pre.RollbackAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.CompletedTask);
 
         //Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () => await unitOfWork.RollbackChangesAsync());
+        await Should.ThrowAsync<InvalidOperationException>(async () => await unitOfWork.RollbackChangesAsync(token));
 
     }
 
@@ -88,13 +91,14 @@ public class UnitOfWorkTests
     public async Task SaveChangesAsync_Should_Rollback()
     {
         //Arrange
+        CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
         databaseFacadeMock.Setup(pre => pre.BeginTransactionAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.FromResult(dbContextTransactionMock.Object));
         dbContextTransactionMock.Setup(pre => pre.CommitAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.CompletedTask);
 
-        await unitOfWork.BeginTransactionAsync();
+        await unitOfWork.BeginTransactionAsync(token);
 
         //Act & Assert
         await Should.NotThrowAsync(async () => await unitOfWork.SaveChangesAsync());
@@ -103,11 +107,12 @@ public class UnitOfWorkTests
     [Fact]
     public async Task SaveChangesAsync_Should_ThrowError_When_TransactionIsNull()
     {
+        CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
         dbContextTransactionMock.Setup(pre => pre.RollbackAsync(It.IsAny<CancellationToken>()))
           .Returns(Task.CompletedTask);
 
         //Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () => await unitOfWork.SaveChangesAsync());
+        await Should.ThrowAsync<InvalidOperationException>(async () => await unitOfWork.SaveChangesAsync(token));
     }
 }

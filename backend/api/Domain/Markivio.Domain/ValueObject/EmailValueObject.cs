@@ -6,24 +6,24 @@ namespace Markivio.Domain.ValueObject;
 public sealed class EmailValueObject : BaseValueObject
 {
     private const string REGEX_EMAIL = @"^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$";
-	public string Email {get; set;} = string.Empty;
+    public string Email { get; set; } = string.Empty;
 
-	private EmailValueObject() { }
+    private EmailValueObject() { }
 
     public EmailValueObject(string email)
     {
-		if(string.IsNullOrEmpty(email))
-			throw new EmptyException($"email cannot be empty", "EMPTY_EMAIL");
+        if (string.IsNullOrEmpty(email))
+            throw new EmptyException($"email cannot be empty", "EMPTY_EMAIL");
 
-		if(!Regex.IsMatch(email, REGEX_EMAIL))
-			throw new PatternException($"email : {email} doesn't match", "FORMAT_EMAIL");
+        if (!Regex.IsMatch(email, REGEX_EMAIL))
+            throw new PatternException($"email : {email} doesn't match", "FORMAT_EMAIL");
 
-		Email = email;
+        Email = email;
 
     }
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-		yield return Email;
+        yield return Email;
     }
 }

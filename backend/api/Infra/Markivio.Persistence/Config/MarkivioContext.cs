@@ -9,7 +9,7 @@ namespace Markivio.Persistence.Config;
 public class MarkivioContext : DbContext
 {
     public readonly IAuthUser authUser;
-	public string CurrentUserId => authUser?.CurrentUser?.AuthId ?? "";
+    public string CurrentUserId => authUser?.CurrentUser?.AuthId ?? "";
 
     public DbSet<User> User { get; set; }
     public DbSet<Article> Article { get; set; }
@@ -18,31 +18,31 @@ public class MarkivioContext : DbContext
 
     public MarkivioContext(DbContextOptions<MarkivioContext> options, IAuthUser authUser) : base(options)
     {
-		this.authUser = authUser;
+        this.authUser = authUser;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-		optionsBuilder.AddInterceptors(new DateTimeSaveUpdateInterceptor());
+        optionsBuilder.AddInterceptors(new DateTimeSaveUpdateInterceptor());
         base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-		new ArticleDbConfiguration()
-			.Configure(modelBuilder.Entity<Article>());
-		new FolderDbConfiguration()
-			.Configure(modelBuilder.Entity<Folder>());
-		new UserDbConfiguration()
-			.Configure(modelBuilder.Entity<User>());
-		new TagDbConfiguration()
-			.Configure(modelBuilder.Entity<Tag>());
+        new ArticleDbConfiguration()
+            .Configure(modelBuilder.Entity<Article>());
+        new FolderDbConfiguration()
+            .Configure(modelBuilder.Entity<Folder>());
+        new UserDbConfiguration()
+            .Configure(modelBuilder.Entity<User>());
+        new TagDbConfiguration()
+            .Configure(modelBuilder.Entity<Tag>());
 
-		modelBuilder.Entity<Tag>()
-			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
-		modelBuilder.Entity<Article>()
-			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
-		modelBuilder.Entity<Folder>()
-			.HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
+        modelBuilder.Entity<Tag>()
+            .HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
+        modelBuilder.Entity<Article>()
+            .HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
+        modelBuilder.Entity<Folder>()
+            .HasQueryFilter(pre => pre.User.AuthId == CurrentUserId);
     }
 }

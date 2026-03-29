@@ -32,6 +32,6 @@ public class ArticleRepository(MarkivioContext context, HttpClient httpClient) :
     {
         const string framableHeader = "x-frame-options";
         var result = await _httpClient.GetAsync(url, token);
-		return !result.Headers.Any(pre => pre.Key.Equals(framableHeader, StringComparison.InvariantCultureIgnoreCase));
+        return !result.Headers.Any(pre => pre.Key.Equals(framableHeader, StringComparison.InvariantCultureIgnoreCase));
     }
 }

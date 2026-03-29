@@ -17,7 +17,7 @@ public enum TagExistConditionEnum
 
 public interface ITagUseCase
 {
-	bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum);
+    bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum);
     Result<TagInformation[]> CreateTag(CreateTag[] creatingTags);
     IQueryable<TagInformation> GetAllTags(string tagName);
 }
@@ -73,12 +73,13 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
                 .ToArray());
     }
 
-	public bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum) =>
-		conditionEnum switch {
-			TagExistConditionEnum.Id when typeof(T) == typeof(Guid) => TagExistByIds(values.Cast<Guid>()),
-			TagExistConditionEnum.Name when typeof(T) == typeof(string) => TagsExistByName(values.Cast<string>()),
-			_ => throw new ArgumentException()
-		};
+    public bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum) =>
+        conditionEnum switch
+        {
+            TagExistConditionEnum.Id when typeof(T) == typeof(Guid) => TagExistByIds(values.Cast<Guid>()),
+            TagExistConditionEnum.Name when typeof(T) == typeof(string) => TagsExistByName(values.Cast<string>()),
+            _ => throw new ArgumentException()
+        };
 
     private bool TagsExistByName(IEnumerable<string> tagNames)
     {

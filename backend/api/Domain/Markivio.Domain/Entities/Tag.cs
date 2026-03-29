@@ -4,11 +4,12 @@ namespace Markivio.Domain.Entities;
 
 public sealed class Tag : EntityWithTenancy
 {
-	public TagValueObject TagValue {get;set;}
+    public TagValueObject TagValue { get; set; }
 
-	private Tag() {}
+    private Tag() { }
 
-	public Tag(TagValueObject tagValue) {
-		TagValue = tagValue ?? throw new ArgumentNullException(nameof(tagValue));
-	}
+    public Tag(TagValueObject tagValue)
+    {
+        TagValue = tagValue ?? throw new ArgumentNullException(nameof(tagValue));
+    }
 }

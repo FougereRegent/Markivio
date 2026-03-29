@@ -27,30 +27,33 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
             string token = authHeader.Substring("Bearer ".Length);
             requestBuilder.SetGlobalState("token", token);
 
-			User? user = await CheckIfUserExist(context, requestBuilder, token, cancellationToken);
-			if(user is null) {
-				await unitOfWork.BeginTransactionAsync(cancellationToken);
+            User? user = await CheckIfUserExist(context, requestBuilder, token, cancellationToken);
+            if (user is null)
+            {
+                await unitOfWork.BeginTransactionAsync(cancellationToken);
 
-				Result result = await userUseCase.CreateNewUserOnConnection(new UserConnectionDto(token), cancellationToken)!;
-				if (result.IsFailed)
-				{
-					await unitOfWork.RollbackChangesAsync(cancellationToken);
-					throw new GraphQLException(ErrorBuilder.New()
-						.SetMessage(string.Join(Environment.NewLine, result.Errors.Select(pre => pre.Message)))
-						.Build());
-				}
-				await unitOfWork.SaveChangesAsync(cancellationToken);
+                Result result = await userUseCase.CreateNewUserOnConnection(new UserConnectionDto(token), cancellationToken)!;
+                if (result.IsFailed)
+                {
+                    await unitOfWork.RollbackChangesAsync(cancellationToken);
+                    throw new GraphQLException(ErrorBuilder.New()
+                        .SetMessage(string.Join(Environment.NewLine, result.Errors.Select(pre => pre.Message)))
+                        .Build());
+                }
+                await unitOfWork.SaveChangesAsync(cancellationToken);
 
-				await SetCurrentUser(context, requestBuilder, token, cancellationToken);
-			} else {
-				requestBuilder.SetGlobalState("auth-user", user);
-			}
+                await SetCurrentUser(context, requestBuilder, token, cancellationToken);
+            }
+            else
+            {
+                requestBuilder.SetGlobalState("auth-user", user);
+            }
         }
         await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
     }
 
     private static async Task SetCurrentUser(HttpContext context,
-		HotChocolate.Execution.OperationRequestBuilder requestBuilder,
+        HotChocolate.Execution.OperationRequestBuilder requestBuilder,
         string token,
         CancellationToken cancellationToken = default)
     {
@@ -63,16 +66,17 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
                   "User not found")
                 .Build());
 
-		requestBuilder.SetGlobalState("auth-user", user);
+        requestBuilder.SetGlobalState("auth-user", user);
     }
 
-	private static async Task<User?> CheckIfUserExist(HttpContext context,
-		HotChocolate.Execution.OperationRequestBuilder requestBuilder,
+    private static async Task<User?> CheckIfUserExist(HttpContext context,
+        HotChocolate.Execution.OperationRequestBuilder requestBuilder,
         string token,
-        CancellationToken cancellationToken = default) {
+        CancellationToken cancellationToken = default)
+    {
 
         IUserRepository userRepository = context.RequestServices.GetRequiredService<IUserRepository>();
         JwtTokenInfo tokenInfo = JwtTokenExtentions.ParseToken(token);
         return await userRepository.GetUserByAuthId(tokenInfo.Subject, cancellationToken);
-	}
+    }
 }
