@@ -12,7 +12,7 @@ async function initializeAuthState() {
 export const httpClient = new Client({
   url: import.meta.env.VITE_MARKIVIO_GRAPHQL_API,
   exchanges: [cacheExchange, authExchange(async utils => {
-    let token = await initializeAuthState();
+    const token = await initializeAuthState();
     return {
       addAuthToOperation(operation) {
           if(!token) return operation;

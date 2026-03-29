@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, it, beforeEach, afterEach } from 'vitest';
+import { describe, expect, vi, it, beforeEach, afterEach } from 'vitest';
 import { useLoaderStore } from '@/stores/loader-store';
 import { createPinia, setActivePinia } from 'pinia';
 

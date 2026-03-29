@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import ArticleComponent, { type ArticleProps } from '@/components/ArticleComponent.vue';
-import { onActivated, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useInfiniteScroll } from '@vueuse/core';
 import DrawerAddOrEdit from '@/components/DrawerAddOrEdit.vue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
 import { useGetArticles } from '@/composables/article.graphql';
 
-let articlesProps = ref<ArticleProps[]>([]);
+const articlesProps = ref<ArticleProps[]>([]);
 const drawer = useAddEditDrawer();
 const articlesRef = useTemplateRef('articles');
 const offset = ref(0);

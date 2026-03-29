@@ -3,7 +3,7 @@ import { useCreateTags } from '@/composables/tag.graphql';
 import { useZodValidation } from '@/composables/zod.composable';
 import { type Tag, TagSchema } from '@/domain/tag.models';
 import { InputText } from 'primevue';
-import { computed, ref, toValue, useTemplateRef, watch } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 
 const popoverRef = useTemplateRef("popover");
 const emptyTag = () => ({
@@ -21,7 +21,7 @@ const tagColor = computed({
 });
 
 const { createTags } = useCreateTags(tag);
-const { validate, errors, isValid } = useZodValidation(TagSchema, tag);
+const { validate } = useZodValidation(TagSchema, tag);
 
 async function submit() {
   if(validate()) {
@@ -30,7 +30,7 @@ async function submit() {
   }
 }
 
-function onClick(event: any) {
+const onClick = event => {
   popoverRef.value?.toggle(event);
   tag.value = emptyTag();
 }
