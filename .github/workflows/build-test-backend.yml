@@ -1,0 +1,43 @@
+---
+name: build test backend
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        required: true
+        type: string
+      markivio-version:
+        required: false
+        type: string
+        default: 0.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build & test api
+    steps:
+      - uses: actions/checkout@v6
+        name: checkout
+
+      - uses: actions/setup-dotnet@v5
+        name: setup dotnet
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - run: dotnet format --verify-no-changes
+        working-directory: ./backend/api/
+        name: check format
+
+      - run: dotnet restore
+        working-directory: ./backend/api/
+        name: install dependencies
+
+      - run: dotnet build -c Release --no-restore /p:Version=${{ inputs.markivio-version }}
+        working-directory: ./backend/api
+        name: build api bakckend
+
+      - run: dotnet test
+        working-directory: ./backend/api
+        name: unit tests
+
