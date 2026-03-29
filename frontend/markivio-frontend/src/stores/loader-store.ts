@@ -5,7 +5,7 @@ import { ref } from 'vue';
 export const useLoaderStore = defineStore('loader', () => {
   const nbrequest = ref(0);
   const isLoading = ref(false);
-  let delayTimeout = 0;
+  let delayTimeout: ReturnType<typeof setTimeout>;
   let startTime: number;
 
   function start() {

@@ -30,7 +30,7 @@ async function submit() {
   }
 }
 
-const onClick = event => {
+const onClick = (event: PointerEvent) => {
   popoverRef.value?.toggle(event);
   tag.value = emptyTag();
 }
