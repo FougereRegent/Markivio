@@ -8,7 +8,7 @@ internal class UserDbConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-		builder.ToTable("users");
+        builder.ToTable("users");
         builder
           .HasKey(pre => pre.Id);
 
@@ -16,7 +16,7 @@ internal class UserDbConfiguration : IEntityTypeConfiguration<User>
           .Property(pre => pre.Id)
           .ValueGeneratedOnAdd();
 
-		builder.ComplexProperty(pre => pre.Email);
+        builder.ComplexProperty(pre => pre.Email);
 
         builder.ComplexProperty(pre => pre.Identity, buildAction =>
         {

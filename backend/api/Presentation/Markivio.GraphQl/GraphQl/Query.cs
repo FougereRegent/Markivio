@@ -7,16 +7,18 @@ namespace Markivio.Presentation.GraphQl;
 
 public class Query
 {
-	public UserInformation Me(IUserUseCase userUseCase) {
-		return userUseCase.CurrentUser;
-	}
+    public UserInformation Me(IUserUseCase userUseCase)
+    {
+        return userUseCase.CurrentUser;
+    }
 
-	public IQueryable<ArticleInformation> Articles(IArticleUseCase articleUseCase, string? title, List<string>? tags) {
-	  return articleUseCase.FindByFilter(new ArticleFilters(
-			title,
-			tags
-			));
-	}
+    public IQueryable<ArticleInformation> Articles(IArticleUseCase articleUseCase, string? title, List<string>? tags)
+    {
+        return articleUseCase.FindByFilter(new ArticleFilters(
+              title,
+              tags
+              ));
+    }
 
     public async ValueTask<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id, CancellationToken cancellationToken = default)
     {
@@ -27,8 +29,8 @@ public class Query
         return result.Value;
     }
 
-	public IQueryable<TagInformation> Tags(ITagUseCase tagUseCase, string? tagName) =>
-		tagUseCase.GetAllTags(tagName ?? string.Empty);
+    public IQueryable<TagInformation> Tags(ITagUseCase tagUseCase, string? tagName) =>
+        tagUseCase.GetAllTags(tagName ?? string.Empty);
 }
 
 public class QueryType : ObjectType<Query>
@@ -57,25 +59,25 @@ public class QueryType : ObjectType<Query>
               AllowBackwardPagination = false,
               DefaultPageSize = 50,
           })
-		.UseFiltering()
-		.UseSorting();
+        .UseFiltering()
+        .UseSorting();
 
         descriptor
-	        .Field("tags")
-	        .Argument("tagName", f => f.Type<StringType?>())
-	        .UseOffsetPaging(options: new PagingOptions()
-	        {
-		        MaxPageSize = 100,
-		        IncludeTotalCount = true,
-		        RequirePagingBoundaries = false,
-		        AllowBackwardPagination = false,
-		        DefaultPageSize = 50,
-	        })
-	        .Resolve(context =>
-	        {
-		        string tagName = context.ArgumentValue<string?>("tagName") ?? string.Empty;
-		        var tagUseCase = context.Services.GetRequiredService<ITagUseCase>();
-		        return tagUseCase.GetAllTags(tagName);
-	        });
+            .Field("tags")
+            .Argument("tagName", f => f.Type<StringType?>())
+            .UseOffsetPaging(options: new PagingOptions()
+            {
+                MaxPageSize = 100,
+                IncludeTotalCount = true,
+                RequirePagingBoundaries = false,
+                AllowBackwardPagination = false,
+                DefaultPageSize = 50,
+            })
+            .Resolve(context =>
+            {
+                string tagName = context.ArgumentValue<string?>("tagName") ?? string.Empty;
+                var tagUseCase = context.Services.GetRequiredService<ITagUseCase>();
+                return tagUseCase.GetAllTags(tagName);
+            });
     }
 }

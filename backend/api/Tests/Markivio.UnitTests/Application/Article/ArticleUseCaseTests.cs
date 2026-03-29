@@ -47,9 +47,10 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldFail_WhenArticleAlreadyExists()
     {
         // Arrange
+        CancellationToken token = new CancellationToken();
         var existing = new Article(
             new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), new List<TagValueObject>(), null),
-            faker.Lorem.Slug(4))
+            faker.Lorem.Slug(4), false)
         { Id = Guid.NewGuid() };
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
@@ -57,7 +58,7 @@ public sealed class ArticleUseCaseTests : BaseTests
 
         // Act
         Result<ArticleInformation> result = await useCase.CreateArticle(
-            new CreateArticle("title", faker.Internet.Url(), "desc", Array.Empty<TagCreateArticle>()));
+            new CreateArticle("title", faker.Internet.Url(), "desc", Array.Empty<TagCreateArticle>()), token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -69,6 +70,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldFail_WhenSomeTagsDoNotExist()
     {
         // Arrange
+        CancellationToken token = new CancellationToken();
         Guid[] tagIds = Enumerable.Range(0, 3).Select(_ => Guid.NewGuid()).ToArray();
         CreateArticle input = new(
             Title: faker.Random.Word(),
@@ -83,7 +85,7 @@ public sealed class ArticleUseCaseTests : BaseTests
           .Returns(false);
 
         // Act
-        Result<ArticleInformation> result = await useCase.CreateArticle(input);
+        Result<ArticleInformation> result = await useCase.CreateArticle(input, token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -95,6 +97,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldFail_WhenSourceIsEmpty()
     {
         // Arrange
+        CancellationToken token = new CancellationToken();
         Guid[] tagIds = Enumerable.Range(0, 2).Select(_ => Guid.NewGuid()).ToArray();
         CreateArticle input = new(
             Title: faker.Random.Word(),
@@ -114,7 +117,7 @@ public sealed class ArticleUseCaseTests : BaseTests
         authUserMock.Setup(pre => pre.CurrentUser).Returns(CreateValidUser());
 
         // Act
-        Result<ArticleInformation> result = await useCase.CreateArticle(input);
+        Result<ArticleInformation> result = await useCase.CreateArticle(input, token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -127,6 +130,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldCreate_WhenInputsAreValid()
     {
         // Arrange
+        CancellationToken token = new CancellationToken();
         Faker localFaker = new Faker("fr");
         string title = localFaker.Random.Word();
         string url = localFaker.Internet.Url();
@@ -159,7 +163,7 @@ public sealed class ArticleUseCaseTests : BaseTests
           });
 
         // Act
-        Result<ArticleInformation> result = await useCase.CreateArticle(input);
+        Result<ArticleInformation> result = await useCase.CreateArticle(input, token);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();

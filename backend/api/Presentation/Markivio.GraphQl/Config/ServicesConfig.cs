@@ -11,68 +11,83 @@ using Serilog;
 
 namespace Markivio.Presentation.Config;
 
-public static class ConfigServiceInjection {
-	public static WebApplicationBuilder ConfigDI(this WebApplicationBuilder builder, EnvConfig config) {
-		builder.ConfigInfraServices(config.MARKIVIO_CORS_ORIGIN)
-			.ConfigAuth()
-			.ConfigDB(config)
-			.ConfigRepository()
-			.ConfigServices();
-		return builder;
-	}
+public static class ConfigServiceInjection
+{
+    public static WebApplicationBuilder ConfigDI(this WebApplicationBuilder builder, EnvConfig config)
+    {
+        builder.ConfigInfraServices(config.MARKIVIO_CORS_ORIGIN)
+            .ConfigAuth()
+            .ConfigDB(config)
+            .ConfigRepository()
+            .ConfigServices();
+        return builder;
+    }
 
-	private static WebApplicationBuilder ConfigDB(this WebApplicationBuilder builder, EnvConfig config) {
-		builder.Services.AddDbContext<MarkivioContext>(options => {
+    private static WebApplicationBuilder ConfigDB(this WebApplicationBuilder builder, EnvConfig config)
+    {
+        builder.Services.AddDbContext<MarkivioContext>(options =>
+        {
             options.UseNpgsql(config.CONNECTION_STRING)
                           .UseCamelCaseNamingConvention();
-				});
-		return builder;
-	}
+        });
+        return builder;
+    }
 
-	private static WebApplicationBuilder ConfigRepository(this WebApplicationBuilder builder) {
-		builder.Services.AddScoped<IUnitOfWork, UnitOfWork>()
-			.AddHttpClient()
-			.AddScoped<IUserRepository, UserRepository>()
-			.AddScoped<ITagRepository, TagRepository>()
-			.AddScoped<IArticleRepository, ArticleRepository>();
-		return builder;
-	}
+    private static WebApplicationBuilder ConfigRepository(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>()
+            .AddHttpClient()
+            .AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<ITagRepository, TagRepository>()
+            .AddScoped<IArticleRepository, ArticleRepository>();
+        return builder;
+    }
 
-	private static WebApplicationBuilder ConfigServices(this WebApplicationBuilder builder) {
-		builder.Services.AddScoped<IUserUseCase, UserUseCase>()
-			.AddScoped<IArticleUseCase, ArticleUseCase>()
-			.AddScoped<ITagUseCase, TagUseCase>();
-		return builder;
-	}
+    private static WebApplicationBuilder ConfigServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IUserUseCase, UserUseCase>()
+            .AddScoped<IArticleUseCase, ArticleUseCase>()
+            .AddScoped<ITagUseCase, TagUseCase>();
+        return builder;
+    }
 
-	private static WebApplicationBuilder ConfigAuth(this WebApplicationBuilder builder) {
-		builder.Services.AddScoped<IAuthUser, AuthUser>();
-		return builder;
-	}
+    private static WebApplicationBuilder ConfigAuth(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IAuthUser, AuthUser>();
+        return builder;
+    }
 
-	private static WebApplicationBuilder ConfigInfraServices(this WebApplicationBuilder builder, string corsOrigins) {
-		// In dev we keep a permissive policy; outside dev we expect explicit origins.
-		string[] origins = corsOrigins.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+    private static WebApplicationBuilder ConfigInfraServices(this WebApplicationBuilder builder, string corsOrigins)
+    {
+        // In dev we keep a permissive policy; outside dev we expect explicit origins.
+        string[] origins = corsOrigins.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-		builder.Services.AddCors(options => {
-				options.AddPolicy("AllowAllOrigins", policyBuilder => {
-						if (builder.Environment.IsDevelopment()) {
-							policyBuilder.AllowAnyOrigin();
-						} else if (origins.Length > 0) {
-							policyBuilder.WithOrigins(origins);
-						}
-						policyBuilder.AllowAnyHeader()
-							.AllowAnyMethod();
-						});
-				})
-		.AddMemoryCache()
-		.AddHttpClient()
-		.AddSerilog(options => {
-				options.WriteTo.Async(pre => {
-						pre.Console();
-						pre.OpenTelemetry();
-						});
-				});
-		return builder;
-	}
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins", policyBuilder =>
+            {
+                if (builder.Environment.IsDevelopment())
+                {
+                    policyBuilder.AllowAnyOrigin();
+                }
+                else if (origins.Length > 0)
+                {
+                    policyBuilder.WithOrigins(origins);
+                }
+                policyBuilder.AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        })
+        .AddMemoryCache()
+        .AddHttpClient()
+        .AddSerilog(options =>
+        {
+            options.WriteTo.Async(pre =>
+            {
+                pre.Console();
+                pre.OpenTelemetry();
+            });
+        });
+        return builder;
+    }
 }

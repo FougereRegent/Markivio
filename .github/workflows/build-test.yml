@@ -1,1 +1,19 @@
+---
+name: build and test
 
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  build-backend:
+    uses: ./.github/workflows/build-test-backend.yml
+    with:
+      dotnet-version: 10.0
+
+  build-frontend:
+    uses: ./.github/workflows/build-test-frontend.yml
+    with:
+      node-version: 22.17.0

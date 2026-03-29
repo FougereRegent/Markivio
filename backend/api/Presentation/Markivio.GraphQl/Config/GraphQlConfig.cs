@@ -16,38 +16,41 @@ public static class GraphQlConfig
         .AddAuthorization()
         .AddHttpRequestInterceptor<AuthUserInterceptor>()
         .UseField<AuthMiddleware>()
-		.AddErrorFilter<DomainErrorFilter>()
+        .AddErrorFilter<DomainErrorFilter>()
         .AddQueryType<QueryType>()
         .AddMutationType<MutationType>()
-		.AddFiltering()
-		.AddSorting()
-		.AddInstrumentation()
+        .AddFiltering()
+        .AddSorting()
+        .AddInstrumentation()
 #if DEBUG
         .ModifyRequestOptions(options =>
         {
             options.IncludeExceptionDetails = true;
             options.ExecutionTimeout = TimeSpan.FromMinutes(2);
-        });
+        })
 #endif
-
-		builder.ConfigOpenTelemetry();
+;
+        builder.ConfigOpenTelemetry();
         return builder;
     }
 
-	private static WebApplicationBuilder ConfigOpenTelemetry(this WebApplicationBuilder builder) {
-		builder.Services.AddOpenTelemetry()
-			.WithTracing(tracing => {
-					tracing.AddAspNetCoreInstrumentation();
-					tracing.AddHttpClientInstrumentation();
-					tracing.AddHotChocolateInstrumentation();
-					tracing.AddEntityFrameworkCoreInstrumentation();
-					tracing.AddOtlpExporter();
-					})
-			.WithMetrics(metrics => {
-					metrics.AddHttpClientInstrumentation();
-					metrics.AddAspNetCoreInstrumentation();
-					metrics.AddOtlpExporter();
-					});
-		return builder;
-	}
+    private static WebApplicationBuilder ConfigOpenTelemetry(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracing =>
+            {
+                tracing.AddAspNetCoreInstrumentation();
+                tracing.AddHttpClientInstrumentation();
+                tracing.AddHotChocolateInstrumentation();
+                tracing.AddEntityFrameworkCoreInstrumentation();
+                tracing.AddOtlpExporter();
+            })
+            .WithMetrics(metrics =>
+            {
+                metrics.AddHttpClientInstrumentation();
+                metrics.AddAspNetCoreInstrumentation();
+                metrics.AddOtlpExporter();
+            });
+        return builder;
+    }
 }

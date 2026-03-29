@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Drawer, IconField, Textarea, type AutoCompleteOptionSelectEvent } from 'primevue';
+import { Drawer, IconField, Textarea, type AutoCompleteCompleteEvent, type AutoCompleteOptionSelectEvent } from 'primevue';
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
-import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useDebounce } from '@vueuse/core';
 import { type Article, ArticleSchema } from '@/domain/article.models';
 import { type Tag } from '@/domain/tag.models';
@@ -48,7 +48,7 @@ function removeChip(tag: Tag) {
   article.value.tags = article.value.tags.filter((item) => item.id !== tag.id);
 }
 
-function search(event: any) {
+const search = (event: AutoCompleteCompleteEvent) => {
   offset.value = 0;
   tagName.value = event.query ?? '';
 
@@ -126,7 +126,7 @@ watch(
           </div>
           <div class="flex flex-col">
             <div class="flex flex-row gap-1 h-8">
-              <template v-for="item of article.tags">
+              <template v-for="item of article.tags" :key="item.id ?? ''">
                 <Chip :label="item.name" removable @remove="removeChip(item)"
                   style="background-color: var(--color-blue-50)" />
               </template>

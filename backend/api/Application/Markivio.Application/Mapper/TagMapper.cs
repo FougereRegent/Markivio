@@ -10,15 +10,15 @@ namespace Markivio.Application.Mapper;
 [Mapper(AllowNullPropertyAssignment = true, PreferParameterlessConstructors = false)]
 public partial class TagMapper
 {
-	[MapNestedProperties(nameof(Tag.TagValue))]
+    [MapNestedProperties(nameof(Tag.TagValue))]
     public partial TagInformation MapToTagInformation(Tag tag);
 
-	[MapNestedProperties(nameof(Tag.TagValue))]
-	public partial TagSoftInformation MapToSoftInformation(Tag tag);
+    [MapNestedProperties(nameof(Tag.TagValue))]
+    public partial TagSoftInformation MapToSoftInformation(Tag tag);
 
-	[UserMapping]
-	public Tag Map(CreateTag createTag) =>
-		new(new TagValueObject(createTag.Name, createTag.Color));
+    [UserMapping]
+    public Tag Map(CreateTag createTag) =>
+        new(new TagValueObject(createTag.Name, createTag.Color));
 }
 
 [Mapper]
@@ -26,8 +26,8 @@ public static partial class TagMapperProjection
 {
     public static partial IQueryable<TagInformation> ProjectionToTagInformation(this IQueryable<Tag> tags);
 
-	[MapNestedProperties(nameof(Tag.TagValue))]
-	private static partial TagInformation TagToTagInformation(Tag tag);
+    [MapNestedProperties(nameof(Tag.TagValue))]
+    private static partial TagInformation TagToTagInformation(Tag tag);
 }
 
 #pragma warning restore RMG020

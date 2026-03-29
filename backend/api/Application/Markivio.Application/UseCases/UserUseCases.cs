@@ -81,11 +81,11 @@ public class UserUseCase : IUserUseCase
         if (user is null)
             return Result.Fail(new NotFoundError("Cannot found"));
 
-		UserMapper mapper = new UserMapper();
+        UserMapper mapper = new UserMapper();
         try
         {
-			user.UpdateUser(firstName: updateUser.FirstName,
-					lastName: updateUser.LastName);
+            user.UpdateUser(firstName: updateUser.FirstName,
+                    lastName: updateUser.LastName);
         }
         catch (DomainException ex)
         {

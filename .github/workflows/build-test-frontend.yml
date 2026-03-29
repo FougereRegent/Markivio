@@ -1,0 +1,50 @@
+---
+name: build & test frontend
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: true
+        type: string
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build & test frontend
+    
+    steps:
+      - uses: actions/checkout@v6
+        name: checkout
+
+      - uses: actions/setup-node@v6.3.0
+        name: setup node
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - uses: pnpm/action-setup@v5.0.0
+        name: setup pnpm
+        with:
+          version: 10
+
+      - run: pnpm install
+        name: install dependencies
+        working-directory: ./frontend/markivio-frontend
+
+      - run: pnpm lint
+        name: check format
+        working-directory: ./frontend/markivio-frontend
+
+      - run: pnpm build
+        name: build frontend
+        working-directory: ./frontend/markivio-frontend
+
+      - run: pnpm test:unit:ci
+        name: unit tests
+        working-directory: ./frontend/markivio-frontend
+
+
+
+
+
+          

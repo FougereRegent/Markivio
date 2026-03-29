@@ -10,7 +10,7 @@ internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
     {
         const string nameFkUser = "UserId";
 
-		builder.ToTable("tags");
+        builder.ToTable("tags");
         builder
           .HasKey(pre => pre.Id);
 
@@ -19,7 +19,7 @@ internal class TagDbConfiguration : IEntityTypeConfiguration<Tag>
           .ValueGeneratedOnAdd();
 
 
-		builder.ComplexProperty(pre => pre.TagValue);
+        builder.ComplexProperty(pre => pre.TagValue);
 
         builder
           .HasOne(pre => pre.User)

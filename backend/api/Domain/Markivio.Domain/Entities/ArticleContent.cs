@@ -43,10 +43,11 @@ public sealed class ArticleContent
 
     public void RemoveTags(IReadOnlyList<TagValueObject> tags)
     {
-		foreach(TagValueObject tag in tags) {
-			TagValueObject? removeTag = Tags.FirstOrDefault(pre => pre.Name == tag.Name);
-			if(removeTag != null)
-				Tags.Remove(removeTag);
-		}
+        foreach (TagValueObject tag in tags)
+        {
+            TagValueObject? removeTag = Tags.FirstOrDefault(pre => pre.Name == tag.Name);
+            if (removeTag != null)
+                Tags.Remove(removeTag);
+        }
     }
 }

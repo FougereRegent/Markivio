@@ -15,7 +15,7 @@ public sealed class ArticleTests : BaseTests
         string title = faker.Lorem.Slug(wordcount: 4);
 
         // Act
-        var act = () => new Article(articleContent, title);
+        var act = () => new Article(articleContent, title, false);
 
         // Assert
         Should.Throw<ArgumentNullException>(act).ParamName.ShouldBe("articleContent");
@@ -34,7 +34,7 @@ public sealed class ArticleTests : BaseTests
             description: null);
 
         // Act
-        var act = () => new Article(content, title!);
+        var act = () => new Article(content, title!, false);
 
         // Assert
         EmptyException ex = Should.Throw<EmptyException>(act);
@@ -53,7 +53,7 @@ public sealed class ArticleTests : BaseTests
             description: faker.Lorem.Sentence());
 
         // Act
-        var article = new Article(content, title);
+        var article = new Article(content, title, false);
 
         // Assert
         article.Title.ShouldBe(title);

@@ -2,7 +2,7 @@
 import { Tag } from 'primevue';
 import { contrastColor } from '@/helpers/ui.helpers';
 import DialogSource from './DialogSource.vue';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useGetSourceUrl, type UrlSource } from '@/composables/article.graphql';
 
 export type ArticleProps = {

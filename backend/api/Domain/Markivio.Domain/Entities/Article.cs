@@ -12,17 +12,18 @@ public sealed class Article : EntityWithTenancy
     public Folder? Folder { get; set; } = null;
     public ArticleContent ArticleContent { get; set; } = null!;
 
-	public bool IsFramable {get;set;} = true;
+    public bool IsFramable { get; set; } = true;
 
-	private Article() {}
+    private Article() { }
 
-	public Article(ArticleContent articleContent, string title, bool isFramable) {
-		ArticleContent = articleContent ?? throw new ArgumentNullException(nameof(articleContent));
+    public Article(ArticleContent articleContent, string title, bool isFramable)
+    {
+        ArticleContent = articleContent ?? throw new ArgumentNullException(nameof(articleContent));
 
-		if(string.IsNullOrEmpty(title))
-			throw new EmptyException("title cannot be empty", "EMPTY_ARTICLETITLE");
+        if (string.IsNullOrEmpty(title))
+            throw new EmptyException("title cannot be empty", "EMPTY_ARTICLETITLE");
 
-		Title = title;
-		IsFramable = isFramable;
-	}
+        Title = title;
+        IsFramable = isFramable;
+    }
 }

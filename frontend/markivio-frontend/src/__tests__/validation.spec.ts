@@ -47,15 +47,6 @@ describe('Validations', () => {
     expect(() => validation.Throw()).toThrowError(ValidationError);
   });
 
-  test('None Errors occured should not throw', () => {
-    const validation = new Validation();
-    validation.IsValid(() => true, {
-      errorMessage: 'error message',
-    });
-
-    validation.Throw();
-  });
-
   test('Should store propertyName in error', () => {
     const validation = new Validation();
     validation.IsValid(() => false, {

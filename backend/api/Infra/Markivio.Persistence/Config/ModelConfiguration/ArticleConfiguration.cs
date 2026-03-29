@@ -8,7 +8,7 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
 {
     public void Configure(EntityTypeBuilder<Article> builder)
     {
-		builder.ToTable("articles");
+        builder.ToTable("articles");
         builder
           .HasKey(pre => pre.Id);
 
@@ -32,8 +32,8 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
               sa.OwnsMany(pre => pre.Tags);
           });
 
-		builder
-			.Property(pre => pre.IsFramable)
-			.HasDefaultValue(false);
+        builder
+            .Property(pre => pre.IsFramable)
+            .HasDefaultValue(false);
     }
 }

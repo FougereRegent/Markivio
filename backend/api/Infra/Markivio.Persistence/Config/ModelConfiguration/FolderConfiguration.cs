@@ -8,7 +8,7 @@ internal class FolderDbConfiguration : IEntityTypeConfiguration<Folder>
 {
     public void Configure(EntityTypeBuilder<Folder> builder)
     {
-		builder.ToTable("folders");
+        builder.ToTable("folders");
         builder
           .HasKey(pre => pre.Id);
 

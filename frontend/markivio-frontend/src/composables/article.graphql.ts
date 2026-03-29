@@ -47,7 +47,7 @@ export function useCreateArticle(article: Ref<Article>) {
   return { createArticle, error, id, fetching }
 }
 
-export function useGetSourceUrl(id:String) {
+export function useGetSourceUrl(id:string) {
   const { client } = useClientHandle()
   const runQuery = async () => {
     const result = await client.query(GetUrlByArticleId, {
