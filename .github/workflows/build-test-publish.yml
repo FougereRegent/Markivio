@@ -1,1 +1,76 @@
+name: build and test and publish
 
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: 22.17.0
+  DOTNET_VERSION: 10.0
+  PNPM_VERSION: 10
+
+jobs:
+  build-backend:
+    uses: ./.github/workflows/build-test-backend.yml
+    with:
+      dotnet-version: $DOTNET_VERSION
+
+  build-frontend:
+    uses: ./.github/workflows/build-test-frontend.yml
+    with:
+      node-version: $NODE_VERSION
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-frontend]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6.3.0
+        name: setup node
+        with:
+          node-version: $NODE_VERSION
+
+      - uses: pnpm/action-setup@v5.0.0
+        name: setup pnpm
+        with:
+          version: $PNPM_VERSION
+
+      - run: pnpm install
+        name: install dependencies
+        working-directory: ./frontend/markivio-frontend
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm semantic-release
+
+      - name: Print version
+        run: echo "Semantic release created version $VERSION"
+      
+      - name: Set version output
+        id: set_version
+        run: echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: login to harbor
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ vars.HARBOR_REGISTRY }}
+          username: ${{ vars.HARBOR_USERNAME }}
+          password: ${{ secrets.HARBOR_PASSWORD }}
+
+      - name: build and push
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: registry.damien-venant.ovh/markivio/markivio-graphql:${{ needs.release.outputs.version }}
+          build-args: SEM_VERSION=${{ needs.release.outputs.version }}
