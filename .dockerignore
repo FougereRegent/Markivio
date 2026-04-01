@@ -1,0 +1,10 @@
+**/obj
+**/bin
+
+**/.env
+**/node_modules
+
+docs
+
+./package.json
+./pnpm-lock.yaml
