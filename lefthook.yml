@@ -1,77 +1,21 @@
-# EXAMPLE USAGE:
-#
-#   Refer for explanation to following link:
-#   https://lefthook.dev/configuration/
-#
-# pre-push:
-#   jobs:
-#     - name: packages audit
-#       tags:
-#         - frontend
-#         - security
-#       run: yarn audit
-#
-#     - name: gems audit
-#       tags:
-#         - backend
-#         - security
-#       run: bundle audit
-#
-# pre-commit:
-#   parallel: true
-#   jobs:
-#     - run: yarn eslint {staged_files}
-#       glob: "*.{js,ts,jsx,tsx}"
-#
-#     - name: rubocop
-#       glob: "*.rb"
-#       exclude:
-#         - config/application.rb
-#         - config/routes.rb
-#       run: bundle exec rubocop --force-exclusion {all_files}
-#
-#     - name: govet
-#       files: git ls-files -m
-#       glob: "*.go"
-#       run: go vet {files}
-#
-#     - script: "hello.js"
-#       runner: node
-#
-#     - script: "hello.go"
-#       runner: go run
-#
-
 commit-msg:
-  parallel: false
-  jobs:
-    - script: "message-checker.sh"
-      runner: "sh"
-
-
-pre-commit:
-  parallel: false
-  jobs:
-    - name: format backend
-      run: dotnet format ./backend/api/Markivio.sln
-      runner: bash
-
+  commands:
+    "lint commit message":
+      run: pnpm commitlint --edit {1}
 pre-push:
-  parallel: false
-  jobs:
-    - name: build backend
-      run: dotnet build ./backend/api/Markivio.sln
-      runner: bash
 
-    - name: test backend 
-      run: dotnet test ./backend/api/Tests/Markivio.UnitTests/Markivio.UnitTests.csproj
-      runner: bash
-
-post-receive:
   parallel: true
-  jobs:
-    - name: restore backend
-      run: dotnet restore ./backend/api/Markivio.sln
+  commands:
+    backend:
+      root: ./backend/api/
+      glob: "**/*.cs"
+      run: |
+        dotnet build Markivio.sln
+        dotnet test Markivio.UnitTests/Markivio.UnitTests.csproj
 
-    - name: build docker image
-      run: docker buildx build -f Dockerfile.Api .
+    frontend:
+      root: ./frontend/markivio-frontend/
+      glob: "**/{*.js,*.ts,*.vue}"
+      run: |
+        pnpm build
+        pnpm test:unit
