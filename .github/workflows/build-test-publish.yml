@@ -14,13 +14,12 @@ jobs:
   build-backend:
     uses: ./.github/workflows/build-test-backend.yml
     with:
-      dotnet-version: $DOTNET_VERSION
+      dotnet-version: ${{ env.DOTNET_VERSION }}
 
   build-frontend:
     uses: ./.github/workflows/build-test-frontend.yml
     with:
-      node-version: $NODE_VERSION
-
+      node-version: ${{ env.NODE_VERSION }} 
   release:
     runs-on: ubuntu-latest
     needs: [build-frontend, build-frontend]
@@ -31,12 +30,12 @@ jobs:
       - uses: actions/setup-node@v6.3.0
         name: setup node
         with:
-          node-version: $NODE_VERSION
+          node-version: ${{ env.NODE_VERSION }} 
 
       - uses: pnpm/action-setup@v5.0.0
         name: setup pnpm
         with:
-          version: $PNPM_VERSION
+          version: ${{ env.PNPM_VERSION }}
 
       - run: pnpm install
         name: install dependencies
