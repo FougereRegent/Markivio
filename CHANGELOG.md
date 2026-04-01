@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/FougereRegent/Markivio/compare/v1.0.0...v1.1.0) (2026-04-01)
+
+
+### Features
+
+* add fetch depth ([51f6e72](https://github.com/FougereRegent/Markivio/commit/51f6e72e02390e62005b240b63c50c15df77bd6b))
+
 # 1.0.0 (2026-04-01)
 
 
