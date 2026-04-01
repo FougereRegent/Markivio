@@ -15,7 +15,6 @@
 	[
       "@semantic-release/exec",
       {
-        "verifyConditionsCmd": "",
         "prepareCmd": "echo VERSION=${nextRelease.version} >> $GITHUB_ENV"
       }
 	]
