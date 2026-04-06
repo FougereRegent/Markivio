@@ -21,6 +21,7 @@ config.CONNECTION_STRING = connectionString;
 builder.Configuration.Bind(config);
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config, !builder.Environment.IsDevelopment());
+builder.Services.AddHealthChecks();
 builder.ConfigDI(config);
 builder.ConfigGraphQl();
 
@@ -42,10 +43,15 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", scalarOptions);
 }
 
+app.UseStaticFiles();
+app.UseDefaultFiles();
+app.UseStaticFiles();   // DOIT être avant
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapGraphQL();
+app.UseHealthChecks("/health-check");
+app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())
 {
