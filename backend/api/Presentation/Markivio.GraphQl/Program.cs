@@ -43,13 +43,14 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", scalarOptions);
 }
 
-app.UseStaticFiles();
 app.UseDefaultFiles();
-app.UseStaticFiles();   // DOIT être avant
+app.UseStaticFiles();
+
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapGraphQL();
+
 app.UseHealthChecks("/health-check");
 app.MapFallbackToFile("index.html");
 
