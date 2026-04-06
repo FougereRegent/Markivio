@@ -1,0 +1,19 @@
+image:
+  repository: registry.damien-venant.ovh/markivio/markivio-graphql
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIp
+  port: 8080
+
+app:
+  env:
+    environment: 'Production'
+    authority: ''
+    audience: ''
+    authClientId: ''
+    authDomain: ''
+    authAudience: ''
+  db:
+    conectionString: ''
