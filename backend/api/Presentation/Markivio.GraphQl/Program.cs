@@ -21,6 +21,7 @@ config.CONNECTION_STRING = connectionString;
 builder.Configuration.Bind(config);
 builder.Services.AddOpenApi();
 builder.Services.AddAuth0(config, !builder.Environment.IsDevelopment());
+builder.Services.AddHealthChecks();
 builder.ConfigDI(config);
 builder.ConfigGraphQl();
 
@@ -42,19 +43,41 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/docs", scalarOptions);
 }
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapGraphQL();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
-    bool runMigrations =
-        app.Environment.IsDevelopment()
-        || builder.Configuration.GetValue<bool>("MARKIVIO_RUN_MIGRATIONS");
+app.UseHealthChecks("/health-check");
+app.MapFallbackToFile("index.html");
 
-    if (runMigrations)
-        await db.Database.MigrateAsync();
+if (ShouldRunMigration(app, args))
+{
+    await ApplyMigration(app);
+    if (ShouldExitAfterMigration(args)) return;
 }
+
 app.Run();
+
+
+static bool ShouldRunMigration(WebApplication application, string[] arguments)
+{
+    return application.Environment.IsDevelopment() || arguments
+        .Any(pre => pre.Contains("migrate", StringComparison.CurrentCultureIgnoreCase));
+}
+
+static bool ShouldExitAfterMigration(string[] arguments)
+{
+    return arguments
+        .Any(pre => pre.Contains("migrate", StringComparison.CurrentCultureIgnoreCase));
+}
+
+static async Task ApplyMigration(WebApplication application)
+{
+    using var scope = application.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
+    await db.Database.MigrateAsync();
+}

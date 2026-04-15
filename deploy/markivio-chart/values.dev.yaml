@@ -1,0 +1,30 @@
+image:
+  repository: registry.damien-venant.ovh/markivio/markivio-graphql
+  tag: test-1
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env:
+  MARKIVIO_AUTHORITY: "https://markivio.eu.auth0.com/"
+  MARKIVIO_AUDIENCE: "https://localhost:8080/"
+  MARKIVIO_AUTH_DOMAIN: "markivio.eu.auth0.com"
+  MARKIVIO_AUTH_AUDIENCE: "https://localhost:8080/"
+  ASPNETCORE_ENVIRONMENT: "Development"
+
+secret:
+  MARKIVIO_AUTH_CLIENT_ID: ""
+  ConnectionStrings__markivio: ""
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "750m"
+
+ingressRoute:
+  host: ""
