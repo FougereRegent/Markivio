@@ -54,26 +54,30 @@ app.MapGraphQL();
 app.UseHealthChecks("/health-check");
 app.MapFallbackToFile("index.html");
 
-if(ShouldRunMigration(app, args)){
-	await ApplyMigration(app);
-	if(ShouldExitAfterMigration(args)) return;
+if (ShouldRunMigration(app, args))
+{
+    await ApplyMigration(app);
+    if (ShouldExitAfterMigration(args)) return;
 }
 
 app.Run();
 
 
-static bool ShouldRunMigration(WebApplication application, string[] arguments) {
-	return application.Environment.IsDevelopment() || arguments
-		.Any(pre => pre.Contains("migrate", StringComparison.CurrentCultureIgnoreCase));
+static bool ShouldRunMigration(WebApplication application, string[] arguments)
+{
+    return application.Environment.IsDevelopment() || arguments
+        .Any(pre => pre.Contains("migrate", StringComparison.CurrentCultureIgnoreCase));
 }
 
-static bool ShouldExitAfterMigration(string[] arguments) {
-	return arguments
-		.Any(pre => pre.Contains("migrate", StringComparison.CurrentCultureIgnoreCase));
+static bool ShouldExitAfterMigration(string[] arguments)
+{
+    return arguments
+        .Any(pre => pre.Contains("migrate", StringComparison.CurrentCultureIgnoreCase));
 }
 
-static async Task ApplyMigration(WebApplication application) {
-	using var scope = application.Services.CreateScope();
-	var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
-	await db.Database.MigrateAsync();
+static async Task ApplyMigration(WebApplication application)
+{
+    using var scope = application.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
+    await db.Database.MigrateAsync();
 }

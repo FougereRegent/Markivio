@@ -1,12 +1,12 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.1.2">
+<Project Sdk="Aspire.AppHost.Sdk/13.2.2">
 
   <ItemGroup>
     <ProjectReference Include="..\Markivio.GraphQl\Markivio.GraphQl.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.1.2" />
-	<PackageReference Include="Aspire.Npgsql" Version="13.1.2" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.2" />
+	<PackageReference Include="Aspire.Npgsql" Version="13.2.2" />
 	<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="*" />
   </ItemGroup>
 
