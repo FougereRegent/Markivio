@@ -20,7 +20,7 @@ public class Query
               ));
     }
 
-    public async ValueTask<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id, CancellationToken cancellationToken = default)
+    public async Task<UserInformation> GetUserById(IUserUseCase userUseCase, Guid id, CancellationToken cancellationToken = default)
     {
         FluentResults.Result<UserInformation> result = await userUseCase.GetUserInformationById(id, cancellationToken);
         if (result.IsFailed)

@@ -12,17 +12,17 @@ namespace Markivio.Application.UseCases;
 
 public interface IArticleUseCase
 {
-    ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default);
-    ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
+    Task<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default);
+    Task<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
     IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters);
 
-    ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags);
-    ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
+    Task<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags);
+    Task<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
 }
 
 public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRepository, ITagRepository tagRepository, IAuthUser authUser) : IArticleUseCase
 {
-    public ValueTask<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default)
+    public Task<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default)
     {
         throw new NotImplementedException();
     }
@@ -38,7 +38,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
     }
 
-    public async ValueTask<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default)
+    public async Task<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default)
     {
         ArticleMapper mapper = new ArticleMapper();
         Article? article = await articleRepository.GetByTitle(createArticle.Title);
@@ -68,7 +68,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         return mapper.Map(resultArticle);
     }
 
-    public async ValueTask<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags)
+    public async Task<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags)
     {
         ArticleMapper mapper = new ArticleMapper();
         Article? article = await articleRepository.GetById(addTags.articleId);
@@ -95,7 +95,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         return mapper.Map(res);
     }
 
-    public async ValueTask<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags)
+    public async Task<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags)
     {
         ArticleMapper mapper = new ArticleMapper();
         Article? article = await articleRepository.GetById(removeTags.articleId);

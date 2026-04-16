@@ -19,7 +19,7 @@ public class GenericRepository<T>(MarkivioContext context) : IGenericRepository<
           .OrderBy(pre => pre.Id);
     }
 
-    public async ValueTask<T?> GetById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<T?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         T? result = await _context.Set<T>()
             .FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);

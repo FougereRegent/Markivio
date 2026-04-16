@@ -54,7 +54,7 @@ public sealed class ArticleUseCaseTests : BaseTests
         { Id = Guid.NewGuid() };
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
-          .Returns(ValueTask.FromResult<Article?>(existing));
+          .Returns(Task.FromResult<Article?>(existing));
 
         // Act
         Result<ArticleInformation> result = await useCase.CreateArticle(
@@ -79,7 +79,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
-          .Returns(ValueTask.FromResult<Article?>(null));
+          .Returns(Task.FromResult<Article?>(null));
 
         tagUseCaseMock.Setup(pre => pre.TagsExist<Guid>(It.IsAny<IEnumerable<Guid>>(), TagExistConditionEnum.Id))
           .Returns(false);
@@ -106,7 +106,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
-          .Returns(ValueTask.FromResult<Article?>(null));
+          .Returns(Task.FromResult<Article?>(null));
 
         tagUseCaseMock.Setup(pre => pre.TagsExist<Guid>(It.IsAny<IEnumerable<Guid>>(), TagExistConditionEnum.Id))
           .Returns(true);
@@ -143,7 +143,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
-          .Returns(ValueTask.FromResult<Article?>(null));
+          .Returns(Task.FromResult<Article?>(null));
 
         tagUseCaseMock.Setup(pre => pre.TagsExist<Guid>(It.IsAny<IEnumerable<Guid>>(), TagExistConditionEnum.Id))
           .Returns(true);
