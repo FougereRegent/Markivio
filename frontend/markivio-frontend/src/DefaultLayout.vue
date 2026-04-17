@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import HeaderComponent from '@/components/HeaderComponent.vue';
-import { useAuthStore } from '@/stores/auth-store';
-import NavBarComponent from '@/components/NavBarComponent.vue';
-import { useLoaderStore } from '@/stores/loader-store';
-import { watch } from 'vue';
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import { useAuthStore } from '@/stores/auth-store'
+import NavBarComponent from '@/components/NavBarComponent.vue'
+import { useLoaderStore } from '@/stores/loader-store'
+import { watch } from 'vue'
 
-const authStore = useAuthStore();
-const loadingStore = useLoaderStore();
+const authStore = useAuthStore()
+const loadingStore = useLoaderStore()
 
 watch(
   () => authStore.token,
   (token) => {
-    if (!token) return;
-    loadingStore.stop();
+    if (!token) return
+    loadingStore.stop()
   },
   { immediate: true },
-);
+)
 </script>
 
 <template>

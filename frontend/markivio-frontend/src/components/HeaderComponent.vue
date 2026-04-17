@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import LogoComponent from '@/components/LogoComponent.vue';
-import 'remixicon/fonts/remixicon.css';
-import UserIconComponent from '@/components/UserIconComponent.vue';
-import UserMenuComponent from '@/components/UserMenuComponent.vue';
-import { useAddEditDrawer } from '@/stores/add-edit-drawer-store';
-import { ref } from 'vue';
+import LogoComponent from '@/components/LogoComponent.vue'
+import 'remixicon/fonts/remixicon.css'
+import UserIconComponent from '@/components/UserIconComponent.vue'
+import UserMenuComponent from '@/components/UserMenuComponent.vue'
+import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
+import { ref } from 'vue'
 
-const popoverRef = ref();
-const drawer = useAddEditDrawer();
+const popoverRef = ref()
+const drawer = useAddEditDrawer()
 
 const clickIcon = () => {
-  popoverRef.value.toggle(event);
-};
+  popoverRef.value.toggle(event)
+}
 </script>
 
 <template>

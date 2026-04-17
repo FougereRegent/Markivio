@@ -26,6 +26,7 @@ var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-fro
                     .WithReference(graphqlApi)
                     .WithEndpoint("http", endpoint => endpoint.Port = 5173)
                     .WaitFor(graphqlApi)
+                    .WithEnvironment("VITE_DEV", "true")
                     .WithEnvironment("VITE_MARKIVIO_AUTH_CLIENT_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
                     .WithEnvironment("VITE_MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
                     .WithEnvironment("VITE_MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])

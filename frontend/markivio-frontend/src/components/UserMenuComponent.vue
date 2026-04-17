@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import router from '@/router';
-import { useAuthStore } from '@/stores/auth-store';
+import router from '@/router'
+import { useAuthStore } from '@/stores/auth-store'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 const items = [
-  { label: 'Edit Profile', icon: 'ri-edit-line', command: () => router.push({ name: 'updateUser' }) },
+  {
+    label: 'Edit Profile',
+    icon: 'ri-edit-line',
+    command: () => router.push({ name: 'updateUser' }),
+  },
   { label: 'Logout', icon: 'ri-logout-box-line', command: async () => await authStore.logout() },
-];
+]
 </script>
 
 <template>

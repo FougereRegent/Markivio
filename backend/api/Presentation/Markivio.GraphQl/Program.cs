@@ -23,16 +23,16 @@ config.CONNECTION_STRING = connectionString;
 builder.Configuration.Bind(config);
 builder.Services.AddOpenApi();
 builder
-	.ConfigAuth(config)
-	.ConfigHealthCheck()
-	.ConfigDI(config)
-	.ConfigGraphQl()
-	.ConfigJson();
+    .ConfigAuth(config)
+    .ConfigHealthCheck()
+    .ConfigDI(config)
+    .ConfigGraphQl()
+    .ConfigJson();
 
 var app = builder.Build();
 app.ConfigAuth()
-	.ConfigScalar()
-	.ConfigApi();
+    .ConfigScalar()
+    .ConfigApi();
 
 if (ShouldRunMigration(app, args))
 {
@@ -42,7 +42,7 @@ if (ShouldRunMigration(app, args))
 
 var api = app.MapGroup("/api");
 api.GetConfig()
-	.GetVersion();
+    .GetVersion();
 
 app.Run();
 

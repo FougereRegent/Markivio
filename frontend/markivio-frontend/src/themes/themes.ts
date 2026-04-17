@@ -1,5 +1,5 @@
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { definePreset } from '@primeuix/themes'
+import Aura from '@primeuix/themes/aura'
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -31,7 +31,7 @@ const MyPreset = definePreset(Aura, {
           800: 'var(--surface-color-800)',
           900: 'var(--surface-color-900)',
           950: 'var(--surface-color-950)',
-        }
+        },
       },
       dark: {
         surface: {
@@ -47,10 +47,10 @@ const MyPreset = definePreset(Aura, {
           800: 'var(--surface-color-800-dark)',
           900: 'var(--surface-color-900-dark)',
           950: 'var(--surface-color-950-dark)',
-        }
-      }
-    }
+        },
+      },
+    },
   },
-});
+})
 
-export default MyPreset;
+export default MyPreset

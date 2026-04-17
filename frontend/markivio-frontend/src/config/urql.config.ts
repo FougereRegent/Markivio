@@ -1,25 +1,30 @@
-import {cacheExchange, Client, fetchExchange} from '@urql/vue';
-import { authExchange, type AuthConfig } from '@urql/exchange-auth';
-import { useAuthStore } from '@/stores/auth-store';
+import { cacheExchange, Client, fetchExchange } from '@urql/vue'
+import { authExchange, type AuthConfig } from '@urql/exchange-auth'
+import { useAuthStore } from '@/stores/auth-store'
+import { CONFIG } from './constante.config'
 
 async function initializeAuthState() {
-  const auth = useAuthStore();
-  await auth.init();
-  const token = auth.token;
-  return token;
+  const auth = useAuthStore()
+  await auth.init()
+  const token = auth.token
+  return token
 }
 
 export const httpClient = new Client({
-  url: import.meta.env.VITE_MARKIVIO_GRAPHQL_API,
-  exchanges: [cacheExchange, authExchange(async utils => {
-    const token = await initializeAuthState();
-    return {
-      addAuthToOperation(operation) {
-          if(!token) return operation;
+  url: CONFIG.graphqlApi,
+  exchanges: [
+    cacheExchange,
+    authExchange(async (utils) => {
+      const token = await initializeAuthState()
+      return {
+        addAuthToOperation(operation) {
+          if (!token) return operation
           return utils.appendHeaders(operation, {
-            Authorization: `Bearer ${token}`
-          });
-      },
-    } as AuthConfig;
-  }), fetchExchange],
+            Authorization: `Bearer ${token}`,
+          })
+        },
+      } as AuthConfig
+    }),
+    fetchExchange,
+  ],
 })

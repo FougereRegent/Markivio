@@ -1,8 +1,5 @@
 <template>
-    <div>
-        Loading
-    </div>
+  <div>Loading</div>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>

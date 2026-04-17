@@ -1,41 +1,41 @@
 export interface ValErr {
-  propertyName?: string | undefined;
-  errorMessage: string;
+  propertyName?: string | undefined
+  errorMessage: string
 }
 
-type ValidationCallback = () => boolean;
+type ValidationCallback = () => boolean
 
 export class ValidationError extends Error {
-  readonly type: string = 'validation-errors';
+  readonly type: string = 'validation-errors'
 
-  validationErrors: Array<ValErr>;
+  validationErrors: Array<ValErr>
 
   constructor(errs: Array<ValErr>) {
-    super();
-    this.validationErrors = errs;
+    super()
+    this.validationErrors = errs
   }
 }
 
 export class Validation {
-  _errors = new Array<ValErr>();
+  _errors = new Array<ValErr>()
 
   get HasError(): boolean {
-    return this._errors.length > 0;
+    return this._errors.length > 0
   }
 
   public IsValid(callback: ValidationCallback, err: ValErr): Validation {
     if (callback()) {
-      return this;
+      return this
     }
-    this._errors.push(err);
-    return this;
+    this._errors.push(err)
+    return this
   }
 
   public Throw() {
-    if (this.HasError) throw new ValidationError(this._errors);
+    if (this.HasError) throw new ValidationError(this._errors)
   }
 }
 
 export function nameof<K>(property: keyof K): string {
-  return property as string;
+  return property as string
 }

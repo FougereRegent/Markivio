@@ -1,28 +1,28 @@
-import { gql, type TypedDocumentNode } from "@urql/vue";
+import { gql, type TypedDocumentNode } from '@urql/vue'
 
 export type GetTagsInformationQuery = {
   tags: {
-    __typename: 'tags';
+    __typename: 'tags'
     items: Array<{
-      id: string;
-      name: string;
-      color: string;
-    }>;
-    totalCount: number;
+      id: string
+      name: string
+      color: string
+    }>
+    totalCount: number
     pageInfo: {
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    };
-  };
-};
+      hasNextPage: boolean
+      hasPreviousPage: boolean
+    }
+  }
+}
 
 export type TagsInformationQuery = {
   nodes: Array<{
-    id: string,
-    name: string,
-    color: string,
+    id: string
+    name: string
+    color: string
   }>
-};
+}
 
 export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
   query Tags($skip: Int!, $take: Int!, $tagName: String) {
@@ -40,17 +40,16 @@ export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
       }
     }
   }
-`;
-
+`
 
 export const AddTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
-mutation CreateTag($input: [CreateTagInput!]!) {
-  createTags(createTags: $input) {
-    nodes {
+  mutation CreateTag($input: [CreateTagInput!]!) {
+    createTags(createTags: $input) {
+      nodes {
         id
         name
         color
       }
+    }
   }
-}
-`;
+`

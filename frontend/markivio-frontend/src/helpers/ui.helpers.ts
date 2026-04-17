@@ -2,18 +2,18 @@ const luminanceFactor = {
   r: 0.152,
   g: 0.383,
   b: 0.038,
-};
+}
 
 export function calculateLuminance(colorHex: string): number {
-  const r = parseInt(colorHex.substring(1, 3), 16);
-  const g = parseInt(colorHex.substring(3, 5), 16);
-  const b = parseInt(colorHex.substring(5, 7), 16);
+  const r = parseInt(colorHex.substring(1, 3), 16)
+  const g = parseInt(colorHex.substring(3, 5), 16)
+  const b = parseInt(colorHex.substring(5, 7), 16)
 
-  return luminanceFactor.r * r + luminanceFactor.g * g + luminanceFactor.b * b;
+  return luminanceFactor.r * r + luminanceFactor.g * g + luminanceFactor.b * b
 }
 
 export function contrastColor(colorHex: string): string {
-  const thresholdLuminance = 0.5;
-  const luminance = calculateLuminance(colorHex) / 255.0;
-  return luminance < thresholdLuminance ? 'white' : 'black';
+  const thresholdLuminance = 0.5
+  const luminance = calculateLuminance(colorHex) / 255.0
+  return luminance < thresholdLuminance ? 'white' : 'black'
 }
