@@ -2,6 +2,8 @@ using Scalar.AspNetCore;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
 using Microsoft.EntityFrameworkCore;
+using Markivio.Presentation.Endpoint.Config;
+using Markivio.Presentation.Endpoint.Version;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +61,10 @@ if (ShouldRunMigration(app, args))
     await ApplyMigration(app);
     if (ShouldExitAfterMigration(args)) return;
 }
+
+var api = app.MapGroup("/api");
+api.GetConfig()
+	.GetVersion();
 
 app.Run();
 

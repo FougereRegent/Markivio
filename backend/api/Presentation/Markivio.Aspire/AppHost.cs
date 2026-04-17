@@ -15,7 +15,10 @@ var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
                     .WaitFor(db)
                     .WithReference(db)
                     .WithEnvironment("MARKIVIO_AUTHORITY", env["MARKIVIO_AUTHORITY"])
-                    .WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"]);
+                    .WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"])
+                    .WithEnvironment("MARKIVIO_AUTH_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
+                    .WithEnvironment("MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
+                    .WithEnvironment("MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"]);
 
 var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-frontend")
                     .WithPnpm()
