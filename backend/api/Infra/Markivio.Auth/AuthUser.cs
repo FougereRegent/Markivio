@@ -20,7 +20,7 @@ public class AuthUser(
 
     public User CurrentUser { get; set; } = default!;
 
-    public async ValueTask<User?> GetUserInfoByToken(string jwtToken, CancellationToken cancellationToken = default)
+    public async Task<User?> GetUserInfoByToken(string jwtToken, CancellationToken cancellationToken = default)
     {
         HttpClient client = httpClientFactory.CreateClient();
         JwtTokenInfo tok = JwtTokenExtentions.ParseToken(jwtToken);

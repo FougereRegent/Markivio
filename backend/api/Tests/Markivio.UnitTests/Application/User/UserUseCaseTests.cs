@@ -34,12 +34,12 @@ public sealed class UserUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async ValueTask CreateNewUserOnConnection_ShouldReturnFailedResult_WhenTokenIsCorrupted()
+    public async Task CreateNewUserOnConnection_ShouldReturnFailedResult_WhenTokenIsCorrupted()
     {
         // Arrange
         CancellationToken token = new CancellationToken();
         authUserMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(null));
+          .Returns(Task.FromResult<User?>(null));
 
         // Act
         Result result = await useCase.CreateNewUserOnConnection(new UserConnectionDto(""), token);
@@ -52,7 +52,7 @@ public sealed class UserUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async ValueTask CreateNewUserOnConnection_ShouldNotSaveUser_WhenUserExist()
+    public async Task CreateNewUserOnConnection_ShouldNotSaveUser_WhenUserExist()
     {
         // Arrange
         CancellationToken token = new CancellationToken();
@@ -60,10 +60,10 @@ public sealed class UserUseCaseTests : BaseTests
         User userFromDb = CreateValidUser(authId: "auth0|token");
 
         authUserMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(userFromToken));
+          .Returns(Task.FromResult<User?>(userFromToken));
 
         userRepositoryMock.Setup(pre => pre.GetUserByAuthId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(userFromDb));
+          .Returns(Task.FromResult<User?>(userFromDb));
 
         // Act
         Result result = await useCase.CreateNewUserOnConnection(new UserConnectionDto("token"), token);
@@ -75,17 +75,17 @@ public sealed class UserUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async ValueTask CreateNewUserOnConnection_ShouldSave_WhenUserNotExist()
+    public async Task CreateNewUserOnConnection_ShouldSave_WhenUserNotExist()
     {
         // Arrange
         CancellationToken token = new CancellationToken();
         User userFromToken = CreateValidUser(authId: "auth0|token");
 
         authUserMock.Setup(pre => pre.GetUserInfoByToken(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(userFromToken));
+          .Returns(Task.FromResult<User?>(userFromToken));
 
         userRepositoryMock.Setup(pre => pre.GetUserByAuthId(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(null));
+          .Returns(Task.FromResult<User?>(null));
 
         // Act
         Result result = await useCase.CreateNewUserOnConnection(new UserConnectionDto("token"), token);
@@ -96,7 +96,7 @@ public sealed class UserUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async ValueTask UpdateCurrentUser_ShouldNotUpdate_WhenCurrentUserIsNotFound()
+    public async Task UpdateCurrentUser_ShouldNotUpdate_WhenCurrentUserIsNotFound()
     {
         // Arrange
         CancellationToken token = new CancellationToken();
@@ -105,7 +105,7 @@ public sealed class UserUseCaseTests : BaseTests
 
         userRepositoryMock
           .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(null));
+          .Returns(Task.FromResult<User?>(null));
 
         // Act
         Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation("John", "Doe"), token);
@@ -118,7 +118,7 @@ public sealed class UserUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async ValueTask UpdateCurrentUser_ShouldFail_WhenUpdateIsInvalid()
+    public async Task UpdateCurrentUser_ShouldFail_WhenUpdateIsInvalid()
     {
         // Arrange
         CancellationToken token = new CancellationToken();
@@ -127,7 +127,7 @@ public sealed class UserUseCaseTests : BaseTests
 
         userRepositoryMock
           .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(currentUser));
+          .Returns(Task.FromResult<User?>(currentUser));
 
         // Act
         Result<UserInformation> result = await useCase.UpdateCurrentUser(new UpdateUserInformation("&^^", "Doe"), token);
@@ -141,7 +141,7 @@ public sealed class UserUseCaseTests : BaseTests
     }
 
     [Fact]
-    public async ValueTask UpdateCurrentUser_ShouldUpdate_WhenInputsAreValid()
+    public async Task UpdateCurrentUser_ShouldUpdate_WhenInputsAreValid()
     {
         // Arrange
         CancellationToken token = new CancellationToken();
@@ -151,7 +151,7 @@ public sealed class UserUseCaseTests : BaseTests
 
         userRepositoryMock
           .Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-          .Returns(ValueTask.FromResult<User?>(currentUser));
+          .Returns(Task.FromResult<User?>(currentUser));
 
         userRepositoryMock
           .Setup(pre => pre.Update(It.IsAny<User>()))

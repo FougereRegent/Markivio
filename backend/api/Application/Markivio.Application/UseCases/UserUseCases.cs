@@ -13,9 +13,9 @@ namespace Markivio.Application.UseCases;
 public interface IUserUseCase
 {
     UserInformation CurrentUser { get; }
-    ValueTask<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default);
-    ValueTask<Result<UserInformation>> GetUserInformationById(Guid id, CancellationToken cancellationToken = default);
-    ValueTask<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser, CancellationToken cancellationToken = default);
+    Task<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default);
+    Task<Result<UserInformation>> GetUserInformationById(Guid id, CancellationToken cancellationToken = default);
+    Task<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser, CancellationToken cancellationToken = default);
     IQueryable<UserInformation> GetUsers();
 }
 
@@ -39,7 +39,7 @@ public class UserUseCase : IUserUseCase
         this.authUser = authUser;
     }
 
-    public async ValueTask<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default)
+    public async Task<Result> CreateNewUserOnConnection(UserConnectionDto user, CancellationToken cancellationToken = default)
     {
         User? userFromToken = await authUser.GetUserInfoByToken(user.Token, cancellationToken);
         if (userFromToken is null)
@@ -54,7 +54,7 @@ public class UserUseCase : IUserUseCase
         return Result.Ok();
     }
 
-    public async ValueTask<Result<UserInformation>> GetUserInformationById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<UserInformation>> GetUserInformationById(Guid id, CancellationToken cancellationToken = default)
     {
         User? user = await userRepository.GetById(id);
         Result<UserInformation> result = Result.FailIf(user is null, "");
@@ -74,7 +74,7 @@ public class UserUseCase : IUserUseCase
           .Select(user => mapper.UserToUserInformation(user));
     }
 
-    public async ValueTask<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser,
+    public async Task<Result<UserInformation>> UpdateCurrentUser(UpdateUserInformation updateUser,
         CancellationToken cancellationToken = default)
     {
         User? user = await userRepository.GetById(CurrentUser.Id, cancellationToken);

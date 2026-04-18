@@ -6,7 +6,7 @@ namespace Markivio.Presentation.GraphQl;
 
 public class Mutation
 {
-    public async ValueTask<UserInformation> UpdateMyUser(IUserUseCase userUseCase,
+    public async Task<UserInformation> UpdateMyUser(IUserUseCase userUseCase,
         UpdateUserInformation updateUserInformation,
         CancellationToken cancellationToken = default)
     {
@@ -23,7 +23,7 @@ public class Mutation
         return resultUpdate.Value;
     }
 
-    public async ValueTask<ArticleInformation> CreateArticle(IArticleUseCase articleUseCase,
+    public async Task<ArticleInformation> CreateArticle(IArticleUseCase articleUseCase,
         CreateArticle createArticle,
         CancellationToken cancellationToken = default)
     {
@@ -31,7 +31,7 @@ public class Mutation
         return resultCreate.ThrowIfResultIsFailed();
     }
 
-    public async ValueTask<TagInformation[]> CreateTags(ITagUseCase tagUseCase,
+    public async Task<TagInformation[]> CreateTags(ITagUseCase tagUseCase,
         List<CreateTag> createTags,
         CancellationToken cancellationToken = default)
     {
@@ -39,13 +39,13 @@ public class Mutation
         return resultCreate.ThrowIfResultIsFailed();
     }
 
-    public async ValueTask<ArticleInformation> AddTags(IArticleUseCase articleUseCase,
+    public async Task<ArticleInformation> AddTags(IArticleUseCase articleUseCase,
         AddTagsToArticle addTagsToArticle)
     {
         FluentResults.Result<ArticleInformation> resultAddTags = await articleUseCase.AddTags(addTagsToArticle);
         return resultAddTags.ThrowIfResultIsFailed();
     }
-    public async ValueTask<ArticleInformation> RemoveTags(IArticleUseCase articleUseCase,
+    public async Task<ArticleInformation> RemoveTags(IArticleUseCase articleUseCase,
         RemoveTagsToArticle removeTagsToArticle)
     {
         FluentResults.Result<ArticleInformation> resultRemoveTags = await articleUseCase.RemoveTags(removeTagsToArticle);
