@@ -10,7 +10,6 @@ var postgres = builder.AddPostgres("postgres")
                         .WithDataVolume("markivio-db");
 
 var db = postgres.AddDatabase("markivio");
-
 var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
                     .WaitFor(db)
                     .WithReference(db)
@@ -19,8 +18,8 @@ var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
                     .WithEnvironment("MARKIVIO_AUTH_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
                     .WithEnvironment("MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
                     .WithEnvironment("MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
-					.WithUrl("/scalar")
-					.WithUrl("/graphql");
+                    .WithUrl("/scalar")
+                    .WithUrl("/graphql");
 
 var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-frontend")
                     .WithPnpm()
