@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/FougereRegent/Markivio/compare/v1.1.0...v1.2.0) (2026-04-18)
+
+
+### Features
+
+* change configuration ([#22](https://github.com/FougereRegent/Markivio/issues/22)) ([4e9fb56](https://github.com/FougereRegent/Markivio/commit/4e9fb5669cb08ae3c20d3b85d47a08fea3f9a5ba))
+
 # [1.1.0](https://github.com/FougereRegent/Markivio/compare/v1.0.0...v1.1.0) (2026-04-01)
 
 
