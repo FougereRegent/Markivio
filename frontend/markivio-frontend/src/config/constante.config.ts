@@ -39,8 +39,9 @@ if (import.meta.env.DEV) {
   const response = await fetch('/api/config')
   const payload = await response.json()
 
-  CONFIG.audience = payload['auth-client-id']
+  CONFIG.clientId = payload['auth-client-id']
   CONFIG.domain = payload['auth-domain']
-  CONFIG.clientId = payload['auth-audience']
+  CONFIG.audience = payload['auth-audience']
   CONFIG.graphqlApi = '/graphql'
+  console.log(CONFIG);
 }
