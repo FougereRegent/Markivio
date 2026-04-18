@@ -10,12 +10,16 @@ var postgres = builder.AddPostgres("postgres")
                         .WithDataVolume("markivio-db");
 
 var db = postgres.AddDatabase("markivio");
-
 var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
                     .WaitFor(db)
                     .WithReference(db)
                     .WithEnvironment("MARKIVIO_AUTHORITY", env["MARKIVIO_AUTHORITY"])
-                    .WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"]);
+                    .WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"])
+                    .WithEnvironment("MARKIVIO_AUTH_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
+                    .WithEnvironment("MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
+                    .WithEnvironment("MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
+                    .WithUrl("/scalar")
+                    .WithUrl("/graphql");
 
 var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-frontend")
                     .WithPnpm()
@@ -23,6 +27,7 @@ var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-fro
                     .WithReference(graphqlApi)
                     .WithEndpoint("http", endpoint => endpoint.Port = 5173)
                     .WaitFor(graphqlApi)
+                    .WithEnvironment("VITE_DEV", "true")
                     .WithEnvironment("VITE_MARKIVIO_AUTH_CLIENT_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
                     .WithEnvironment("VITE_MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
                     .WithEnvironment("VITE_MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])

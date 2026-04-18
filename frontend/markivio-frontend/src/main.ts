@@ -1,46 +1,45 @@
 import { createApp } from 'vue'
-import { createAuth0 } from '@auth0/auth0-vue';
-import App from "./App.vue"
+import { createAuth0 } from '@auth0/auth0-vue'
+import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config'
-import MyPreset from './themes/themes';
-import './assets/style.css';
-import { createPinia } from 'pinia';
-import * as z from 'zod';
-import { ToastService } from 'primevue';
-import { httpClient } from './config/urql.config';
-import urql from '@urql/vue';
+import MyPreset from './themes/themes'
+import './assets/style.css'
+import { createPinia } from 'pinia'
+import * as z from 'zod'
+import { ToastService } from 'primevue'
+import { httpClient } from './config/urql.config'
+import { CONFIG } from './config/constante.config'
+import urql from '@urql/vue'
 
-const app = createApp(App);
-const pinia = createPinia();
+const app = createApp(App)
+const pinia = createPinia()
 
-const audience: string = import.meta.env.VITE_MARKIVIO_AUTH_AUDIENCE;
-const domain: string = import.meta.env.VITE_MARKIVIO_AUTH_DOMAIN;
-const clientId: string = import.meta.env.VITE_MARKIVIO_AUTH_CLIENT_ID;
+z.config(z.locales.fr())
 
-z.config(z.locales.fr());
-
-app.use(router)
+app
+  .use(router)
   .use(ToastService)
   .use(pinia)
   .use(
     createAuth0({
-      domain: domain,
-      clientId: clientId,
+      domain: CONFIG.domain,
+      clientId: CONFIG.clientId,
       authorizationParams: {
         redirect_uri: `${window.location.origin}/callback`,
-        audience: audience,
+        audience: CONFIG.audience,
       },
       useRefreshTokens: true,
-    })
-  ).use(PrimeVue, {
+    }),
+  )
+  .use(PrimeVue, {
     theme: {
       preset: MyPreset,
       options: {
         prefix: 'p',
-        darkModeSelector: '.app-dark'
-      }
-    }
+        darkModeSelector: '.app-dark',
+      },
+    },
   })
   .use(urql, httpClient)
   .mount('#app')

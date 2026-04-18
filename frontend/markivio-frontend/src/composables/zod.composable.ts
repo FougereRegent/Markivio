@@ -1,59 +1,59 @@
-import { groupBy } from '@/helpers/collection.helpers';
-import { ref, toValue, watch } from 'vue';
-import * as z from 'zod';
+import { groupBy } from '@/helpers/collection.helpers'
+import { ref, toValue, watch } from 'vue'
+import * as z from 'zod'
 
 export function useZodValidation<
   T extends z.ZodTypeAny,
   U = Record<string, unknown>,
   V = Record<string, z.ZodError[]>,
 >(schema: T, data: U) {
-  const isValid = ref(true);
-  const errors = ref<V | null>(null);
+  const isValid = ref(true)
+  const errors = ref<V | null>(null)
 
   const clearErrors = () => {
-    errors.value = null;
-  };
+    errors.value = null
+  }
 
-  let unwatch: null | (() => void) = null;
+  let unwatch: null | (() => void) = null
 
   const validateWatch = () => {
-    if (unwatch != null) return;
+    if (unwatch != null) return
 
     unwatch = watch(
       () => data,
       () => {
-        validate();
+        validate()
       },
       { deep: true },
-    );
-  };
+    )
+  }
 
   const stopWatch = () => {
-    unwatch?.();
-    unwatch = null;
-  };
+    unwatch?.()
+    unwatch = null
+  }
 
   const validate = () => {
-    clearErrors();
+    clearErrors()
 
-    const result = toValue(schema).safeParse(toValue(data));
-    isValid.value = result.success;
+    const result = toValue(schema).safeParse(toValue(data))
+    isValid.value = result.success
 
     if (!result.success) {
-      errors.value = groupBy(result.error.issues, 'path');
-      return false;
+      errors.value = groupBy(result.error.issues, 'path')
+      return false
     }
-    return true;
-  };
+    return true
+  }
 
   const propertyIsValid = (propertyName: keyof U) => {
-    const errs = toValue(errors);
-    if(toValue(isValid)) {
-      return true;
+    const errs = toValue(errors)
+    if (toValue(isValid)) {
+      return true
     }
 
-    return errs[propertyName] != undefined;
-  };
+    return errs[propertyName] != undefined
+  }
 
-  return { validate, isValid, errors, propertyIsValid ,validateWatch, stopWatch };
+  return { validate, isValid, errors, propertyIsValid, validateWatch, stopWatch }
 }

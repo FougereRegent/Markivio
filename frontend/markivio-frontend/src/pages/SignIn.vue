@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import LogoComponent from '@/components/LogoComponent.vue';
-import { useAuthStore } from '@/stores/auth-store';
+import LogoComponent from '@/components/LogoComponent.vue'
+import { useAuthStore } from '@/stores/auth-store'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -13,10 +13,30 @@ const authStore = useAuthStore();
         <span class="font-semibold text-4xl mb-2 text-neutral-900 antialiased">Sign In</span>
         <Button class="w-56" @click="authStore.login" label="Continue" size="large" />
         <div class="flex flex-row justify-between w-56 mt-5">
-          <img class="size-12" src="@/assets/linkedin-icon.svg" alt="linkedin logo" @click="authStore.login" />
-          <img class="size-12" src="@/assets/google-icon.svg" alt="google logo" @click="authStore.login" />
-          <img class="size-12" src="@/assets/microsoft-icon.svg" alt="microsoft logo" @click="authStore.login" />
-          <img class="size-12" src="@/assets/github-icon.svg" alt="github logo" @click="authStore.login" />
+          <img
+            class="size-12"
+            src="@/assets/linkedin-icon.svg"
+            alt="linkedin logo"
+            @click="authStore.login"
+          />
+          <img
+            class="size-12"
+            src="@/assets/google-icon.svg"
+            alt="google logo"
+            @click="authStore.login"
+          />
+          <img
+            class="size-12"
+            src="@/assets/microsoft-icon.svg"
+            alt="microsoft logo"
+            @click="authStore.login"
+          />
+          <img
+            class="size-12"
+            src="@/assets/github-icon.svg"
+            alt="github logo"
+            @click="authStore.login"
+          />
         </div>
         <span class="text-neutral-700 text-center font-extralight mt-1 antialiased"
           >Sign in with different account</span

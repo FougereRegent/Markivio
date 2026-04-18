@@ -1,0 +1,49 @@
+version: "3.1"
+services:
+  database:
+    image: postgres:18.3
+    restart: always
+    container_name: "markivio_db"
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+    environment:
+      POSTGRES_PASSWORD: example
+
+  pgadmin:
+    image: elestio/pgadmin
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test.test@example.com
+      PGADMIN_DEFAULT_PASSWORD: example
+      PGADMIN_LISTEN_PORT: 8085
+    ports:
+      - 8085:8085
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      MARKIVIO_AUTHORITY: "https://markivio.eu.auth0.com/"
+      MARKIVIO_AUDIENCE: "https://localhost:8080/"
+      MARKIVIO_AUTH_ID: "TWlbVAgnOznEURGzFbvAru15iGY2CbAW"
+      MARKIVIO_AUTH_DOMAIN: "markivio.eu.auth0.com"
+      MARKIVIO_AUTH_AUDIENCE: "https://localhost:8080/"
+      ConnectionStrings__markivio: "Host=database;Port=5432;Username=postgres;Password=example;Database=postgres"
+

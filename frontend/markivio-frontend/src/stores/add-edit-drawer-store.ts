@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export enum ActionDrawer {
   Create,
@@ -7,17 +7,17 @@ export enum ActionDrawer {
 }
 
 export const useAddEditDrawer = defineStore('add-edit-drawer', () => {
-  const drawerType = ref(ActionDrawer.Create);
-  const drawerState = ref(false);
-  const drawerTitle = ref("");
+  const drawerType = ref(ActionDrawer.Create)
+  const drawerState = ref(false)
+  const drawerTitle = ref('')
 
   function open(isEdit: boolean = false) {
-    drawerTitle.value =  isEdit ? "Edit" : "Create";
-    drawerState.value = true;
+    drawerTitle.value = isEdit ? 'Edit' : 'Create'
+    drawerState.value = true
   }
 
   function close() {
-    drawerState.value = false;
+    drawerState.value = false
   }
 
   return {
@@ -25,6 +25,6 @@ export const useAddEditDrawer = defineStore('add-edit-drawer', () => {
     close,
     drawerState,
     drawerType,
-    drawerTitle
-  };
-});
+    drawerTitle,
+  }
+})

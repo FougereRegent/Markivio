@@ -2,6 +2,8 @@ using Scalar.AspNetCore;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
 using Microsoft.EntityFrameworkCore;
+using Markivio.Presentation.Endpoint.Config;
+using Markivio.Presentation.Endpoint.Version;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,45 +22,27 @@ config.CONNECTION_STRING = connectionString;
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Configuration.Bind(config);
 builder.Services.AddOpenApi();
-builder.Services.AddAuth0(config, !builder.Environment.IsDevelopment());
-builder.Services.AddHealthChecks();
-builder.ConfigDI(config);
-builder.ConfigGraphQl();
-
+builder
+    .ConfigAuth(config)
+    .ConfigHealthCheck()
+    .ConfigDI(config)
+    .ConfigGraphQl()
+    .ConfigJson();
 
 var app = builder.Build();
-app.UseAuth();
-
-Action<ScalarOptions> scalarOptions = options =>
-{
-    options.WithTitle("Markivio API");
-};
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-    app.MapScalarApiReference("/api-docs", scalarOptions);
-    app.MapScalarApiReference("/docs", scalarOptions);
-}
-
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
-app.UseCors("AllowAllOrigins");
-app.UseHttpsRedirection();
-app.UseRouting();
-app.MapGraphQL();
-
-app.UseHealthChecks("/health-check");
-app.MapFallbackToFile("index.html");
+app.ConfigAuth()
+    .ConfigScalar()
+    .ConfigApi();
 
 if (ShouldRunMigration(app, args))
 {
     await ApplyMigration(app);
     if (ShouldExitAfterMigration(args)) return;
 }
+
+var api = app.MapGroup("/api");
+api.GetConfig()
+    .GetVersion();
 
 app.Run();
 

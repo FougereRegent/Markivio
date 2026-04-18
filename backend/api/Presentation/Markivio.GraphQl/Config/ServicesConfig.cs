@@ -25,9 +25,18 @@ public static class ConfigServiceInjection
 
     private static WebApplicationBuilder ConfigDB(this WebApplicationBuilder builder, EnvConfig config)
     {
+        string connectionString = string.Empty;
+        if (string.IsNullOrEmpty(config.MARKIVIO_DB_USER) ||
+                string.IsNullOrEmpty(config.MARKIVIO_DB_HOST) ||
+                string.IsNullOrEmpty(config.MARKIVIO_DB_PORT) ||
+                string.IsNullOrEmpty(config.MARKIVIO_DB_PASSWORD))
+            connectionString = config.CONNECTION_STRING;
+        else
+            connectionString = $"Host={config.MARKIVIO_DB_HOST};Port={config.MARKIVIO_DB_PORT};Database=markivio;Username={config.MARKIVIO_DB_USER};Password={config.MARKIVIO_DB_PASSWORD}";
+
         builder.Services.AddDbContext<MarkivioContext>(options =>
         {
-            options.UseNpgsql(config.CONNECTION_STRING)
+            options.UseNpgsql(connectionString)
                           .UseCamelCaseNamingConvention();
         });
         return builder;

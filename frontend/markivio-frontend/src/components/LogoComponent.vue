@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import router from '@/router';
-import logoSvg from '@/assets/logo.svg';
+import router from '@/router'
+import logoSvg from '@/assets/logo.svg'
 
 const onClick = () => {
-  router.push({ name: 'home' });
-};
+  router.push({ name: 'home' })
+}
 </script>
 
 <template>

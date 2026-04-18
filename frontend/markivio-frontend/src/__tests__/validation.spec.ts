@@ -1,71 +1,71 @@
-import { describe, test, expect } from 'vitest';
-import { nameof, Validation, ValidationError } from '@/helpers/validation.helpers';
+import { describe, test, expect } from 'vitest'
+import { nameof, Validation, ValidationError } from '@/helpers/validation.helpers'
 
 describe('Validations', () => {
   test('Should add error when callback return false', () => {
-    const validation = new Validation();
+    const validation = new Validation()
     validation.IsValid(() => false, {
       errorMessage: 'error message',
-    });
+    })
 
-    expect(validation._errors.length).greaterThan(0);
-  });
+    expect(validation._errors.length).greaterThan(0)
+  })
 
   test('Should not add error when callback return true', () => {
-    const validation = new Validation();
+    const validation = new Validation()
     validation.IsValid(() => true, {
       errorMessage: 'error message',
-    });
+    })
 
-    expect(validation._errors.length).eq(0);
-  });
+    expect(validation._errors.length).eq(0)
+  })
 
   test('HasError should be true when callback return false', () => {
-    const validation = new Validation();
+    const validation = new Validation()
     validation.IsValid(() => false, {
       errorMessage: 'error message',
-    });
+    })
 
-    expect(validation.HasError).eq(true);
-  });
+    expect(validation.HasError).eq(true)
+  })
 
   test('HasError should be false when callback return true', () => {
-    const validation = new Validation();
+    const validation = new Validation()
     validation.IsValid(() => true, {
       errorMessage: 'error message',
-    });
+    })
 
-    expect(validation.HasError).eq(false);
-  });
+    expect(validation.HasError).eq(false)
+  })
 
   test('Errors occured should throw', () => {
-    const validation = new Validation();
+    const validation = new Validation()
     validation.IsValid(() => false, {
       errorMessage: 'error message',
-    });
+    })
 
-    expect(() => validation.Throw()).toThrowError(ValidationError);
-  });
+    expect(() => validation.Throw()).toThrowError(ValidationError)
+  })
 
   test('Should store propertyName in error', () => {
-    const validation = new Validation();
+    const validation = new Validation()
     validation.IsValid(() => false, {
       propertyName: 'testField',
       errorMessage: 'error message',
-    });
+    })
 
-    expect(validation._errors[0]?.propertyName).eq('testField');
-  });
-});
+    expect(validation._errors[0]?.propertyName).eq('testField')
+  })
+})
 
 describe('nameof', () => {
-  type Color = 'BLUE' | 'BROWN' | 'GREEN';
+  type Color = 'BLUE' | 'BROWN' | 'GREEN'
 
   interface ObjTest1 {
-    FirstName: string;
-    LastName: string;
-    Age: number;
-    EyeColor: Color;
+    FirstName: string
+    LastName: string
+    Age: number
+    EyeColor: Color
   }
 
   test.each([
@@ -74,7 +74,7 @@ describe('nameof', () => {
     { propertyName: 'Age' },
     { propertyName: 'EyeColor' },
   ])('Get Name', ({ propertyName }) => {
-    const name = nameof<ObjTest1>(propertyName as keyof ObjTest1);
-    expect(name).eq(propertyName);
-  });
-});
+    const name = nameof<ObjTest1>(propertyName as keyof ObjTest1)
+    expect(name).eq(propertyName)
+  })
+})

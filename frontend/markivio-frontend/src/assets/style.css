@@ -1,57 +1,56 @@
 :root {
-  --primary-color-50:  #EFF6FF;
-  --primary-color-100: #DBEAFE;
-  --primary-color-200: #BFDBFE;
-  --primary-color-300: #93C5FD;
-  --primary-color-400: #60A5FA;
-  --primary-color-500: #3B82F6;
-  --primary-color-600: #2563EB;
-  --primary-color-700: #1D4ED8;
-  --primary-color-800: #1E40AF;
-  --primary-color-900: #1E3A8A;
-  --primary-color-950: #FFFFFF;
+  --primary-color-50: #eff6ff;
+  --primary-color-100: #dbeafe;
+  --primary-color-200: #bfdbfe;
+  --primary-color-300: #93c5fd;
+  --primary-color-400: #60a5fa;
+  --primary-color-500: #3b82f6;
+  --primary-color-600: #2563eb;
+  --primary-color-700: #1d4ed8;
+  --primary-color-800: #1e40af;
+  --primary-color-900: #1e3a8a;
+  --primary-color-950: #ffffff;
 
-  --primary-color-50-dark: #172A65;
-  --primary-color-100-dark: #1E3A8A;
-  --primary-color-200-dark: #1E40AF;
-  --primary-color-300-dark: #1D4ED8;
-  --primary-color-400-dark: #2563EB;
-  --primary-color-500-dark: #3B82F6;
-  --primary-color-600-dark: #60A5FA;
-  --primary-color-700-dark: #93C5FD;
-  --primary-color-800-dark: #BFDBFE;
-  --primary-color-900-dark: #DBEAFE;
-  --primary-color-950-dark: #EFF6FF;
+  --primary-color-50-dark: #172a65;
+  --primary-color-100-dark: #1e3a8a;
+  --primary-color-200-dark: #1e40af;
+  --primary-color-300-dark: #1d4ed8;
+  --primary-color-400-dark: #2563eb;
+  --primary-color-500-dark: #3b82f6;
+  --primary-color-600-dark: #60a5fa;
+  --primary-color-700-dark: #93c5fd;
+  --primary-color-800-dark: #bfdbfe;
+  --primary-color-900-dark: #dbeafe;
+  --primary-color-950-dark: #eff6ff;
 
-  --surface-color-0  : #FFFFFF;
-  --surface-color-50 : #F9FAFB;
-  --surface-color-100: #F3F4F6;
-  --surface-color-200: #E5E7EB;
-  --surface-color-300: #E2E8F0;
-  --surface-color-400: #CBD5E1;
-  --surface-color-500: #CBD5E1;
-  --surface-color-600: #94A3B8;
-  --surface-color-700: #64748B;
+  --surface-color-0: #ffffff;
+  --surface-color-50: #f9fafb;
+  --surface-color-100: #f3f4f6;
+  --surface-color-200: #e5e7eb;
+  --surface-color-300: #e2e8f0;
+  --surface-color-400: #cbd5e1;
+  --surface-color-500: #cbd5e1;
+  --surface-color-600: #94a3b8;
+  --surface-color-700: #64748b;
   --surface-color-800: #475569;
   --surface-color-900: #334155;
   --surface-color-950: #030712;
 
-  --surface-color-0-dark: #0B1120;
-  --surface-color-50-dark: #0F172A;
-  --surface-color-100-dark: #1E293B;
+  --surface-color-0-dark: #0b1120;
+  --surface-color-50-dark: #0f172a;
+  --surface-color-100-dark: #1e293b;
   --surface-color-200-dark: #273449;
   --surface-color-300-dark: #334155;
   --surface-color-400-dark: #475569;
-  --surface-color-500-dark: #64748B;
-  --surface-color-600-dark: #94A3B8;
-  --surface-color-700-dark: #CBD5E1;
-  --surface-color-800-dark: #E2E8F0;
-  --surface-color-900-dark: #F8FAFC;
-  --surface-color-950-dark: #FFFFFF;
-
+  --surface-color-500-dark: #64748b;
+  --surface-color-600-dark: #94a3b8;
+  --surface-color-700-dark: #cbd5e1;
+  --surface-color-800-dark: #e2e8f0;
+  --surface-color-900-dark: #f8fafc;
+  --surface-color-950-dark: #ffffff;
 }
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-neutral-50: var(--surface-color-50);

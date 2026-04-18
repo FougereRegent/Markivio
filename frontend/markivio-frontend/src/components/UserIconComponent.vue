@@ -5,21 +5,21 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth-store';
-import { computed } from 'vue';
-const store = useAuthStore();
+import { useAuthStore } from '@/stores/auth-store'
+import { computed } from 'vue'
+const store = useAuthStore()
 
 const defaultUser = computed(() => {
-  if ((store.getUser?.accountPicture ?? "") === "") {
-    return "/src/assets/default-user.svg";
+  if ((store.getUser?.accountPicture ?? '') === '') {
+    return '/src/assets/default-user.svg'
   }
-  return store.getUser?.accountPicture;
+  return store.getUser?.accountPicture
 })
 
 const defaultClass = computed(() => {
-  if ((store.getUser?.accountPicture ?? "") === "") {
-    return "p-1 bg-blue-500";
+  if ((store.getUser?.accountPicture ?? '') === '') {
+    return 'p-1 bg-blue-500'
   }
-  return "";
+  return ''
 })
 </script>
