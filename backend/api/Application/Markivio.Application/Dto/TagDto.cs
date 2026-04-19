@@ -11,10 +11,11 @@ public class TagInformation
 public class TagSoftInformation
 {
     public string Name { get; set; } = string.Empty;
-    public string Color { get; set; } = string.Empty;
+    public string Color { get; set; } =
+    string.Empty;
 }
 
-public record TagCreateArticle(
+public record TagArticle(
     Guid Id
 );
 

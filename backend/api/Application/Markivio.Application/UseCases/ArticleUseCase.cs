@@ -14,6 +14,7 @@ public interface IArticleUseCase
 {
     Task<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default);
     Task<Result<ArticleInformation>> CreateArticle(CreateArticle createArticle, CancellationToken cancellationToken = default);
+    Task<Result<ArticleInformation>> UpdateArticle(UpdateArticle updateArticle, CancellationToken cancellationToken = default);
     IQueryable<ArticleInformation> FindByFilter(ArticleFilters articleFilters);
 
     Task<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags);
@@ -123,6 +124,42 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         return mapper.Map(res);
     }
 
+    public async Task<Result<ArticleInformation>> UpdateArticle(UpdateArticle updateArticle,
+            CancellationToken cancellationToken = default)
+    {
+        ArticleMapper mapper = new ArticleMapper();
+        Article? article = await articleRepository.GetById(updateArticle.Id, cancellationToken);
+        if (article is null)
+            return Result.Fail(new NotFoundError("Artcile doesn't exist"));
+
+        bool isFramable;
+        if (updateArticle.Source.Equals(article.ArticleContent.Source, StringComparison.InvariantCultureIgnoreCase))
+            isFramable = article.IsFramable;
+        else
+            isFramable = await articleRepository.IsFramable(updateArticle.Source);
+
+        List<TagValueObject> tags = tagRepository
+            .GetByIds(updateArticle.Tags.Select(pre => pre.Id).ToList())
+            .Select(pre => pre.TagValue).ToList();
+        try
+        {
+            article.Update(
+                    title: updateArticle.Title,
+                    source: updateArticle.Source,
+                    description: updateArticle.Description,
+                    tags: tags,
+                    isFramable: isFramable
+                    );
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(DomainError.Create(ex));
+        }
+
+        articleRepository.Update(article);
+        return Result.Ok(mapper.Map(article));
+    }
+
     private bool CheckIfTagsExits(CreateArticle createArticle)
     {
         TagMapper tagMapper = new TagMapper();
@@ -134,4 +171,5 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         return tagUseCase.TagsExist<Guid>(tags, TagExistConditionEnum.Id);
     }
+
 }

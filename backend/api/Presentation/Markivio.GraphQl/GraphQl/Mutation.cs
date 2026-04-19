@@ -31,6 +31,14 @@ public class Mutation
         return resultCreate.ThrowIfResultIsFailed();
     }
 
+    public async Task<ArticleInformation> UpdateArticle(IArticleUseCase articleUseCase,
+            UpdateArticle updateArticle,
+            CancellationToken cancellationToken = default)
+    {
+        FluentResults.Result<ArticleInformation> resultUpdate = await articleUseCase.UpdateArticle(updateArticle, cancellationToken);
+        return resultUpdate.ThrowIfResultIsFailed();
+    }
+
     public async Task<TagInformation[]> CreateTags(ITagUseCase tagUseCase,
         List<CreateTag> createTags,
         CancellationToken cancellationToken = default)
@@ -69,6 +77,11 @@ public class MutationType : ObjectType<Mutation>
           .Field(f => f.CreateArticle(default!, default!, default!))
           .UseTransactionMiddleware()
           .Type<ArticleInformationType>();
+
+        descriptor
+            .Field(f => f.UpdateArticle(default!, default!, default!))
+            .UseTransactionMiddleware()
+            .Type<ArticleInformationType>();
 
         descriptor
           .Field(f => f.CreateTags(default!, default!, default!))

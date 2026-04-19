@@ -21,7 +21,7 @@ public record CreateArticle(
     string Title,
     string Source,
     string? Description,
-    TagCreateArticle[] Tags
+    TagArticle[] Tags
     );
 
 public record AddTagsToArticle(
@@ -38,3 +38,11 @@ public readonly record struct ArticleFilters(
     string? Title,
     List<string>? TagNames
 );
+
+public record UpdateArticle(
+        Guid Id,
+        string Title,
+        string Source,
+        string? Description,
+        TagArticle[] Tags
+        );

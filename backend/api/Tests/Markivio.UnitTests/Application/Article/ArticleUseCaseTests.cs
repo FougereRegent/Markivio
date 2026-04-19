@@ -58,7 +58,7 @@ public sealed class ArticleUseCaseTests : BaseTests
 
         // Act
         Result<ArticleInformation> result = await useCase.CreateArticle(
-            new CreateArticle("title", faker.Internet.Url(), "desc", Array.Empty<TagCreateArticle>()), token);
+            new CreateArticle("title", faker.Internet.Url(), "desc", Array.Empty<TagArticle>()), token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -76,7 +76,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Title: faker.Random.Word(),
             Source: faker.Internet.Url(),
             Description: faker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
           .Returns(Task.FromResult<Article?>(null));
@@ -103,7 +103,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Title: faker.Random.Word(),
             Source: "",
             Description: faker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
           .Returns(Task.FromResult<Article?>(null));
@@ -140,7 +140,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Title: title,
             Source: url,
             Description: localFaker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
           .Returns(Task.FromResult<Article?>(null));
@@ -171,5 +171,182 @@ public sealed class ArticleUseCaseTests : BaseTests
         result.Value.Source.ShouldBe(url);
         result.Value.Id.ShouldNotBe(Guid.Empty);
         articleRepositoryMock.Verify(pre => pre.Save(It.IsAny<Article>()), Times.Once());
+    }
+    [Fact]
+    public async Task UpdateArticle_ShouldFail_WhenArticleDoesNotExist()
+    {
+        // Arrange
+        CancellationToken token = new CancellationToken();
+        UpdateArticle input = new(
+            Id: Guid.NewGuid(),
+            Title: faker.Random.Word(),
+            Source: faker.Internet.Url(),
+            Description: faker.Lorem.Sentence(),
+            Tags: Array.Empty<TagArticle>());
+
+        articleRepositoryMock.Setup(pre => pre.GetById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Article?)null);
+
+        // Act
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
+
+        // Assert
+        result.IsFailed.ShouldBeTrue();
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<NotFoundError>();
+    }
+
+    [Fact]
+    public async Task UpdateArticle_ShouldUseExistingFramable_WhenSourceIsUnchanged()
+    {
+        // Arrange
+        CancellationToken token = new CancellationToken();
+        string source = faker.Internet.Url();
+
+        Article article = new(
+            new ArticleContent(source, faker.Lorem.Paragraph(), new List<TagValueObject>(), null),
+            faker.Lorem.Slug(),
+            true)
+        { Id = Guid.NewGuid(), User = CreateValidUser() };
+
+        UpdateArticle input = new(
+            Id: article.Id,
+            Title: faker.Random.Word(),
+            Source: source, // même source
+            Description: faker.Lorem.Sentence(),
+            Tags: Array.Empty<TagArticle>());
+
+        articleRepositoryMock.Setup(pre => pre.GetById(article.Id, token))
+            .ReturnsAsync(article);
+
+        tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
+
+        // Act
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        articleRepositoryMock.Verify(pre => pre.IsFramable(It.IsAny<string>()), Times.Never());
+    }
+    [Fact]
+    public async Task UpdateArticle_ShouldCallIsFramable_WhenSourceChanged()
+    {
+        // Arrange
+        CancellationToken token = new CancellationToken();
+
+        Article article = new(
+            new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), new List<TagValueObject>(), null),
+            faker.Lorem.Slug(),
+            false)
+        { Id = Guid.NewGuid(), User = CreateValidUser() };
+
+        string newSource = faker.Internet.Url();
+
+        UpdateArticle input = new(
+            Id: article.Id,
+            Title: faker.Random.Word(),
+            Source: newSource,
+            Description: faker.Lorem.Sentence(),
+            Tags: Array.Empty<TagArticle>());
+
+        articleRepositoryMock.Setup(pre => pre.GetById(article.Id, token))
+            .ReturnsAsync(article);
+
+        articleRepositoryMock.Setup(pre => pre.IsFramable(newSource))
+            .ReturnsAsync(true);
+
+        tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
+
+        // Act
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        articleRepositoryMock.Verify(pre => pre.IsFramable(newSource), Times.Once());
+    }
+
+    [Fact]
+    public async Task UpdateArticle_ShouldFail_WhenDomainExceptionThrown()
+    {
+        // Arrange
+        CancellationToken token = new CancellationToken();
+
+        Article article = new(
+            new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), new List<TagValueObject>(), null),
+            faker.Lorem.Slug(),
+            false)
+        { Id = Guid.NewGuid(), User = CreateValidUser() };
+
+        UpdateArticle input = new(
+            Id: article.Id,
+            Title: "", // provoque une erreur métier (ex: titre vide)
+            Source: faker.Internet.Url(),
+            Description: faker.Lorem.Sentence(),
+            Tags: Array.Empty<TagArticle>());
+
+        articleRepositoryMock.Setup(pre => pre.GetById(article.Id, token))
+            .ReturnsAsync(article);
+
+        articleRepositoryMock.Setup(pre => pre.IsFramable(It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
+
+        // Act
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
+
+        // Assert
+        result.IsFailed.ShouldBeTrue();
+        result.Errors.Count.ShouldBe(1);
+        result.Errors[0].ShouldBeOfType<DomainError>();
+    }
+    [Fact]
+    public async Task UpdateArticle_ShouldUpdateArticle_WhenInputsAreValid()
+    {
+        // Arrange
+        CancellationToken token = new CancellationToken();
+        Faker localFaker = new Faker("fr");
+
+        Article article = new(
+            new ArticleContent(localFaker.Internet.Url(), localFaker.Lorem.Paragraph(), new List<TagValueObject>(), null),
+            localFaker.Lorem.Slug(),
+            false)
+        { Id = Guid.NewGuid(), User = CreateValidUser() };
+
+        Guid[] tagIds = Enumerable.Range(0, 2).Select(_ => Guid.NewGuid()).ToArray();
+
+        UpdateArticle input = new(
+            Id: article.Id,
+            Title: localFaker.Random.Word(),
+            Source: localFaker.Internet.Url(),
+            Description: localFaker.Lorem.Sentence(),
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
+
+        Tag[] dbTags = tagIds.Select(id => CreateTag(id, $"Tag{id.ToString()[..6]}")).ToArray();
+
+        articleRepositoryMock.Setup(pre => pre.GetById(article.Id, token))
+            .ReturnsAsync(article);
+
+        articleRepositoryMock.Setup(pre => pre.IsFramable(It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        articleRepositoryMock.Setup(pre => pre.Update(It.IsAny<Article>()))
+            .Returns(article);
+
+        tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
+            .Returns(dbTags.AsQueryable());
+
+
+        // Act
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
+
+        // Assert
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.Id.ShouldBe(article.Id);
+        result.Value.Title.ShouldBe(input.Title);
+        result.Value.Source.ShouldBe(input.Source);
     }
 }
