@@ -4,7 +4,7 @@ using Markivio.Domain.ValueObject;
 
 namespace Markivio.Domain.Entities;
 
-public sealed class ArticleContent
+public sealed class ArticleContent : BaseValueObject
 {
     private const int TAGS_LIMIT = 20;
     private const string REGEX_SOURCE = @"^(?:http[s]?:\/\/.)?(?:www\.)?[-a-zA-ZÀ-ÿà-ÿ0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b(?:[-a-zA-ZÀ-ÿà-ÿ0-9@:%_\+.~#?&\/\/=]*)";
@@ -49,5 +49,26 @@ public sealed class ArticleContent
             if (removeTag != null)
                 Tags.Remove(removeTag);
         }
+    }
+
+	public void Update(string source, string description, IReadOnlyList<TagValueObject> tags) {
+        if (string.IsNullOrEmpty(source))
+            throw new EmptyException("source cannot be empty", "EMPTY_ARTICLESOURCE");
+
+        if (!Regex.IsMatch(source, REGEX_SOURCE))
+            throw new PatternException($"{source} didn't fit with url format", "FORMAT_ARTICLE_SOURCE");
+
+		AddTags(tags);
+
+		Source = source;
+		Description = description;
+	}
+
+    protected override IEnumerable<object> GetAtomicValues()
+    {
+		yield return Source;
+		yield return Description!;
+		yield return Tags;
+		yield return Content;
     }
 }
