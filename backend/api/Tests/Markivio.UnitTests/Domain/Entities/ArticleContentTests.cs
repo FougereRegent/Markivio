@@ -103,5 +103,44 @@ public sealed class ArticleContentTests : BaseTests
         articleContent.Tags.Count.ShouldBe(1);
         articleContent.Tags[0].ShouldBe(keep);
     }
+
+    [Theory]
+    [InlineData("localhost")]
+    [InlineData("http://localhost")]
+    [InlineData("not a url")]
+    public void UpdateTags_ShouldNotUpdate_WhenSourceDoesNotMatchPattern(string source)
+    {
+        string content = faker.Lorem.Paragraph();
+        List<TagValueObject> tags = new();
+        var article = new ArticleContent("https://www.google.com", content, tags, description: null);
+
+        // Act
+        var act = () =>
+            article.Update(source: source, description: string.Empty, tags);
+
+        // Assert
+        PatternException ex = Should.Throw<PatternException>(act);
+        ex.ErrorCode.ShouldBe("FORMAT_ARTICLE_SOURCE");
+    }
+
+    [Fact]
+    public void UpdateTags_ShouldUpdate()
+    {
+        //Arrange
+        var content = faker.Lorem.Paragraph();
+        var tags = new List<TagValueObject>();
+        var article = new ArticleContent("https://www.google.com", content, tags, description: null);
+        var url = faker.Internet.Url();
+        var description = faker.Lorem.Paragraph();
+
+        //Act
+        article.Update(
+                source: url,
+                description: description,
+                tags: tags);
+        //Assert
+        article.Source.ShouldBe(url);
+        article.Description.ShouldBe(description);
+    }
 }
 

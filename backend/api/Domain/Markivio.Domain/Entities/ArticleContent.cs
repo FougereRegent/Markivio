@@ -51,24 +51,25 @@ public sealed class ArticleContent : BaseValueObject
         }
     }
 
-	public void Update(string source, string description, IReadOnlyList<TagValueObject> tags) {
+    public void Update(string source, string? description, IReadOnlyList<TagValueObject> tags)
+    {
         if (string.IsNullOrEmpty(source))
             throw new EmptyException("source cannot be empty", "EMPTY_ARTICLESOURCE");
 
         if (!Regex.IsMatch(source, REGEX_SOURCE))
             throw new PatternException($"{source} didn't fit with url format", "FORMAT_ARTICLE_SOURCE");
 
-		AddTags(tags);
+        AddTags(tags);
 
-		Source = source;
-		Description = description;
-	}
+        Source = source;
+        Description = description;
+    }
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-		yield return Source;
-		yield return Description!;
-		yield return Tags;
-		yield return Content;
+        yield return Source;
+        yield return Description!;
+        yield return Tags;
+        yield return Content;
     }
 }
