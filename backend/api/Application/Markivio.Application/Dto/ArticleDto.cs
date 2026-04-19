@@ -42,7 +42,6 @@ public readonly record struct ArticleFilters(
 public record UpdateArticle(
         Guid Id,
         string Title,
-        string Source,
         string? Description,
         TagArticle[] Tags
         );

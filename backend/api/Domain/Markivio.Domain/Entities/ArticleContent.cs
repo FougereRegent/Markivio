@@ -35,7 +35,7 @@ public sealed class ArticleContent : BaseValueObject
 
     public void AddTags(IReadOnlyList<TagValueObject> tags)
     {
-        if (tags.Count + Tags.Count > 20)
+        if (tags.Count + Tags.Count > TAGS_LIMIT)
             throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
 
         Tags.AddRange(tags);
@@ -50,19 +50,14 @@ public sealed class ArticleContent : BaseValueObject
                 Tags.Remove(removeTag);
         }
     }
+    public void Update(string? description, IReadOnlyList<TagValueObject> tags)
 
-    public void Update(string source, string? description, IReadOnlyList<TagValueObject> tags)
     {
-        if (string.IsNullOrEmpty(source))
-            throw new EmptyException("source cannot be empty", "EMPTY_ARTICLESOURCE");
+        if(tags.Count > TAGS_LIMIT)
+            throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
 
-        if (!Regex.IsMatch(source, REGEX_SOURCE))
-            throw new PatternException($"{source} didn't fit with url format", "FORMAT_ARTICLE_SOURCE");
-
-        AddTags(tags);
-
-        Source = source;
         Description = description;
+		Tags = tags.ToList();
     }
 
     protected override IEnumerable<object> GetAtomicValues()

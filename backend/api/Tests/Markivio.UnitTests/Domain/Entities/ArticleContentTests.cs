@@ -1,6 +1,7 @@
 using Markivio.Domain.Entities;
 using Markivio.Domain.Exceptions;
 using Markivio.Domain.ValueObject;
+using Markivio.UnitTests.Helper.Faker;
 using Shouldly;
 
 namespace Markivio.UnitTests.Domain.Entities;
@@ -104,23 +105,23 @@ public sealed class ArticleContentTests : BaseTests
         articleContent.Tags[0].ShouldBe(keep);
     }
 
-    [Theory]
-    [InlineData("localhost")]
-    [InlineData("http://localhost")]
-    [InlineData("not a url")]
-    public void UpdateTags_ShouldNotUpdate_WhenSourceDoesNotMatchPattern(string source)
+    [Fact]
+    public void UpdateTags_ShouldNotUpdate_WhenThereAreMore20Tags()
     {
-        string content = faker.Lorem.Paragraph();
-        List<TagValueObject> tags = new();
+        //Arrange
+		var tagFaker = new TagValueObjectFaker();
+        var content = faker.Lorem.Paragraph();
+        var tags = new List<TagValueObject>();
         var article = new ArticleContent("https://www.google.com", content, tags, description: null);
+        var description = faker.Lorem.Paragraph();
 
-        // Act
-        var act = () =>
-            article.Update(source: source, description: string.Empty, tags);
-
-        // Assert
-        PatternException ex = Should.Throw<PatternException>(act);
-        ex.ErrorCode.ShouldBe("FORMAT_ARTICLE_SOURCE");
+        //Act
+        var act = () => article.Update(
+                description: description,
+                tags: tagFaker.Generate(25));
+        //Assert
+		var ex = Should.Throw<TagLimitExceededException>(act);
+		ex.Message.ShouldBe("you cannot add more 20 tags");
     }
 
     [Fact]
@@ -130,16 +131,13 @@ public sealed class ArticleContentTests : BaseTests
         var content = faker.Lorem.Paragraph();
         var tags = new List<TagValueObject>();
         var article = new ArticleContent("https://www.google.com", content, tags, description: null);
-        var url = faker.Internet.Url();
         var description = faker.Lorem.Paragraph();
 
         //Act
         article.Update(
-                source: url,
                 description: description,
                 tags: tags);
         //Assert
-        article.Source.ShouldBe(url);
         article.Description.ShouldBe(description);
     }
 }

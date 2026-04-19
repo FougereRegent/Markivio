@@ -28,17 +28,15 @@ public sealed class Article : EntityWithTenancy
         IsFramable = isFramable;
     }
 
-    public void Update(string title, string source, string? description, bool isFramable, IReadOnlyList<TagValueObject> tags)
+    public void Update(string title, string? description, IReadOnlyList<TagValueObject> tags)
     {
 
         if (string.IsNullOrEmpty(title))
             throw new EmptyException("title cannot be empty", "EMPTY_ARTICLETITLE");
 
-        ArticleContent.Update(source: source,
-                description: description,
+        ArticleContent.Update(description: description,
                 tags: tags);
 
         Title = title;
-        IsFramable = isFramable;
     }
 }

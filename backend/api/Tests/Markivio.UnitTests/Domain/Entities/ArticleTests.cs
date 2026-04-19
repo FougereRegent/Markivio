@@ -73,7 +73,7 @@ public sealed class ArticleTests : BaseTests
         var article = new Article(content, title, true);
 
         //Act
-        var act = () => article.Update(title: string.Empty, description: faker.Lorem.Sentence(), source: faker.Internet.Url(), isFramable: true, tags: new List<TagValueObject>());
+        var act = () => article.Update(title: string.Empty, description: faker.Lorem.Sentence(), tags: new List<TagValueObject>());
 
         //Assert
         var ex = Should.Throw<EmptyException>(act);
@@ -93,7 +93,7 @@ public sealed class ArticleTests : BaseTests
         var article = new Article(content, title, true);
         var updatedTitle = faker.Lorem.Slug(wordcount: 4);
         //Act
-        article.Update(title: updatedTitle, description: faker.Lorem.Sentence(), source: faker.Internet.Url(), isFramable: true, tags: new List<TagValueObject>());
+        article.Update(title: updatedTitle, description: faker.Lorem.Sentence(), tags: new List<TagValueObject>());
 
         //Assert
         article.Title.ShouldBe(updatedTitle);
