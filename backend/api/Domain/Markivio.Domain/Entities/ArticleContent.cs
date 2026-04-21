@@ -11,12 +11,11 @@ public sealed class ArticleContent : BaseValueObject
 
     public string Source { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
-    public List<TagValueObject> Tags { get; set; } = new List<TagValueObject>();
-    public string? Description { get; set; } = null;
+	public string? Description { get; set; } = null;
 
     private ArticleContent() { }
 
-    public ArticleContent(string source, string content, List<TagValueObject> tags, string? description)
+    public ArticleContent(string source, string content, string? description)
     {
         if (string.IsNullOrEmpty(source))
             throw new EmptyException("source cannot be empty", "EMPTY_ARTICLESOURCE");
@@ -24,47 +23,21 @@ public sealed class ArticleContent : BaseValueObject
         if (!Regex.IsMatch(source, REGEX_SOURCE))
             throw new PatternException($"{source} didn't fit with url format", "FORMAT_ARTICLE_SOURCE");
 
-        if (tags is { Count: > TAGS_LIMIT })
-            throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
-
         Source = source;
         Content = content;
-        Tags = tags;
         Description = description;
     }
 
-    public void AddTags(IReadOnlyList<TagValueObject> tags)
-    {
-        if (tags.Count + Tags.Count > TAGS_LIMIT)
-            throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
-
-        Tags.AddRange(tags);
-    }
-
-    public void RemoveTags(IReadOnlyList<TagValueObject> tags)
-    {
-        foreach (TagValueObject tag in tags)
-        {
-            TagValueObject? removeTag = Tags.FirstOrDefault(pre => pre.Name == tag.Name);
-            if (removeTag != null)
-                Tags.Remove(removeTag);
-        }
-    }
-    public void Update(string? description, IReadOnlyList<TagValueObject> tags)
+    public void Update(string? description)
 
     {
-        if(tags.Count > TAGS_LIMIT)
-            throw new TagLimitExceededException($"you cannot add more {TAGS_LIMIT} tags");
-
         Description = description;
-		Tags = tags.ToList();
     }
 
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Source;
         yield return Description!;
-        yield return Tags;
         yield return Content;
     }
 }

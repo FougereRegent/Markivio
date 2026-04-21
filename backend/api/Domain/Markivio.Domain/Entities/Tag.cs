@@ -4,7 +4,7 @@ namespace Markivio.Domain.Entities;
 
 public sealed class Tag : EntityWithTenancy
 {
-    public TagValueObject TagValue { get; set; }
+    public TagValueObject TagValue { get; set; } = null!;
 
     private Tag() { }
 

@@ -1,6 +1,5 @@
 using Markivio.Application.Dto;
 using Markivio.Domain.Entities;
-using Markivio.Domain.ValueObject;
 using Riok.Mapperly.Abstractions;
 
 namespace Markivio.Application.Mapper;
@@ -11,17 +10,17 @@ public partial class ArticleMapper
     [MapNestedProperties(nameof(Article.ArticleContent))]
     public partial ArticleInformation Map(Article article);
 
-    public Article Map(CreateArticle createArticle, List<TagValueObject> tags, bool isFramable)
+    public Article Map(CreateArticle createArticle, List<Tag> tags, bool isFramable)
     {
         return new Article(
                 articleContent: new ArticleContent(
                     source: createArticle.Source,
                     description: createArticle.Description,
-                    content: string.Empty,
-                    tags: tags
+                    content: string.Empty
                     ),
                 title: createArticle.Title,
-                isFramable: isFramable
+                isFramable: isFramable,
+				tags: tags
                 );
     }
 }

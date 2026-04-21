@@ -52,9 +52,9 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
             return Result.Fail(new NotFoundError("A tag doesn't exist"));
 
 
-        List<TagValueObject> tags = tagRepository
+        List<Tag> tags = tagRepository
             .GetByIds(createArticle.Tags.Select(pre => pre.Id).ToList())
-            .Select(pre => pre.TagValue).ToList();
+            .ToList();
 
         try
         {
@@ -78,8 +78,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is null)
             return Result.Fail(new NotFoundError("Article doesn't exist"));
 
-        IReadOnlyList<TagValueObject> tags = tagRepository.GetByIds(addTags.tagIds)
-            .Select(pre => pre.TagValue)
+        IReadOnlyList<Tag> tags = tagRepository.GetByIds(addTags.tagIds)
             .ToList();
 
         if (tags.Count() != addTags.tagIds.Length)
@@ -87,7 +86,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         try
         {
-            article.ArticleContent.AddTags(tags);
+            article.AddTags(tags);
         }
         catch (DomainException ex)
         {
@@ -105,8 +104,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is null)
             return Result.Fail(new NotFoundError("Article doesn't exist"));
 
-        IReadOnlyList<TagValueObject> tags = tagRepository.GetByIds(removeTags.tagIds)
-            .Select(pre => pre.TagValue)
+        IReadOnlyList<Tag> tags = tagRepository.GetByIds(removeTags.tagIds)
             .ToList();
 
         if (tags.Count != removeTags.tagIds.Length)
@@ -114,7 +112,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         try
         {
-            article.ArticleContent.RemoveTags(tags);
+            article.RemoveTags(tags);
         }
         catch (DomainException ex)
         {
@@ -135,9 +133,9 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is null)
             return Result.Fail(new NotFoundError("Artcile doesn't exist"));
 
-        List<TagValueObject> tags = tagRepository
+        List<Tag> tags = tagRepository
             .GetByIds(updateArticle.Tags.Select(pre => pre.Id).ToList())
-            .Select(pre => pre.TagValue).ToList();
+			.ToList();
 
 		if(await CheckIfTitleAlreadyExist(updateArticle, article))
             return Result.Fail(new AlreadyExistError("This title article already exist"));
