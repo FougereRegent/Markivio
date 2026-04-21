@@ -9,7 +9,7 @@ public class ArticleInformation
     public string? Description { get; set; } = null;
     public bool IsFramable { get; set; } = false;
     public UserInformation User { get; set; }
-    public TagSoftInformation[] Tags { get; set; } = Array.Empty<TagSoftInformation>();
+    public List<TagInformation> Tags { get; set; } = new List<TagInformation>();
 }
 
 public record ArticleGetByName(

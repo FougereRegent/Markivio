@@ -8,13 +8,6 @@ public class TagInformation
     public string Color { get; set; } = string.Empty;
 }
 
-public class TagSoftInformation
-{
-    public string Name { get; set; } = string.Empty;
-    public string Color { get; set; } =
-    string.Empty;
-}
-
 public record TagArticle(
     Guid Id
 );

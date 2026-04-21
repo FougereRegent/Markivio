@@ -24,7 +24,7 @@ public class ArticleInformationType : ObjectType<ArticleInformation>
 
         descriptor
           .Field(f => f.Tags)
-          .Type<ListType<TagSoftInformationType>>();
+          .Type<ListType<TagInformationType>>();
 
         descriptor
             .Field(f => f.IsFramable)

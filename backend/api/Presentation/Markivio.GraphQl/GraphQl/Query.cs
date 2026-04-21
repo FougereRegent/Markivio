@@ -40,6 +40,7 @@ public class QueryType : ObjectType<Query>
 
         descriptor
           .Authorize();
+
         descriptor
           .Field(f => f.GetUserById(default!, default!, default!))
           .Argument("id", args => args.Type<UuidType>())

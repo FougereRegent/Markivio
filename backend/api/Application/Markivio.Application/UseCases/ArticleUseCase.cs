@@ -6,7 +6,6 @@ using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
 using Markivio.Domain.Exceptions;
 using Markivio.Domain.Repositories;
-using Markivio.Domain.ValueObject;
 
 namespace Markivio.Application.UseCases;
 
@@ -32,10 +31,10 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
     {
         if (articleFilters is { Title: null, TagNames: null })
             return articleRepository.GetAll()
-              .ProjectionToDto();
+              .ProjectionToArticleInformation();
 
         return articleRepository.Filter(articleFilters.Title, articleFilters.TagNames)
-          .ProjectionToDto();
+          .ProjectionToArticleInformation();
 
     }
 
@@ -114,8 +113,8 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         {
             article.RemoveTags(tags);
         }
-        catch (DomainException ex)
-        {
+		catch (DomainException ex) 
+		{
             return Result.Fail(DomainError.Create(ex));
         }
 

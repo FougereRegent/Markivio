@@ -28,8 +28,11 @@ public partial class ArticleMapper
 [Mapper]
 public static partial class ArticleMapperProjection
 {
-    public static partial IQueryable<ArticleInformation> ProjectionToDto(this IQueryable<Article> articles);
+    public static partial IQueryable<ArticleInformation> ProjectionToArticleInformation(this IQueryable<Article> articles);
 
     [MapNestedProperties(nameof(Article.ArticleContent))]
-    private static partial ArticleInformation ArticleToArticleInformation(Article article);
+    private static partial ArticleInformation Map(Article article);
+
+	[MapNestedProperties(nameof(Tag.TagValue))]
+	private static partial TagInformation Map(Tag tag);
 }
