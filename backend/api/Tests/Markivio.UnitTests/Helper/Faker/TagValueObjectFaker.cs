@@ -38,3 +38,4 @@ public sealed class TagValueObjectFaker : Faker<TagValueObject>
         return f.Random.Hexadecimal(6, prefix: "#");
     }
 }
+

@@ -47,10 +47,11 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldFail_WhenArticleAlreadyExists()
     {
         // Arrange
+		List<Tag> tags = new List<Tag>();
         CancellationToken token = new CancellationToken();
-        var existing = new Article(
-            new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), new List<TagValueObject>(), null),
-            faker.Lorem.Slug(4), false)
+        Article existing = new Article(
+            new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), null),
+            faker.Lorem.Slug(4), false, tags)
         { Id = Guid.NewGuid() };
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
