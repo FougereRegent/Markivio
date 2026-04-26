@@ -33,15 +33,13 @@ const debounceTagName = useDebounce(tagName, CONST.debounceTime.inputTime);
 const { validate, errors } = useZodValidation(ArticleSchema, article);
 const { createArticle, fetching } = useCreateArticle(article);
 const { tags, executeQuery } = useGetAllTags(debounceTagName)
-const { article: art, executeQuery: fetchArticle } = useGetArticleById(
-  computed(() => drawer.drawerArticleId),
-  {
-    pause: computed(
-      () =>
-        drawer.drawerArticleId == null || drawer.drawerType !== ActionDrawer.Edit,
-    ),
-  },
-)
+const { article: art, executeQuery: fetchArticle } =
+  useGetArticleById(computed(() => drawer.drawerArticleId), { pause: computed(() => {
+  debugger;
+  const result = drawer.drawerArticleId
+  == null || drawer.drawerType === ActionDrawer.Edit;
+  return result;
+  })});
 
 const titleHasError = computed(() => errors.value?.title != undefined);
 const sourceHasError = computed(() => errors.value?.source != undefined);
@@ -74,21 +72,9 @@ watch(
   { immediate: true },
 )
 
-watch(
-  () => art.value,
-  (newArticle) => {
-    if (
-      drawer.drawerType !== ActionDrawer.Edit ||
-      drawer.drawerArticleId == null
-    ) {
-      return
-    }
-    if (newArticle.id != null && newArticle.id !== drawer.drawerArticleId) {
-      return
-    }
-    article.value = newArticle
-  },
-)
+watch(() => art.value, (newArticle) => {
+  article.value = newArticle;
+});
 
 async function selectedItems(event: AutoCompleteOptionSelectEvent) {
   const selected = event.value as Tag
