@@ -6,15 +6,16 @@ import {
   type AutoCompleteCompleteEvent,
   type AutoCompleteOptionSelectEvent,
 } from 'primevue'
-import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
+import { ActionDrawer, useAddEditDrawer } from '@/stores/add-edit-drawer-store'
 import { computed, nextTick, ref, watch } from 'vue'
-import { useDebounce } from '@vueuse/core'
 import { type Article, ArticleSchema } from '@/domain/article.models'
 import { type Tag } from '@/domain/tag.models'
 import { useZodValidation } from '@/composables/zod.composable'
 import TagCreatorComponent from './TagCreatorComponent.vue'
-import { useCreateArticle } from '@/composables/article.graphql'
+import { useCreateArticle, useGetArticleById } from '@/composables/article.graphql'
 import { useGetAllTags } from '@/composables/tag.graphql'
+import { useDebounce } from '@vueuse/core'
+import { CONST } from '@/config/constante.config'
 
 const article = ref<Article>({
   id: null,
@@ -22,22 +23,58 @@ const article = ref<Article>({
   source: '',
   description: '',
   tags: [],
-})
-const { validate, errors } = useZodValidation(ArticleSchema, article)
-const { createArticle, fetching } = useCreateArticle(article)
-
-const titleHasError = computed(() => errors.value?.title != undefined)
-const sourceHasError = computed(() => errors.value?.source != undefined)
-
-const drawer = useAddEditDrawer()
-
-const tagName = ref<string | null>('')
-const debouncedTagName = useDebounce(tagName, 400) // 🔥 important
+});
+const tagName = ref<string | null>('');
 const offset = ref(0)
+const refSuggestion = ref<Tag[]>([]);
 
-const refSuggestion = ref<Tag[]>([])
+const drawer = useAddEditDrawer();
+const debounceTagName = useDebounce(tagName, CONST.debounceTime.inputTime);
+const { validate, errors } = useZodValidation(ArticleSchema, article);
+const { createArticle, fetching } = useCreateArticle(article);
+const { tags, executeQuery } = useGetAllTags(debounceTagName)
+const { article: art, executeQuery: fetchArticle } =
+  useGetArticleById(computed(() => drawer.drawerArticleId), { pause: computed(() => {
+  debugger;
+  const result = drawer.drawerArticleId
+  == null || drawer.drawerType === ActionDrawer.Edit;
+  return result;
+  })});
 
-const { tags, executeQuery } = useGetAllTags(debouncedTagName)
+const titleHasError = computed(() => errors.value?.title != undefined);
+const sourceHasError = computed(() => errors.value?.source != undefined);
+
+watch(tags, (newData) => {
+  refSuggestion.value = newData ?? []
+})
+
+watch(
+  () => drawer.drawerState,
+  async (open) => {
+    if (!open) return
+
+    article.value = {
+      id: null,
+      tags: [],
+      source: '',
+      title: '',
+      description: '',
+    }
+
+    errors.value = null;
+    tagName.value = ''
+    offset.value = 0
+    refSuggestion.value = []
+
+    if(drawer.drawerType === ActionDrawer.Edit)
+      await fetchArticle({requestPolicy: 'network-only'})
+  },
+  { immediate: true },
+)
+
+watch(() => art.value, (newArticle) => {
+  article.value = newArticle;
+});
 
 async function selectedItems(event: AutoCompleteOptionSelectEvent) {
   const selected = event.value as Tag
@@ -70,41 +107,10 @@ async function submit() {
   }
 }
 
-watch(tags, (newData) => {
-  refSuggestion.value = newData ?? []
-})
-
-watch(
-  () => drawer.drawerState,
-  (open) => {
-    if (!open) return
-
-    article.value = {
-      id: null,
-      tags: [],
-      source: '',
-      title: '',
-      description: '',
-    }
-
-    tagName.value = ''
-    offset.value = 0
-    refSuggestion.value = []
-
-    // recharge initiale
-    executeQuery({ requestPolicy: 'network-only' })
-  },
-  { immediate: true },
-)
 </script>
 
 <template>
-  <Drawer
-    v-model:visible="drawer.drawerState"
-    position="right"
-    :closeOnEscape="false"
-    class="w-140!"
-  >
+  <Drawer v-model:visible="drawer.drawerState" position="right" :closeOnEscape="false" class="w-140!">
     <template #container>
       <div class="flex flex-col pt-2 px-5">
         <div class="flex flex-row py-6 border-neutral-300 border-b justify-start">
@@ -114,8 +120,7 @@ watch(
           </div>
           <IconField
             class="ri-close-line text-neutral-600 text-3xl ml-auto hover:text-neutral-800 transition cursor-pointer"
-            @click="drawer.close"
-          />
+            @click="drawer.close" />
         </div>
         <div class="flex flex-col mt-4 gap-4">
           <div class="flex flex-col">
@@ -133,40 +138,20 @@ watch(
             </Message>
           </div>
           <div class="flex flex-col">
-            <label for="description" class="text-neutral-950 text-xl font-medium"
-              >Description</label
-            >
-            <Textarea
-              id="description"
-              v-model.trim="article.description"
-              multiple="true"
-              rows="6"
-            />
+            <label for="description" class="text-neutral-950 text-xl font-medium">Description</label>
+            <Textarea id="description" v-model.trim="article.description" multiple="true" rows="6" />
           </div>
           <div class="flex flex-col">
             <div class="flex flex-row gap-1 h-8">
               <template v-for="item of article.tags" :key="item.id ?? ''">
-                <Chip
-                  :label="item.name"
-                  removable
-                  @remove="removeChip(item)"
-                  style="background-color: var(--color-blue-50)"
-                />
+                <Chip :label="item.name" removable @remove="removeChip(item)"
+                  style="background-color: var(--color-blue-50)" />
               </template>
             </div>
             <div class="flex flex-row gap-1 justify-center">
-              <AutoComplete
-                id="tags"
-                ref="autocompleteRef"
-                v-model="tagName"
-                class="my-1 flex-5"
-                placeholder="Ajout tag ..."
-                dropdown
-                optionLabel="name"
-                @option-select="selectedItems"
-                @complete="search"
-                :suggestions="refSuggestion"
-              />
+              <AutoComplete id="tags" ref="autocompleteRef" v-model="tagName" class="my-1 flex-5"
+                placeholder="Ajout tag ..." dropdown optionLabel="name" @option-select="selectedItems"
+                @complete="search" :suggestions="refSuggestion" />
               <TagCreatorComponent />
             </div>
           </div>

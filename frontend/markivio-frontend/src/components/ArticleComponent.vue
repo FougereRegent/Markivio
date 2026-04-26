@@ -4,6 +4,7 @@ import { contrastColor } from '@/helpers/ui.helpers'
 import DialogSource from './DialogSource.vue'
 import { ref } from 'vue'
 import { useGetSourceUrl, type UrlSource } from '@/composables/article.graphql'
+import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
 
 export type ArticleProps = {
   id: string
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<ArticleProps>(), {
 const urlSource = ref<UrlSource | null>(null)
 
 const { runQuery } = useGetSourceUrl(props.id)
+const drawer = useAddEditDrawer();
 
 const visible = ref(false)
 
@@ -38,7 +40,9 @@ async function showSourceArticle() {
 
 function showMarkdownArticle() {}
 
-function editArticle() {}
+function editArticle() {
+  drawer.open(true, props.id);
+}
 </script>
 
 <template>

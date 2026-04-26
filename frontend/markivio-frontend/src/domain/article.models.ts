@@ -16,7 +16,7 @@ export const ArticleSchema = z.object({
   id: z.guid().nullable(),
   title: z.string().min(1),
   source: z.httpUrl(),
-  description: z.string(),
+  description: z.string().nullable(),
   tags: z.array(TagSchema),
 })
 
