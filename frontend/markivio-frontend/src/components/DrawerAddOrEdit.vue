@@ -6,109 +6,26 @@ import {
   type AutoCompleteCompleteEvent,
   type AutoCompleteOptionSelectEvent,
 } from 'primevue'
-import { ActionDrawer, useAddEditDrawer } from '@/stores/add-edit-drawer-store'
-import { computed, nextTick, ref, watch } from 'vue'
-import { type Article, ArticleSchema } from '@/domain/article.models'
-import { type Tag } from '@/domain/tag.models'
-import { useZodValidation } from '@/composables/zod.composable'
 import TagCreatorComponent from './TagCreatorComponent.vue'
-import { useCreateArticle, useGetArticleById, useUpdateArticle } from '@/composables/article.graphql'
-import { useGetAllTags } from '@/composables/tag.graphql'
-import { useDebounce } from '@vueuse/core'
-import { CONST } from '@/config/constante.config'
+import { useArticleDrawer, useArticleForm, useArticleSubmit } from '@/composables/drawer/article.drawer.composable'
+import { useTagAutocomplete } from '@/composables/drawer/tag.drawer.composable'
+import { computed, nextTick, onMounted } from 'vue'
+import type { Tag } from '@/domain/tag.models'
 
-const article = ref<Article>({
-  id: null,
-  title: '',
-  source: '',
-  description: '',
-  tags: [],
-});
-const tagName = ref<string | null>('');
-const offset = ref(0)
-const refSuggestion = ref<Tag[]>([]);
+const { article, addTag, removeTag, reset } = useArticleForm()
+const { drawer } = useArticleDrawer(article);
+const { tagName, refSuggestion, search } = useTagAutocomplete(computed(() => article.value.tags))
+const { submit, hasError, fetching } = useArticleSubmit(article, drawer)
 
-const drawer = useAddEditDrawer();
-const debounceTagName = useDebounce(tagName, CONST.debounceTime.inputTime);
-const { validate, errors } = useZodValidation(ArticleSchema, article);
-const { createArticle, fetching } = useCreateArticle(article);
-const { tags, executeQuery } = useGetAllTags(debounceTagName)
-const { article: art, executeQuery: fetchArticle } =
-  useGetArticleById(computed(() => drawer.drawerArticleId), { pause: computed(() => {
-  const result = drawer.drawerArticleId
-  == null || drawer.drawerType === ActionDrawer.Edit;
-  return result;
-  })});
-
-const { updateArticle } = useUpdateArticle();
-
-const titleHasError = computed(() => errors.value?.title != undefined);
-const sourceHasError = computed(() => errors.value?.source != undefined);
-
-watch(tags, (newData) => {
-  refSuggestion.value = newData ?? []
-})
-
-watch(
-  () => drawer.drawerState,
-  async (open) => {
-    if (!open) return
-
-    article.value = {
-      id: null,
-      tags: [],
-      source: '',
-      title: '',
-      description: '',
-    }
-
-    errors.value = null;
-    tagName.value = ''
-    offset.value = 0
-    refSuggestion.value = []
-
-    if(drawer.drawerType === ActionDrawer.Edit)
-      fetchArticle({requestPolicy: 'network-only'})
-  },
-  { immediate: true },
-)
-
-watch(() => art.value, (newArticle) => {
-  article.value = newArticle;
-});
 
 async function selectedItems(event: AutoCompleteOptionSelectEvent) {
-  const selected = event.value as Tag
-
-  if (!article.value.tags.find((t) => t.id === selected.id)) {
-    article.value.tags.push(selected)
-  }
-
-  tagName.value = null
-  await nextTick()
+  const tag = event.value as Tag;
+  addTag(tag)
+  await nextTick();
 }
 
-function removeChip(tag: Tag) {
-  article.value.tags = article.value.tags.filter((item) => item.id !== tag.id)
-}
-
-const search = async (event: AutoCompleteCompleteEvent) => {
-  offset.value = 0
-  tagName.value = event.query ?? ''
-
-  if (!event.query) {
-    executeQuery({ requestPolicy: 'network-only' })
-  }
-}
-
-async function submit() {
-  if (validate()) {
-    if(drawer.drawerType === ActionDrawer.Create)
-      await createArticle()
-    else if (drawer.drawerType === ActionDrawer.Edit)
-      await updateArticle(article);
-    drawer.close()
-  }
+async function searchTag(event: AutoCompleteCompleteEvent) {
+  search(event.query)
 }
 
 </script>
@@ -129,16 +46,16 @@ async function submit() {
         <div class="flex flex-col mt-4 gap-4">
           <div class="flex flex-col">
             <label for="source" class="text-neutral-950 text-xl font-medium">Source</label>
-            <InputText id="source" v-model.trim="article.source" :invalid="sourceHasError" />
-            <Message variant="simple" severity="error" v-show="sourceHasError">
-              {{ errors?.source?.[0]?.message }}
+            <InputText id="source" v-model.trim="article.source" :invalid="hasError.source.hasError" />
+            <Message variant="simple" severity="error" v-show="hasError.title.hasError">
+              {{ hasError.source.message }}
             </Message>
           </div>
           <div class="flex flex-col">
             <label for="title" class="text-neutral-950 text-xl font-medium">Title</label>
-            <InputText id="title" v-model.trim="article.title" :invalid="titleHasError" />
-            <Message variant="simple" severity="error" v-show="titleHasError">
-              {{ errors?.title?.[0]?.message }}
+            <InputText id="title" v-model.trim="article.title" :invalid="hasError.title.hasError" />
+            <Message variant="simple" severity="error" v-show="hasError.title.hasError">
+              {{ hasError.source.message }}
             </Message>
           </div>
           <div class="flex flex-col">
@@ -148,14 +65,14 @@ async function submit() {
           <div class="flex flex-col">
             <div class="flex flex-row gap-1 h-8">
               <template v-for="item of article.tags" :key="item.id ?? ''">
-                <Chip :label="item.name" removable @remove="removeChip(item)"
+                <Chip :label="item.name" removable @remove="removeTag(item)"
                   style="background-color: var(--color-blue-50)" />
               </template>
             </div>
             <div class="flex flex-row gap-1 justify-center">
               <AutoComplete id="tags" ref="autocompleteRef" v-model="tagName" class="my-1 flex-5"
                 placeholder="Ajout tag ..." dropdown optionLabel="name" @option-select="selectedItems"
-                @complete="search" :suggestions="refSuggestion" />
+                @complete="searchTag" :suggestions="refSuggestion" />
               <TagCreatorComponent />
             </div>
           </div>
