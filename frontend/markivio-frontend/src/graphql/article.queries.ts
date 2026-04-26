@@ -84,6 +84,15 @@ export const AddArticles: TypedDocumentNode<AddArticleReturn> = gql`
   }
 `
 
+export const UpdateArticle: TypedDocumentNode<AddArticleReturn> = gql`
+  ${ArticleInformationFragment}
+  mutation UpdateArticle($input: UpdateArticleInput!) {
+    UpdateArticle(updateArticle: $input) {
+      ...Article
+    }
+  }
+`
+
 export const GetUrlByArticleId: TypedDocumentNode<GetSourceUrlQuery> = gql`
   query Articles($id: UUID!) {
     articles(where: { id: { eq: $id } }, skip: 0, take: 1) {

@@ -67,7 +67,7 @@ watch(
     refSuggestion.value = []
 
     if(drawer.drawerType === ActionDrawer.Edit)
-      await fetchArticle({requestPolicy: 'network-only'})
+      fetchArticle({requestPolicy: 'network-only'})
   },
   { immediate: true },
 )
@@ -96,7 +96,7 @@ const search = async (event: AutoCompleteCompleteEvent) => {
   tagName.value = event.query ?? ''
 
   if (!event.query) {
-    await executeQuery({ requestPolicy: 'network-only' })
+    executeQuery({ requestPolicy: 'network-only' })
   }
 }
 

@@ -1,7 +1,7 @@
 import type { ArticleProps } from '@/components/ArticleComponent.vue'
 import { type Article } from '@/domain/article.models'
 import type { Tag } from '@/domain/tag.models';
-import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId } from '@/graphql/article.queries'
+import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/graphql/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, watch, type Ref } from 'vue'
 
@@ -103,6 +103,20 @@ export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Re
   return {article, executeQuery, error}
 }
 
-export function useUdpateArticle(article: Ref<Article>) {
+export function useUdpateArticle() {
+  const { data, executeMutation, fetching, error} = useMutation(UpdateArticle);
 
+  function updateArticle(article: Ref<Article>) {
+    const art = toValue(article);
+    return executeMutation({
+      input: {
+        id: art.id,
+        description: art.description,
+        title: art.title,
+        tags: art.tags.map(src => src.id)
+      }
+    });
+  }
+
+  return { data, updateArticle, fetching, error}
 }
