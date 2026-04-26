@@ -44,7 +44,8 @@ public sealed class Article : EntityWithTenancy
         ArticleContent.Update(description: description);
 
         Title = title;
-		Tags = tags.ToList();
+		Tags.Clear();
+		Tags.AddRange(tags);
     }
 
     public void AddTags(IReadOnlyList<Tag> tags)

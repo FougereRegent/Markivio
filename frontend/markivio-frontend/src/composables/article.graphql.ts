@@ -3,7 +3,7 @@ import { type Article } from '@/domain/article.models'
 import type { Tag } from '@/domain/tag.models';
 import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/graphql/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
-import { computed, toValue, watch, type Ref } from 'vue'
+import { computed, toValue, type Ref } from 'vue'
 
 export type UrlSource = {
   id: string
@@ -76,7 +76,6 @@ export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Re
   const { data, executeQuery, error } = useQuery({
     query: GetArticleById,
     pause: options?.pause,
-    requestPolicy: 'network-only',
     variables: computed(() => {
       return {
         id: id.value
@@ -93,7 +92,7 @@ export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Re
       description: art?.description,
       source: art?.source,
       tags: art?.tags.map(src => ({
-        id: null,
+        id: src.id,
         name: src.name,
         color: src.color
       } as Tag))
@@ -103,7 +102,7 @@ export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Re
   return {article, executeQuery, error}
 }
 
-export function useUdpateArticle() {
+export function useUpdateArticle() {
   const { data, executeMutation, fetching, error} = useMutation(UpdateArticle);
 
   function updateArticle(article: Ref<Article>) {
@@ -111,9 +110,9 @@ export function useUdpateArticle() {
     return executeMutation({
       input: {
         id: art.id,
-        description: art.description,
         title: art.title,
-        tags: art.tags.map(src => src.id)
+        description: art.description,
+        tags: art.tags.map(src => ({id: src.id}))
       }
     });
   }

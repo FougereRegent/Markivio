@@ -12,7 +12,7 @@ import { type Article, ArticleSchema } from '@/domain/article.models'
 import { type Tag } from '@/domain/tag.models'
 import { useZodValidation } from '@/composables/zod.composable'
 import TagCreatorComponent from './TagCreatorComponent.vue'
-import { useCreateArticle, useGetArticleById } from '@/composables/article.graphql'
+import { useCreateArticle, useGetArticleById, useUpdateArticle } from '@/composables/article.graphql'
 import { useGetAllTags } from '@/composables/tag.graphql'
 import { useDebounce } from '@vueuse/core'
 import { CONST } from '@/config/constante.config'
@@ -35,11 +35,12 @@ const { createArticle, fetching } = useCreateArticle(article);
 const { tags, executeQuery } = useGetAllTags(debounceTagName)
 const { article: art, executeQuery: fetchArticle } =
   useGetArticleById(computed(() => drawer.drawerArticleId), { pause: computed(() => {
-  debugger;
   const result = drawer.drawerArticleId
   == null || drawer.drawerType === ActionDrawer.Edit;
   return result;
   })});
+
+const { updateArticle } = useUpdateArticle();
 
 const titleHasError = computed(() => errors.value?.title != undefined);
 const sourceHasError = computed(() => errors.value?.source != undefined);
@@ -102,7 +103,10 @@ const search = async (event: AutoCompleteCompleteEvent) => {
 
 async function submit() {
   if (validate()) {
-    await createArticle()
+    if(drawer.drawerType === ActionDrawer.Create)
+      await createArticle()
+    else if (drawer.drawerType === ActionDrawer.Edit)
+      await updateArticle(article);
     drawer.close()
   }
 }

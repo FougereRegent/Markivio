@@ -13,6 +13,7 @@ export type GetArticlesInformationQuery = {
       title: string
       description?: string
       tags: Array<{
+        id: string
         name: string
         color: string
       }>
@@ -48,6 +49,7 @@ fragment Article on ArticleInformation {
     title
     description
     tags {
+        id
         name
         color
     }
@@ -87,7 +89,7 @@ export const AddArticles: TypedDocumentNode<AddArticleReturn> = gql`
 export const UpdateArticle: TypedDocumentNode<AddArticleReturn> = gql`
   ${ArticleInformationFragment}
   mutation UpdateArticle($input: UpdateArticleInput!) {
-    UpdateArticle(updateArticle: $input) {
+    updateArticle(updateArticle: $input) {
       ...Article
     }
   }
