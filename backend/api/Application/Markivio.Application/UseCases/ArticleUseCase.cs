@@ -177,7 +177,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 			return false;
 		}
 
-		return await articleRepository.GetByTitle(updateArticle.Title, cancellationToken) == null;
+		return await articleRepository.GetByTitle(updateArticle.Title, cancellationToken) != null;
 	}
  
 }
