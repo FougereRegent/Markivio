@@ -76,6 +76,7 @@ export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Re
   const { data, executeQuery, error } = useQuery({
     query: GetArticleById,
     pause: options?.pause,
+    requestPolicy: 'network-only',
     variables: computed(() => {
       return {
         id: id.value

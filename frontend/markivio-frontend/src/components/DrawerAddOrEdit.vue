@@ -91,12 +91,12 @@ function removeChip(tag: Tag) {
   article.value.tags = article.value.tags.filter((item) => item.id !== tag.id)
 }
 
-const search = (event: AutoCompleteCompleteEvent) => {
+const search = async (event: AutoCompleteCompleteEvent) => {
   offset.value = 0
   tagName.value = event.query ?? ''
 
   if (!event.query) {
-    executeQuery({ requestPolicy: 'network-only' })
+    await executeQuery({ requestPolicy: 'network-only' })
   }
 }
 

@@ -13,7 +13,6 @@ async function initializeAuthState() {
 export const httpClient = new Client({
   url: CONFIG.graphqlApi,
   exchanges: [
-    cacheExchange,
     authExchange(async (utils) => {
       const token = await initializeAuthState()
       return {
