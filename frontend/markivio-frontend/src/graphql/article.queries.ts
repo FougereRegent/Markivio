@@ -1,9 +1,5 @@
 import { gql, type TypedDocumentNode } from '@urql/vue'
 
-export type ArticleInformationQuery = {
-
-};
-
 export type GetArticlesInformationQuery = {
   articles: {
     __typename: 'Articles'

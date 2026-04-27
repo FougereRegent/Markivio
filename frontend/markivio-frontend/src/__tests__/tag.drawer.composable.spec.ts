@@ -1,10 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref, nextTick } from 'vue'
 import { useTagAutocomplete } from '@/composables/drawer/tag.drawer.composable'
+import type { Tag } from '@/domain/tag.models'
 
 // ---- MOCKS ----
 
-const tagsMock = ref<any[]>([])
+const tagsMock = ref<Tag[]>([])
 const executeQueryMock = vi.fn()
 
 vi.mock('@/composables/tag.graphql', () => ({
@@ -15,7 +16,7 @@ vi.mock('@/composables/tag.graphql', () => ({
 }))
 
 vi.mock('@vueuse/core', () => ({
-  useDebounce: (v: any) => v,
+  useDebounce: (v: string) => v,
 }))
 
 vi.mock('@/config/constante.config', () => ({
@@ -64,9 +65,9 @@ describe('useTagAutocomplete', () => {
     const { refSuggestion } = useTagAutocomplete(selectedTags)
 
     tagsMock.value = [
-      { id: 1, name: 'Vue' },
-      { id: 2, name: 'React' },
-    ]
+      { id: "1", name: 'Vue', color: ""},
+      { id: "2", name: 'React', color: ""},
+    ];
 
     await nextTick()
 
@@ -78,7 +79,7 @@ describe('useTagAutocomplete', () => {
 
     const { refSuggestion } = useTagAutocomplete(selectedTags)
 
-    tagsMock.value = undefined as any
+    tagsMock.value = [];
 
     await nextTick()
 

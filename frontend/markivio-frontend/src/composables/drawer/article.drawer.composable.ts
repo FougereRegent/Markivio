@@ -52,7 +52,7 @@ export function useArticleForm() {
   }
 }
 
-export function useArticleSubmit(article: Ref<Article>, drawer: any) {
+export function useArticleSubmit(article: Ref<Article>, drawer: object) {
   const { validate, errors } = useZodValidation(ArticleSchema, article);
   const { createArticle, fetching } = useCreateArticle(article);
   const { updateArticle } = useUpdateArticle();

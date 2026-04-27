@@ -9,10 +9,10 @@ import {
 import TagCreatorComponent from './TagCreatorComponent.vue'
 import { useArticleDrawer, useArticleForm, useArticleSubmit } from '@/composables/drawer/article.drawer.composable'
 import { useTagAutocomplete } from '@/composables/drawer/tag.drawer.composable'
-import { computed, nextTick, onMounted } from 'vue'
+import { computed, nextTick } from 'vue'
 import type { Tag } from '@/domain/tag.models'
 
-const { article, addTag, removeTag, reset } = useArticleForm()
+const { article, addTag, removeTag, } = useArticleForm();
 const { drawer } = useArticleDrawer(article);
 const { tagName, refSuggestion, search } = useTagAutocomplete(computed(() => article.value.tags))
 const { submit, hasError, fetching } = useArticleSubmit(article, drawer)

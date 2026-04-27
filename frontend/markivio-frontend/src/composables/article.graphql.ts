@@ -1,4 +1,4 @@
-import type { ArticleProps } from '@/components/ArticleComponent.vue'
+import type { ArticleProps } from '@/components/ArticleComponent.vue';
 import { type Article } from '@/domain/article.models'
 import type { Tag } from '@/domain/tag.models';
 import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/graphql/article.queries'
