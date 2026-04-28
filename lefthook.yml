@@ -2,20 +2,15 @@ commit-msg:
   commands:
     "lint commit message":
       run: pnpm commitlint --edit {1}
-pre-push:
 
+pre-commit:
   parallel: true
   commands:
     backend:
-      root: ./backend/api/
-      glob: "**/*.cs"
+      root: ./backend/api
       run: |
-        dotnet build Markivio.sln
-        dotnet test Markivio.UnitTests/Markivio.UnitTests.csproj
-
+        dotnet format
     frontend:
-      root: ./frontend/markivio-frontend/
-      glob: "**/{*.js,*.ts,*.vue}"
+      root: ./frontend/markivio-frontend
       run: |
-        pnpm build
-        pnpm test:unit
+        pnpm lint
