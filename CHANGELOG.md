@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/FougereRegent/Markivio/compare/v1.2.0...v1.3.0) (2026-04-28)
+
+
+### Features
+
+* add update article ([#24](https://github.com/FougereRegent/Markivio/issues/24)) ([9f25459](https://github.com/FougereRegent/Markivio/commit/9f2545905897762d573d7bee88d4f04761c0b2de))
+
 # [1.2.0](https://github.com/FougereRegent/Markivio/compare/v1.1.0...v1.2.0) (2026-04-18)
 
 
