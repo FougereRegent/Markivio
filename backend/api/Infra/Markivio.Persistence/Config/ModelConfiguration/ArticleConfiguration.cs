@@ -25,12 +25,11 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
           .WithMany()
           .HasForeignKey("UserId");
 
+        builder.ComplexProperty(pre => pre.ArticleContent);
+
         builder
-          .OwnsOne(pre => pre.ArticleContent, sa =>
-          {
-              sa.ToJson();
-              sa.OwnsMany(pre => pre.Tags);
-          });
+            .HasMany(pre => pre.Tags)
+            .WithMany();
 
         builder
             .Property(pre => pre.IsFramable)

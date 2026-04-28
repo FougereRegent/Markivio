@@ -8,6 +8,15 @@ namespace Markivio.Persistence.Repositories;
 public class ArticleRepository(MarkivioContext context, HttpClient httpClient) : GenericRepository<Article>(context), IArticleRepository
 {
     private readonly HttpClient _httpClient = httpClient;
+
+    public override async Task<Article?> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        Article? result = await _context.Set<Article>()
+            .Include(pre => pre.Tags)
+            .FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
+        return result;
+    }
+
     public async Task<Article?> GetByTitle(string title, CancellationToken token = default!)
     {
         return await _context.Article.Where(pre => pre.Title == title)
@@ -19,8 +28,8 @@ public class ArticleRepository(MarkivioContext context, HttpClient httpClient) :
         IQueryable<Article> baseResult = _context.Article.AsQueryable();
         IQueryable<Article> resultFitler = (title, tagName) switch
         {
-            (null, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name))),
-            (string t, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.ArticleContent.Tags.Any(pre => a.Contains(pre.Name)) && EF.Functions.ILike(pre.Title, $"{title}%")),
+            (null, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.Tags.Any(pre => a.Contains(pre.TagValue.Name))),
+            (string t, List<string> a) when a is { Count: > 0 } => baseResult.Where(pre => pre.Tags.Any(pre => a.Contains(pre.TagValue.Name)) && EF.Functions.ILike(pre.Title, $"{title}%")),
             (string t, _) => baseResult.Where(pre => EF.Functions.ILike(pre.Title, $"{title}%")),
             (_, _) => baseResult
         };

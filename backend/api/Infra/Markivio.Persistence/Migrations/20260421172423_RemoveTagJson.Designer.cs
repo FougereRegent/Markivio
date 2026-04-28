@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Markivio.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Markivio.Persistence.Migrations
 {
     [DbContext(typeof(MarkivioContext))]
-    partial class MarkivioContextModelSnapshot : ModelSnapshot
+    [Migration("20260421172423_RemoveTagJson")]
+    partial class RemoveTagJson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

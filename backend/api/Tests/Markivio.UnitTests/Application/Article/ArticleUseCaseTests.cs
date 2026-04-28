@@ -47,10 +47,11 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldFail_WhenArticleAlreadyExists()
     {
         // Arrange
+        List<Tag> tags = new List<Tag>();
         CancellationToken token = new CancellationToken();
-        var existing = new Article(
-            new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), new List<TagValueObject>(), null),
-            faker.Lorem.Slug(4), false)
+        Article existing = new Article(
+            new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), null),
+            faker.Lorem.Slug(4), false, tags)
         { Id = Guid.NewGuid() };
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
@@ -58,7 +59,7 @@ public sealed class ArticleUseCaseTests : BaseTests
 
         // Act
         Result<ArticleInformation> result = await useCase.CreateArticle(
-            new CreateArticle("title", faker.Internet.Url(), "desc", Array.Empty<TagCreateArticle>()), token);
+            new CreateArticle("title", faker.Internet.Url(), "desc", Array.Empty<TagArticle>()), token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -76,7 +77,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Title: faker.Random.Word(),
             Source: faker.Internet.Url(),
             Description: faker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
           .Returns(Task.FromResult<Article?>(null));
@@ -103,7 +104,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Title: faker.Random.Word(),
             Source: "",
             Description: faker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
           .Returns(Task.FromResult<Article?>(null));
@@ -140,7 +141,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             Title: title,
             Source: url,
             Description: localFaker.Lorem.Sentence(),
-            Tags: tagIds.Select(id => new TagCreateArticle(id)).ToArray());
+            Tags: tagIds.Select(id => new TagArticle(id)).ToArray());
 
         articleRepositoryMock.Setup(obj => obj.GetByTitle(It.IsAny<string>()))
           .Returns(Task.FromResult<Article?>(null));

@@ -2,6 +2,7 @@ export type Constant = {
   debounceTime: {
     buttonTime: number
     refetchTime: number
+    inputTime: number
   }
   flickerTime: number
   toastTime: number
@@ -18,6 +19,7 @@ export const CONST: Constant = {
   debounceTime: {
     buttonTime: 200,
     refetchTime: 200,
+    inputTime: 100
   },
   flickerTime: 300,
   toastTime: 3000,

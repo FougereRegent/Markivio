@@ -9,6 +9,7 @@ export type GetArticlesInformationQuery = {
       title: string
       description?: string
       tags: Array<{
+        id: string
         name: string
         color: string
       }>
@@ -37,24 +38,38 @@ export type AddArticleReturn = {
   }
 }
 
+const ArticleInformationFragment = `
+fragment Article on ArticleInformation {
+    id
+    source
+    title
+    description
+    tags {
+        id
+        name
+        color
+    }
+}`;
+
+const ArticlePaginationFragment = `
+fragment Pagination on ArticlesCollectionSegment {
+    totalCount
+    pageInfo {
+         hasNextPage
+         hasPreviousPage
+    }
+}
+`;
+
 export const GetArticles: TypedDocumentNode<GetArticlesInformationQuery> = gql`
+  ${ArticleInformationFragment}
+  ${ArticlePaginationFragment}
   query Articles($offset: Int!, $limit: Int!) {
     articles(skip: $offset, take: $limit) {
       items {
-        id
-        source
-        title
-        description
-        tags {
-          name
-          color
-        }
+        ...Article
       }
-      totalCount
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-      }
+      ...Pagination
     }
   }
 `
@@ -67,6 +82,15 @@ export const AddArticles: TypedDocumentNode<AddArticleReturn> = gql`
   }
 `
 
+export const UpdateArticle: TypedDocumentNode<AddArticleReturn> = gql`
+  ${ArticleInformationFragment}
+  mutation UpdateArticle($input: UpdateArticleInput!) {
+    updateArticle(updateArticle: $input) {
+      ...Article
+    }
+  }
+`
+
 export const GetUrlByArticleId: TypedDocumentNode<GetSourceUrlQuery> = gql`
   query Articles($id: UUID!) {
     articles(where: { id: { eq: $id } }, skip: 0, take: 1) {
@@ -75,6 +99,23 @@ export const GetUrlByArticleId: TypedDocumentNode<GetSourceUrlQuery> = gql`
         source
         isFramable
       }
+    }
+  }
+`
+
+export const GetArticleById: TypedDocumentNode<GetArticlesInformationQuery> = gql`
+  ${ArticleInformationFragment}
+  ${ArticlePaginationFragment}
+  query Articles($id: UUID!) {
+    articles(where: {
+      id: {
+        eq: $id
+      }
+    }, skip: 0, take: 1) {
+      items {
+        ...Article
+      }
+      ...Pagination
     }
   }
 `

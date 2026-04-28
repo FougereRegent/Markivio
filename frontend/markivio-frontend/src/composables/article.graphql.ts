@@ -1,6 +1,7 @@
-import type { ArticleProps } from '@/components/ArticleComponent.vue'
-import type { Article } from '@/domain/article.models'
-import { AddArticles, GetArticles, GetUrlByArticleId } from '@/graphql/article.queries'
+import type { ArticleProps } from '@/components/ArticleComponent.vue';
+import { type Article } from '@/domain/article.models'
+import type { Tag } from '@/domain/tag.models';
+import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/graphql/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
 
@@ -69,4 +70,52 @@ export function useGetSourceUrl(id: string) {
   }
 
   return { runQuery }
+}
+
+export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Ref<boolean> }) {
+  const { data, executeQuery, error } = useQuery({
+    query: GetArticleById,
+    pause: options?.pause,
+    variables: computed(() => {
+      return {
+        id: id.value
+      };
+    })
+  });
+
+  const article = computed(() => {
+    const art = data.value?.articles.items[0];
+
+    return {
+      id: art?.id,
+      title: art?.title,
+      description: art?.description,
+      source: art?.source,
+      tags: art?.tags.map(src => ({
+        id: src.id,
+        name: src.name,
+        color: src.color
+      } as Tag))
+    } as Article
+  })
+
+  return {article, executeQuery, error}
+}
+
+export function useUpdateArticle() {
+  const { data, executeMutation, fetching, error} = useMutation(UpdateArticle);
+
+  function updateArticle(article: Ref<Article>) {
+    const art = toValue(article);
+    return executeMutation({
+      input: {
+        id: art.id,
+        title: art.title,
+        description: art.description,
+        tags: art.tags.map(src => ({id: src.id}))
+      }
+    });
+  }
+
+  return { data, updateArticle, fetching, error}
 }

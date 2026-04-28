@@ -1,4 +1,4 @@
-import { cacheExchange, Client, fetchExchange } from '@urql/vue'
+import { Client, fetchExchange } from '@urql/vue'
 import { authExchange, type AuthConfig } from '@urql/exchange-auth'
 import { useAuthStore } from '@/stores/auth-store'
 import { CONFIG } from './constante.config'
@@ -13,7 +13,6 @@ async function initializeAuthState() {
 export const httpClient = new Client({
   url: CONFIG.graphqlApi,
   exchanges: [
-    cacheExchange,
     authExchange(async (utils) => {
       const token = await initializeAuthState()
       return {

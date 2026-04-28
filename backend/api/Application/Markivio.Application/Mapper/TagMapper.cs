@@ -13,9 +13,6 @@ public partial class TagMapper
     [MapNestedProperties(nameof(Tag.TagValue))]
     public partial TagInformation MapToTagInformation(Tag tag);
 
-    [MapNestedProperties(nameof(Tag.TagValue))]
-    public partial TagSoftInformation MapToSoftInformation(Tag tag);
-
     [UserMapping]
     public Tag Map(CreateTag createTag) =>
         new(new TagValueObject(createTag.Name, createTag.Color));
@@ -27,7 +24,7 @@ public static partial class TagMapperProjection
     public static partial IQueryable<TagInformation> ProjectionToTagInformation(this IQueryable<Tag> tags);
 
     [MapNestedProperties(nameof(Tag.TagValue))]
-    private static partial TagInformation TagToTagInformation(Tag tag);
+    private static partial TagInformation Map(Tag tag);
 }
 
 #pragma warning restore RMG020
