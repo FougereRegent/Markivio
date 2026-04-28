@@ -1,8 +1,8 @@
-import { ArticleSchema, type Article } from "@/domain/article.models";
-import type { Tag } from "@/domain/tag.models";
+import { ArticleSchema, type Article } from "@/features/article/models/article.models";
+import type { Tag } from "@/features/tag/models/tag.models";
 import { computed, ref, watch, type Ref } from "vue";
-import { useZodValidation } from "../zod.composable";
-import { useCreateArticle, useGetArticleById, useUpdateArticle } from "../article.graphql";
+import { useZodValidation } from "@/features/auth/composables/zod.composable";
+import { useCreateArticle, useGetArticleById, useUpdateArticle } from "@/features/article/composables/article.graphql";
 import { ActionDrawer, useAddEditDrawer } from "@/stores/add-edit-drawer-store";
 
 export function useArticleForm() {

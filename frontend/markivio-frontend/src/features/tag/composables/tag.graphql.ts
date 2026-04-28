@@ -1,5 +1,5 @@
-import type { Tag } from '@/domain/tag.models'
-import { AddTags, GetAllTags } from '@/graphql/tags.queries'
+import type { Tag } from '@/features/tag/models/tag.models'
+import { AddTags, GetAllTags } from '@/features/tag/queries/tags.queries'
 import { useMutation, useQuery } from '@urql/vue'
 import { computed, type Ref } from 'vue'
 

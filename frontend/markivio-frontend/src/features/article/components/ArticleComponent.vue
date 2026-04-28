@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Tag } from 'primevue'
 import { contrastColor } from '@/helpers/ui.helpers'
-import DialogSource from './DialogSource.vue'
+import DialogSource from '@/components/DialogSource.vue'
 import { ref } from 'vue'
-import { useGetSourceUrl, type UrlSource } from '@/composables/article.graphql'
+import { useGetSourceUrl, type UrlSource } from '@/features/article/composables/article.graphql'
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
 
 export type ArticleProps = {

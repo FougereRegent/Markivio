@@ -1,7 +1,7 @@
-import type { Tag } from "@/domain/tag.models";
+import type { Tag } from "@/features/tag/models/tag.models";
 import { useDebounce } from "@vueuse/core";
 import { ref, watch, type Ref } from "vue";
-import { useGetAllTags } from "../tag.graphql";
+import { useGetAllTags } from "@/features/tag/composables/tag.graphql";
 import { CONST } from "@/config/constante.config";
 
 export function useTagAutocomplete(selectedTags: Ref<Tag[]>) {

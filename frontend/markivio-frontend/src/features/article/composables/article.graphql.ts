@@ -1,7 +1,7 @@
-import type { ArticleProps } from '@/components/ArticleComponent.vue';
-import { type Article } from '@/domain/article.models'
-import type { Tag } from '@/domain/tag.models';
-import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/graphql/article.queries'
+import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue';
+import { type Article } from '@/features/article/models/article.models'
+import type { Tag } from '@/features/tag/models/tag.models';
+import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/features/article/queries/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
 

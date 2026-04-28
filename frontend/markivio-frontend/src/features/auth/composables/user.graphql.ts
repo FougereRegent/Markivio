@@ -1,5 +1,5 @@
-import type { UserInformation } from '@/domain/user.models'
-import { GetMe, UpdateUser } from '@/graphql/user.queries'
+import type { UserInformation } from '@/features/auth/models/user.models'
+import { GetMe, UpdateUser } from '@/features/auth/queries/user.queries'
 import { useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
 

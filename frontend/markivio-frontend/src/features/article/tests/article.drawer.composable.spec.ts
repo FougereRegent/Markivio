@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useArticleForm } from '@/composables/drawer/article.drawer.composable'
-import type { Tag } from '@/domain/tag.models'
+import { useArticleForm } from '@/features/drawer/composables/article.drawer.composable'
+import type { Tag } from '@/features/tag/models/tag.models'
 
 // mock store
 const drawerMock = {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref, nextTick } from 'vue'
-import { useTagAutocomplete } from '@/composables/drawer/tag.drawer.composable'
-import type { Tag } from '@/domain/tag.models'
+import { useTagAutocomplete } from '@/features/drawer/composables/tag.drawer.composable'
+import type { Tag } from '@/features/tag/models/tag.models'
 
 // ---- MOCKS ----
 

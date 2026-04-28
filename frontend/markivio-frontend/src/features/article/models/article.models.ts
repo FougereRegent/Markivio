@@ -1,5 +1,5 @@
 import * as z from 'zod'
-import { TagSchema } from './tag.models'
+import { TagSchema } from '@/features/tag/models/tag.models'
 
 export interface ArticleInformation {
   id: string

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useCreateTags } from '@/composables/tag.graphql'
-import { useZodValidation } from '@/composables/zod.composable'
-import { type Tag, TagSchema } from '@/domain/tag.models'
+import { useCreateTags } from '@/features/tag/composables/tag.graphql'
+import { useZodValidation } from '@/features/auth/composables/zod.composable'
+import { type Tag, TagSchema } from '@/features/tag/models/tag.models'
 import { InputText } from 'primevue'
 import { computed, ref, useTemplateRef } from 'vue'
 

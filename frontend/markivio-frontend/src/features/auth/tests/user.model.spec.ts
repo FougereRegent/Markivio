@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { faker } from '@faker-js/faker'
-import { validateUser, type UserInformation } from '@/domain/user.models'
+import { validateUser, type UserInformation } from '@/features/auth/models/user.models'
 import { randomUUID } from 'crypto'
 
 describe.concurrent('Validate User', () => {

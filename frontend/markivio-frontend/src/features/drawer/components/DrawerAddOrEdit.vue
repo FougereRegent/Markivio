@@ -6,11 +6,11 @@ import {
   type AutoCompleteCompleteEvent,
   type AutoCompleteOptionSelectEvent,
 } from 'primevue'
-import TagCreatorComponent from './TagCreatorComponent.vue'
-import { useArticleDrawer, useArticleForm, useArticleSubmit } from '@/composables/drawer/article.drawer.composable'
-import { useTagAutocomplete } from '@/composables/drawer/tag.drawer.composable'
+import TagCreatorComponent from '@/features/tag/components/TagCreatorComponent.vue'
+import { useArticleDrawer, useArticleForm, useArticleSubmit } from '@/features/drawer/composables/article.drawer.composable'
+import { useTagAutocomplete } from '@/features/drawer/composables/tag.drawer.composable'
 import { computed, nextTick } from 'vue'
-import type { Tag } from '@/domain/tag.models'
+import type { Tag } from '@/features/tag/models/tag.models'
 
 const { article, addTag, removeTag, } = useArticleForm();
 const { drawer } = useArticleDrawer(article);

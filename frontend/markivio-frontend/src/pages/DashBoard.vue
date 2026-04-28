@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ArticleComponent, { type ArticleProps } from '@/components/ArticleComponent.vue'
+import ArticleComponent, { type ArticleProps } from '@/features/article/components/ArticleComponent.vue'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import DrawerAddOrEdit from '@/components/DrawerAddOrEdit.vue'
+import DrawerAddOrEdit from '@/features/drawer/components/DrawerAddOrEdit.vue'
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
-import { useGetArticles } from '@/composables/article.graphql'
+import { useGetArticles } from '@/features/article/composables/article.graphql'
 
 const articlesProps = ref<ArticleProps[]>([])
 const drawer = useAddEditDrawer()

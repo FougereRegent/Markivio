@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useZodValidation } from '@/composables/zod.composable'
+import { useZodValidation } from '@/features/auth/composables/zod.composable'
 import * as z from 'zod'
 import { ref } from 'vue'
 
