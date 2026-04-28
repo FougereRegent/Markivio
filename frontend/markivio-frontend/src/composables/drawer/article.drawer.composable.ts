@@ -52,10 +52,11 @@ export function useArticleForm() {
   }
 }
 
-export function useArticleSubmit(article: Ref<Article>, drawer: object) {
+export function useArticleSubmit(article: Ref<Article>) {
   const { validate, errors } = useZodValidation(ArticleSchema, article);
   const { createArticle, fetching } = useCreateArticle(article);
   const { updateArticle } = useUpdateArticle();
+  const drawer = useAddEditDrawer()
   const hasError = computed(() => ({
     title: {
       hasError: errors.value?.title != undefined,

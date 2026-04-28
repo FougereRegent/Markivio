@@ -14,8 +14,8 @@ import type { Tag } from '@/domain/tag.models'
 
 const { article, addTag, removeTag, } = useArticleForm();
 const { drawer } = useArticleDrawer(article);
-const { tagName, refSuggestion, search } = useTagAutocomplete(computed(() => article.value.tags))
-const { submit, hasError, fetching } = useArticleSubmit(article, drawer)
+const { tagName, refSuggestion, search } = useTagAutocomplete(computed(() => article.value.tags));
+const { submit, hasError, fetching } = useArticleSubmit(article);
 
 
 async function selectedItems(event: AutoCompleteOptionSelectEvent) {

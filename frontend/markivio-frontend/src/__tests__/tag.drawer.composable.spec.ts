@@ -45,13 +45,13 @@ describe('useTagAutocomplete', () => {
   })
 
   it('met à jour les suggestions en filtrant les tags déjà sélectionnés', async () => {
-    const selectedTags = ref([{ id: 1, name: 'Vue' }])
+    const selectedTags = ref<Tag[]>([{ id: "1", name: 'Vue', color:"" }])
 
     const { refSuggestion } = useTagAutocomplete(selectedTags)
 
     tagsMock.value = [
-      { id: 1, name: 'Vue' },
-      { id: 2, name: 'React' },
+      { id: "1", name: 'Vue', color: "" },
+      { id: "2", name: 'React', color: "" },
     ]
 
     await nextTick()
