@@ -45,7 +45,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         if (article is not null)
             return Result.Fail(new AlreadyExistError("This article already exist"));
 
-		var isFramableTask = CheckIfIsFramable(createArticle, cancellationToken);
+        var isFramableTask = CheckIfIsFramable(createArticle, cancellationToken);
 
         if (!CheckIfTagsExits(createArticle))
             return Result.Fail(new NotFoundError("A tag doesn't exist"));
@@ -57,7 +57,7 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         try
         {
-			var isFramable = await isFramableTask;
+            var isFramable = await isFramableTask;
             article = mapper.Map(createArticle, tags, isFramable);
             article.User = authUser.CurrentUser;
         }
@@ -113,8 +113,8 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         {
             article.RemoveTags(tags);
         }
-		catch (DomainException ex) 
-		{
+        catch (DomainException ex)
+        {
             return Result.Fail(DomainError.Create(ex));
         }
 
@@ -134,9 +134,9 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
 
         List<Tag> tags = tagRepository
             .GetByIds(updateArticle.Tags.Select(pre => pre.Id).ToList())
-			.ToList();
+            .ToList();
 
-		if(await CheckIfTitleAlreadyExist(updateArticle, article))
+        if (await CheckIfTitleAlreadyExist(updateArticle, article))
             return Result.Fail(new AlreadyExistError("This title article already exist"));
 
         try
@@ -168,16 +168,19 @@ public class ArticleUseCase(ITagUseCase tagUseCase, IArticleRepository articleRe
         return tagUseCase.TagsExist<Guid>(tags, TagExistConditionEnum.Id);
     }
 
-	private async Task<bool> CheckIfIsFramable(CreateArticle article, CancellationToken cancellationToken = default) {
-		return await articleRepository.IsFramable(article.Source, cancellationToken);
-	}
+    private async Task<bool> CheckIfIsFramable(CreateArticle article, CancellationToken cancellationToken = default)
+    {
+        return await articleRepository.IsFramable(article.Source, cancellationToken);
+    }
 
-	private async Task<bool> CheckIfTitleAlreadyExist(UpdateArticle updateArticle, Article source, CancellationToken cancellationToken = default) {
-		if(updateArticle.Title.Equals(source.Title, StringComparison.InvariantCultureIgnoreCase)) {
-			return false;
-		}
+    private async Task<bool> CheckIfTitleAlreadyExist(UpdateArticle updateArticle, Article source, CancellationToken cancellationToken = default)
+    {
+        if (updateArticle.Title.Equals(source.Title, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return false;
+        }
 
-		return await articleRepository.GetByTitle(updateArticle.Title, cancellationToken) != null;
-	}
- 
+        return await articleRepository.GetByTitle(updateArticle.Title, cancellationToken) != null;
+    }
+
 }

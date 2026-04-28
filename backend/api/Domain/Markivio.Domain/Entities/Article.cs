@@ -29,7 +29,7 @@ public sealed class Article : EntityWithTenancy
 
         Title = title;
         IsFramable = isFramable;
-		Tags = tags;
+        Tags = tags;
     }
 
     public void Update(string title, string? description, IReadOnlyList<Tag> tags)
@@ -44,8 +44,8 @@ public sealed class Article : EntityWithTenancy
         ArticleContent.Update(description: description);
 
         Title = title;
-		Tags.Clear();
-		Tags.AddRange(tags);
+        Tags.Clear();
+        Tags.AddRange(tags);
     }
 
     public void AddTags(IReadOnlyList<Tag> tags)

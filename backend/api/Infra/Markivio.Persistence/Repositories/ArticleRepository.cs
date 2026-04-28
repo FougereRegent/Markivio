@@ -11,9 +11,9 @@ public class ArticleRepository(MarkivioContext context, HttpClient httpClient) :
 
     public override async Task<Article?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-		Article? result = await _context.Set<Article>()
-			.Include(pre => pre.Tags)
-			.FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
+        Article? result = await _context.Set<Article>()
+            .Include(pre => pre.Tags)
+            .FirstOrDefaultAsync(pre => pre.Id == id, cancellationToken);
         return result;
     }
 

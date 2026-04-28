@@ -12,7 +12,7 @@ public sealed class ArticleTests : BaseTests
     {
         // Arrange
         ArticleContent articleContent = null!;
-		List<Tag> tags = new List<Tag>();
+        List<Tag> tags = new List<Tag>();
         string title = faker.Lorem.Slug(wordcount: 4);
 
         // Act
@@ -28,7 +28,7 @@ public sealed class ArticleTests : BaseTests
     public void Ctor_ShouldThrowEmptyException_WhenTitleIsNullOrEmpty(string? title)
     {
         // Arrange
-		List<Tag> tags = new List<Tag>();
+        List<Tag> tags = new List<Tag>();
         ArticleContent content = new ArticleContent(
             source: faker.Internet.Url(),
             content: faker.Lorem.Paragraph(),
@@ -42,40 +42,42 @@ public sealed class ArticleTests : BaseTests
         ex.ErrorCode.ShouldBe("EMPTY_ARTICLETITLE");
     }
 
-	[Theory]
-	[InlineData(true)]
-	[InlineData(false)]
-	public void Ctor_ShouldSetIsFramable(bool isFramable) {
-		// Arrange
-		ArticleContent articleContent = ArticleContentGenerator.CreateValid();
-		string title = faker.Lorem.Slug();
-		// act
-		Article article = new Article(articleContent: articleContent, title: title, isFramable: isFramable, tags: new List<Tag>());
-		// Assert
-		article.IsFramable.ShouldBe(isFramable);
-	}
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Ctor_ShouldSetIsFramable(bool isFramable)
+    {
+        // Arrange
+        ArticleContent articleContent = ArticleContentGenerator.CreateValid();
+        string title = faker.Lorem.Slug();
+        // act
+        Article article = new Article(articleContent: articleContent, title: title, isFramable: isFramable, tags: new List<Tag>());
+        // Assert
+        article.IsFramable.ShouldBe(isFramable);
+    }
 
-	public void Ctor_CreatingSuccess() {
-		// Arrange
-		ArticleContent articleContent = ArticleContentGenerator.CreateValid();
-		string title = faker.Lorem.Slug();
-		bool isFramable = faker.Random.Bool();
-		List<Tag> tags = new List<Tag>();
-		// Act
-		Article article = new Article(articleContent: articleContent, title: title, isFramable: isFramable, tags: tags);
-		// Assert
-		article.ArticleContent.ShouldBe(articleContent);
-		article.Title.ShouldBe(title);
-		article.IsFramable.ShouldBe(isFramable);
-		article.Tags.ShouldBe(tags);
-	}
+    public void Ctor_CreatingSuccess()
+    {
+        // Arrange
+        ArticleContent articleContent = ArticleContentGenerator.CreateValid();
+        string title = faker.Lorem.Slug();
+        bool isFramable = faker.Random.Bool();
+        List<Tag> tags = new List<Tag>();
+        // Act
+        Article article = new Article(articleContent: articleContent, title: title, isFramable: isFramable, tags: tags);
+        // Assert
+        article.ArticleContent.ShouldBe(articleContent);
+        article.Title.ShouldBe(title);
+        article.IsFramable.ShouldBe(isFramable);
+        article.Tags.ShouldBe(tags);
+    }
 
     [Fact]
     public void Ctor_ShouldCreate_WhenInputsAreValid()
     {
         // Arrange
         string title = faker.Lorem.Slug(wordcount: 4);
-		List<Tag> tags = new List<Tag>();
+        List<Tag> tags = new List<Tag>();
         var content = new ArticleContent(
             source: faker.Internet.Url(),
             content: faker.Lorem.Paragraph(),
@@ -97,11 +99,11 @@ public sealed class ArticleTests : BaseTests
         string content = faker.Lorem.Paragraph();
         List<Tag> tags = Enumerable.Range(0, 21).Select(_ => TagValueGenerator.CreateValidTag()).ToList();
 
-		ArticleContent articleContent = new ArticleContent(
-				source: source,
-				description: null,
-				content: content
-				);
+        ArticleContent articleContent = new ArticleContent(
+                source: source,
+                description: null,
+                content: content
+                );
 
         // Act
         var act = () => new Article(articleContent, "title", false, tags);
@@ -114,7 +116,7 @@ public sealed class ArticleTests : BaseTests
     public void ArticleUpdate_ShouldNotThrow_WhenTitleIsEmpty()
     {
         //Arrange
-		List<Tag> tags = new List<Tag>();
+        List<Tag> tags = new List<Tag>();
         ArticleContent content = new ArticleContent(
             source: faker.Internet.Url(),
             content: faker.Lorem.Paragraph(),
@@ -134,7 +136,7 @@ public sealed class ArticleTests : BaseTests
     public void ArticleUpdate_ShouldUpdate()
     {
         //Arrange
-		List<Tag> tags = new List<Tag>();
+        List<Tag> tags = new List<Tag>();
         string title = faker.Lorem.Slug(wordcount: 4);
         ArticleContent content = new ArticleContent(
             source: faker.Internet.Url(),

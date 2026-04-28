@@ -47,7 +47,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task CreateArticle_ShouldFail_WhenArticleAlreadyExists()
     {
         // Arrange
-		List<Tag> tags = new List<Tag>();
+        List<Tag> tags = new List<Tag>();
         CancellationToken token = new CancellationToken();
         Article existing = new Article(
             new ArticleContent(faker.Internet.Url(), faker.Lorem.Paragraph(), null),

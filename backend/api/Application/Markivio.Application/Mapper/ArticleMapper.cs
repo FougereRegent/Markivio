@@ -20,7 +20,7 @@ public partial class ArticleMapper
                     ),
                 title: createArticle.Title,
                 isFramable: isFramable,
-				tags: tags
+                tags: tags
                 );
     }
 }
@@ -33,6 +33,6 @@ public static partial class ArticleMapperProjection
     [MapNestedProperties(nameof(Article.ArticleContent))]
     private static partial ArticleInformation Map(Article article);
 
-	[MapNestedProperties(nameof(Tag.TagValue))]
-	private static partial TagInformation Map(Tag tag);
+    [MapNestedProperties(nameof(Tag.TagValue))]
+    private static partial TagInformation Map(Tag tag);
 }

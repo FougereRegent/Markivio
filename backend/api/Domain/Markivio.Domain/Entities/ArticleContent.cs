@@ -11,7 +11,7 @@ public sealed class ArticleContent : BaseValueObject
 
     public string Source { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
-	public string? Description { get; set; } = null;
+    public string? Description { get; set; } = null;
 
     private ArticleContent() { }
 

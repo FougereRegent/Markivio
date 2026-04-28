@@ -1,4 +1,5 @@
 namespace Markivio.UnitTests.Helper.Faker;
+
 using Bogus;
 using Markivio.Domain.ValueObject;
 

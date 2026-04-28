@@ -27,9 +27,9 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
 
         builder.ComplexProperty(pre => pre.ArticleContent);
 
-		builder
-			.HasMany(pre => pre.Tags)
-			.WithMany();
+        builder
+            .HasMany(pre => pre.Tags)
+            .WithMany();
 
         builder
             .Property(pre => pre.IsFramable)
