@@ -56,7 +56,7 @@ describe('useTagAutocomplete', () => {
 
     await nextTick()
 
-    expect(refSuggestion.value).toEqual([{ id: 2, name: 'React' }])
+    expect(refSuggestion.value).toEqual([{ id: "2", name: 'React', color: "" }])
   })
 
   it('retourne toutes les suggestions si aucun tag sélectionné', async () => {

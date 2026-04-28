@@ -56,6 +56,7 @@ public sealed class ArticleTests : BaseTests
         article.IsFramable.ShouldBe(isFramable);
     }
 
+    [Fact]
     public void Ctor_CreatingSuccess()
     {
         // Arrange
