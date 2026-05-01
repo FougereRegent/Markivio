@@ -8,7 +8,7 @@ import type { Tag } from '@/features/tag/models/tag.models'
 const tagsMock = ref<Tag[]>([])
 const executeQueryMock = vi.fn()
 
-vi.mock('@/composables/tag.graphql', () => ({
+vi.mock('@/features/tag/composables/tag.graphql', () => ({
   useGetAllTags: () => ({
     tags: tagsMock,
     executeQuery: executeQueryMock,
@@ -16,7 +16,7 @@ vi.mock('@/composables/tag.graphql', () => ({
 }))
 
 vi.mock('@vueuse/core', () => ({
-  useDebounce: (v: string) => v,
+  useDebounce: (v: any) => ({ value: v }),
 }))
 
 vi.mock('@/config/constante.config', () => ({
@@ -36,7 +36,7 @@ describe('useTagAutocomplete', () => {
   })
 
   it('initialise correctement les refs', () => {
-    const selectedTags = ref([])
+    const selectedTags = ref<Tag[]>([])
 
     const { tagName, refSuggestion } = useTagAutocomplete(selectedTags)
 
@@ -45,29 +45,29 @@ describe('useTagAutocomplete', () => {
   })
 
   it('met à jour les suggestions en filtrant les tags déjà sélectionnés', async () => {
-    const selectedTags = ref<Tag[]>([{ id: "1", name: 'Vue', color:"" }])
+    const selectedTags = ref<Tag[]>([{ id: '1', name: 'Vue', color: '' }])
 
     const { refSuggestion } = useTagAutocomplete(selectedTags)
 
     tagsMock.value = [
-      { id: "1", name: 'Vue', color: "" },
-      { id: "2", name: 'React', color: "" },
+      { id: '1', name: 'Vue', color: '' },
+      { id: '2', name: 'React', color: '' },
     ]
 
     await nextTick()
 
-    expect(refSuggestion.value).toEqual([{ id: "2", name: 'React', color: "" }])
+    expect(refSuggestion.value).toEqual([{ id: '2', name: 'React', color: '' }])
   })
 
   it('retourne toutes les suggestions si aucun tag sélectionné', async () => {
-    const selectedTags = ref([])
+    const selectedTags = ref<Tag[]>([])
 
     const { refSuggestion } = useTagAutocomplete(selectedTags)
 
     tagsMock.value = [
-      { id: "1", name: 'Vue', color: ""},
-      { id: "2", name: 'React', color: ""},
-    ];
+      { id: '1', name: 'Vue', color: '' },
+      { id: '2', name: 'React', color: '' },
+    ]
 
     await nextTick()
 
@@ -75,11 +75,11 @@ describe('useTagAutocomplete', () => {
   })
 
   it('met refSuggestion à [] si tags est null/undefined', async () => {
-    const selectedTags = ref([])
+    const selectedTags = ref<Tag[]>([])
 
     const { refSuggestion } = useTagAutocomplete(selectedTags)
 
-    tagsMock.value = [];
+    tagsMock.value = []
 
     await nextTick()
 
@@ -87,7 +87,7 @@ describe('useTagAutocomplete', () => {
   })
 
   it('search met à jour tagName et reset offset', () => {
-    const selectedTags = ref([])
+    const selectedTags = ref<Tag[]>([])
 
     const { tagName, search } = useTagAutocomplete(selectedTags)
 
@@ -97,7 +97,7 @@ describe('useTagAutocomplete', () => {
   })
 
   it('search appelle executeQuery si query vide', () => {
-    const selectedTags = ref([])
+    const selectedTags = ref<Tag[]>([])
 
     const { search } = useTagAutocomplete(selectedTags)
 
@@ -108,8 +108,8 @@ describe('useTagAutocomplete', () => {
     })
   })
 
-  it('search N\'appelle PAS executeQuery si query non vide', () => {
-    const selectedTags = ref([])
+  it("search N'appelle PAS executeQuery si query non vide", () => {
+    const selectedTags = ref<Tag[]>([])
 
     const { search } = useTagAutocomplete(selectedTags)
 
