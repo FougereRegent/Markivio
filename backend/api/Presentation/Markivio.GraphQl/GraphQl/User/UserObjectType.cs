@@ -1,9 +1,8 @@
 using Markivio.Application.Dto;
 
-namespace Markivio.Presentation.GraphQl;
+namespace Markivio.Presentation.GraphQl.User;
 
-public class UserInformationType : ObjectType<UserInformation>
-{
+public sealed class UserInformationType : ObjectType<UserInformation>{
     protected override void Configure(IObjectTypeDescriptor<UserInformation> descriptor)
     {
         descriptor
@@ -23,4 +22,3 @@ public class UserInformationType : ObjectType<UserInformation>
           .Type<StringType>();
     }
 }
-

@@ -1,6 +1,6 @@
 namespace Markivio.Presentation.GraphQl.User;
 
-public static class MeQuery
+public static class UserMeQuery
 {
     extension(IObjectTypeDescriptor<Query> descriptor)
     {

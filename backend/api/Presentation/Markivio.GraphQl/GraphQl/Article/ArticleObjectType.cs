@@ -1,4 +1,6 @@
 using Markivio.Application.Dto;
+using Markivio.Presentation.GraphQl.User;
+using Markivio.Presentation.GraphQl.Tag;
 
 namespace Markivio.Presentation.GraphQl.Article;
 

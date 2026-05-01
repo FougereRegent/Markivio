@@ -1,66 +1,11 @@
-using Markivio.Application.Dto;
-using Markivio.Application.UseCases;
 using Markivio.Presentation.Middleware;
+using Markivio.Presentation.GraphQl.User;
+using Markivio.Presentation.GraphQl.Article;
+using Markivio.Presentation.GraphQl.Tag;
 
 namespace Markivio.Presentation.GraphQl;
 
-public class Mutation
-{
-    public async Task<UserInformation> UpdateMyUser(IUserUseCase userUseCase,
-        UpdateUserInformation updateUserInformation,
-        CancellationToken cancellationToken = default)
-    {
-        FluentResults.Result<UserInformation> resultUpdate = await userUseCase.UpdateCurrentUser(updateUserInformation);
-        if (resultUpdate.IsFailed)
-        {
-            throw new GraphQLException(ErrorBuilder
-                .New()
-                .SetCode(resultUpdate.Errors[0].GetType().Name)
-                .SetMessage(string.Join(Environment.NewLine, resultUpdate.Errors.Select(pre => pre.Message)))
-                .Build()
-                );
-        }
-        return resultUpdate.Value;
-    }
-
-    public async Task<ArticleInformation> CreateArticle(IArticleUseCase articleUseCase,
-        CreateArticle createArticle,
-        CancellationToken cancellationToken = default)
-    {
-        FluentResults.Result<ArticleInformation> resultCreate = await articleUseCase.CreateArticle(createArticle, cancellationToken);
-        return resultCreate.ThrowIfResultIsFailed();
-    }
-
-    public async Task<ArticleInformation> UpdateArticle(IArticleUseCase articleUseCase,
-            UpdateArticle updateArticle,
-            CancellationToken cancellationToken = default)
-    {
-        FluentResults.Result<ArticleInformation> resultUpdate = await articleUseCase.UpdateArticle(updateArticle, cancellationToken);
-        return resultUpdate.ThrowIfResultIsFailed();
-    }
-
-    public async Task<TagInformation[]> CreateTags(ITagUseCase tagUseCase,
-        List<CreateTag> createTags,
-        CancellationToken cancellationToken = default)
-    {
-        FluentResults.Result<TagInformation[]> resultCreate = tagUseCase.CreateTag(createTags.ToArray());
-        return resultCreate.ThrowIfResultIsFailed();
-    }
-
-    public async Task<ArticleInformation> AddTags(IArticleUseCase articleUseCase,
-        AddTagsToArticle addTagsToArticle)
-    {
-        FluentResults.Result<ArticleInformation> resultAddTags = await articleUseCase.AddTags(addTagsToArticle);
-        return resultAddTags.ThrowIfResultIsFailed();
-    }
-    public async Task<ArticleInformation> RemoveTags(IArticleUseCase articleUseCase,
-        RemoveTagsToArticle removeTagsToArticle)
-    {
-        FluentResults.Result<ArticleInformation> resultRemoveTags = await articleUseCase.RemoveTags(removeTagsToArticle);
-        return resultRemoveTags.ThrowIfResultIsFailed();
-    }
-
-}
+public partial class Mutation;
 
 public class MutationType : ObjectType<Mutation>
 {
@@ -68,10 +13,9 @@ public class MutationType : ObjectType<Mutation>
     {
         descriptor.Authorize();
 
-        descriptor
-          .Field(f => f.UpdateMyUser(default!, default!, default!))
-          .UseTransactionMiddleware()
-          .Type<UserInformationType>();
+        descriptor.MapUserMutation()
+        .MapTagMutation()
+        .MapCreateArticle();
 
         descriptor
           .Field(f => f.CreateArticle(default!, default!, default!))
@@ -82,12 +26,6 @@ public class MutationType : ObjectType<Mutation>
             .Field(f => f.UpdateArticle(default!, default!, default!))
             .UseTransactionMiddleware()
             .Type<ArticleInformationType>();
-
-        descriptor
-          .Field(f => f.CreateTags(default!, default!, default!))
-          .UseTransactionMiddleware()
-          .UsePaging()
-          .Type<ListType<TagInformationType>>();
 
         descriptor
             .Field(f => f.AddTags(default!, default!))
