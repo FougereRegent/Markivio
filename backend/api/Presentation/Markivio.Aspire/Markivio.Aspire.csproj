@@ -5,9 +5,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.2" />
-	<PackageReference Include="Aspire.Npgsql" Version="13.2.2" />
-	<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="*" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" />
+	<PackageReference Include="Aspire.Npgsql" />
+	<PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    <PackageReference Include="OpenTelemetry.Api" />
   </ItemGroup>
 
   <PropertyGroup>

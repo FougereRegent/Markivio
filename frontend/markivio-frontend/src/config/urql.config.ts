@@ -1,6 +1,6 @@
 import { Client, fetchExchange } from '@urql/vue'
 import { authExchange, type AuthConfig } from '@urql/exchange-auth'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/features/auth/stores/auth-store'
 import { CONFIG } from './constante.config'
 
 async function initializeAuthState() {

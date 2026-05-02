@@ -12,6 +12,7 @@ public static class GraphQlConfig
 {
     public static WebApplicationBuilder ConfigGraphQl(this WebApplicationBuilder builder)
     {
+        builder.ConfigOpenTelemetry();
         builder.Services.AddGraphQLServer()
         .AddAuthorization()
         .AddHttpRequestInterceptor<AuthUserInterceptor>()
@@ -30,7 +31,6 @@ public static class GraphQlConfig
         })
 #endif
 ;
-        builder.ConfigOpenTelemetry();
         return builder;
     }
 
@@ -50,6 +50,10 @@ public static class GraphQlConfig
                 metrics.AddHttpClientInstrumentation();
                 metrics.AddAspNetCoreInstrumentation();
                 metrics.AddOtlpExporter();
+            })
+            .WithLogging(logging =>
+            {
+                logging.AddOtlpExporter();
             });
         return builder;
     }

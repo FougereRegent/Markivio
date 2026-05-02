@@ -2,9 +2,9 @@
 import InputText from 'primevue/inputtext'
 import { FloatLabel, Button } from 'primevue'
 import { computed } from 'vue'
-import { useGetMyUser, useUpdateUserInformation } from '@/composables/user.graphql'
-import { useZodValidation } from '@/composables/zod.composable'
-import { UserSchema } from '@/domain/user.models'
+import { useGetMyUser, useUpdateUserInformation } from '@/features/auth/composables/user.graphql'
+import { useZodValidation } from '@/features/auth/composables/zod.composable'
+import { UserSchema } from '@/features/auth/models/user.models'
 
 const { userInfo } = useGetMyUser()
 const { updateUser } = useUpdateUserInformation(userInfo)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LogoComponent from '@/components/LogoComponent.vue'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/features/auth/stores/auth-store'
 
 const authStore = useAuthStore()
 </script>

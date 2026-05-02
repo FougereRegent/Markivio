@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import router from '@/router'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/features/auth/stores/auth-store'
 
 const authStore = useAuthStore()
 

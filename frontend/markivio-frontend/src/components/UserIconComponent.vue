@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/features/auth/stores/auth-store'
 import { computed } from 'vue'
 const store = useAuthStore()
 

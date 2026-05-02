@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/features/auth/stores/auth-store'
 import NavBarComponent from '@/components/NavBarComponent.vue'
 import { useLoaderStore } from '@/stores/loader-store'
 import { watch } from 'vue'
