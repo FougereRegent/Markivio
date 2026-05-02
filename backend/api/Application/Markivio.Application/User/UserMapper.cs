@@ -9,7 +9,8 @@ namespace Markivio.Application.Mapper;
 public partial class UserMapper
 {
     [MapProperty([nameof(User.Email), nameof(User.Email.Email)], nameof(UserInformation.Email))]
-    [MapNestedProperties(nameof(User.Identity))]
+    [MapProperty([nameof(User.Identity), nameof(User.Identity.FirstName)], nameof(UserInformation.FirstName))]
+    [MapProperty([nameof(User.Identity), nameof(User.Identity.LastName)], nameof(UserInformation.LastName))]
     public partial UserInformation UserToUserInformation(User user);
 
     public void ApplyUpdate(UpdateUserInformation update, User user)

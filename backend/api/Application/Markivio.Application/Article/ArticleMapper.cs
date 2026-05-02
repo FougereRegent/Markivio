@@ -1,3 +1,5 @@
+#pragma warning disable RMG020
+#pragma warning disable RMG012
 using Markivio.Application.Dto;
 using Markivio.Domain.Entities;
 using Riok.Mapperly.Abstractions;
@@ -36,3 +38,6 @@ public static partial class ArticleMapperProjection
     [MapNestedProperties(nameof(Tag.TagValue))]
     private static partial TagInformation Map(Tag tag);
 }
+
+#pragma warning restore RMG020
+#pragma warning restore RMG012
