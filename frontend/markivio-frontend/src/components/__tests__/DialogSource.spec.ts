@@ -27,14 +27,14 @@ describe('DialogSource', () => {
     vi.clearAllMocks()
   })
 
-  const mountComponent = (props: any = {}) => {
+  const mountComponent = (overrides: Record<string, unknown> = {}) => {
     return mount(DialogSource, {
       props: {
+        visible: true,
         id: '123',
         title: 'Test Article',
         source: 'https://example.com',
-        visible: false,
-        ...props,
+        ...overrides,
       },
       global: {
         stubs: {
@@ -45,13 +45,13 @@ describe('DialogSource', () => {
   }
 
   it('should render with visible prop', async () => {
-    const wrapper = mountComponent({ visible: true })
+    const wrapper = mountComponent()
 
     expect(wrapper.props('visible')).toBe(true)
   })
 
   it('should emit update:visible when dialog triggers it', async () => {
-    const wrapper = mountComponent({ visible: true })
+    const wrapper = mountComponent()
 
     // Click the dialog to trigger update:visible
     await wrapper.find('div').trigger('click')
@@ -64,6 +64,12 @@ describe('DialogSource', () => {
     const wrapper = mountComponent({ title: 'My Article' })
 
     expect(wrapper.props('title')).toBe('My Article')
+  })
+
+  it('should have visible prop in component', () => {
+    const wrapper = mountComponent()
+
+    expect(wrapper.props('visible')).toBe(true)
   })
 
   it('should set iframe src to source prop', () => {
@@ -84,7 +90,9 @@ describe('DialogSource', () => {
 
     const wrapper = mountComponent({ source: 'https://example.com' })
 
-    wrapper.vm.showSourceArticle()
+    // Access component VM to call method
+    const vm = wrapper.vm as unknown as { showSourceArticle: () => void }
+    vm.showSourceArticle()
 
     expect(mockOpen).toHaveBeenCalledWith('https://example.com', '_blank')
     mockOpen.mockRestore()

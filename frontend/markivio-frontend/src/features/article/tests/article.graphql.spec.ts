@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
 import type { Article } from '@/features/article/models/article.models'
-import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue'
-import { randomUUID } from 'crypto'
+
 
 // Mock urql with gql export
 vi.mock('@urql/vue', async () => {

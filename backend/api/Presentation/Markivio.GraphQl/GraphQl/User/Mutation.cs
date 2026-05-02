@@ -4,7 +4,8 @@ using Markivio.Application.UseCases;
 
 namespace Markivio.Presentation.GraphQl;
 
-public partial class Mutation {
+public partial class Mutation
+{
     public async Task<UserInformation> UpdateMyUser(IUserUseCase userUseCase,
         UpdateUserInformation updateUserInformation,
         CancellationToken cancellationToken = default)

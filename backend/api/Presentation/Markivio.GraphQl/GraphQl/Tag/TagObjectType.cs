@@ -2,7 +2,8 @@ using Markivio.Application.Dto;
 
 namespace Markivio.Presentation.GraphQl.Tag;
 
-public class TagInformationType : ObjectType<TagInformation> {
+public class TagInformationType : ObjectType<TagInformation>
+{
     protected override void Configure(IObjectTypeDescriptor<TagInformation> descriptor)
     {
         descriptor

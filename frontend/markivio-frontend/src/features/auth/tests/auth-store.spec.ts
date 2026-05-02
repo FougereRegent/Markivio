@@ -63,19 +63,22 @@ describe('useAuthStore', () => {
 
   it('Should return user from auth0', () => {
     const store = useAuthStore()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockAuth0.user.value = { sub: '123', name: 'John' } as any
 
     expect(store.user).toBe(mockAuth0.user.value)
   })
 
-  it('Should compute getUser correctly', () => {
+it('Should compute getUser correctly', () => {
     const store = useAuthStore()
+
+     
     mockAuth0.user.value = {
       sub: 'auth0|123',
       name: 'John Doe',
       family_name: 'Doe',
-      picture: 'https://example.com/pic.jpg',
-    } as any
+picture: 'https://example.com/pic.jpg',
+      } as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const userAuth: UserAuth = store.getUser
 
@@ -89,6 +92,7 @@ describe('useAuthStore', () => {
 
   it('Should handle missing user properties in getUser', () => {
     const store = useAuthStore()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockAuth0.user.value = {} as any
 
     const userAuth: UserAuth = store.getUser

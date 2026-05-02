@@ -3,7 +3,8 @@ using Markivio.Application.UseCases;
 
 namespace Markivio.Presentation.GraphQl;
 
-public partial class Mutation {
+public partial class Mutation
+{
     public async Task<ArticleInformation> CreateArticle(IArticleUseCase articleUseCase,
         CreateArticle createArticle,
         CancellationToken cancellationToken = default)

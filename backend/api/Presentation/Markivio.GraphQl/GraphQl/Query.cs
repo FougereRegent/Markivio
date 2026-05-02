@@ -15,8 +15,8 @@ public class QueryType : ObjectType<Query>
         descriptor
           .Authorize();
 
-		descriptor.MapArticleQuery();
-		descriptor.MapUserQuery();
-		descriptor.MapTagQuery();
+        descriptor.MapArticleQuery();
+        descriptor.MapUserQuery();
+        descriptor.MapTagQuery();
     }
 }

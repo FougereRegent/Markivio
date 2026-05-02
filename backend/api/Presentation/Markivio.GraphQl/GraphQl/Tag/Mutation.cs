@@ -3,7 +3,8 @@ using Markivio.Application.UseCases;
 
 namespace Markivio.Presentation.GraphQl;
 
-public partial class Mutation {
+public partial class Mutation
+{
     public async Task<TagInformation[]> CreateTags(ITagUseCase tagUseCase,
         List<CreateTag> createTags,
         CancellationToken cancellationToken = default)

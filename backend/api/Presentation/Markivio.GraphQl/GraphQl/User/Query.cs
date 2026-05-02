@@ -3,7 +3,8 @@ using Markivio.Application.UseCases;
 
 namespace Markivio.Presentation.GraphQl;
 
-public partial class Query {
+public partial class Query
+{
 
     public UserInformation Me(IUserUseCase userUseCase)
     {

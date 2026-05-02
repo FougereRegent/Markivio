@@ -16,7 +16,7 @@ vi.mock('@/features/tag/composables/tag.graphql', () => ({
 }))
 
 vi.mock('@vueuse/core', () => ({
-  useDebounce: (v: any) => ({ value: v }),
+  useDebounce: (v: unknown) => ({ value: v }),
 }))
 
 vi.mock('@/config/constante.config', () => ({

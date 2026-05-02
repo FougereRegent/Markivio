@@ -8,7 +8,7 @@ public sealed class TagValueObject : BaseValueObject
 {
 
     public string Name { get; set; }
-    public string Color { get; set;}
+    public string Color { get; set; }
 
     private TagValueObject()
     {

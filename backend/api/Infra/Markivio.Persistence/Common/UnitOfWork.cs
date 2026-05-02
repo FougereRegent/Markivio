@@ -16,11 +16,12 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
 
     public async Task BeginTransactionAsync(CancellationToken token = default)
     {
-		if(transaction is not null) {
-			await transaction.RollbackAsync(token);
-			await transaction.DisposeAsync();
-			transaction = null;
-		}
+        if (transaction is not null)
+        {
+            await transaction.RollbackAsync(token);
+            await transaction.DisposeAsync();
+            transaction = null;
+        }
         transaction = await dbcontext.Database.BeginTransactionAsync(token);
     }
 
@@ -45,7 +46,7 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
         await dbcontext.SaveChangesAsync(token);
         await transaction.CommitAsync(token);
 
-		await transaction.DisposeAsync();
-		transaction = null;
+        await transaction.DisposeAsync();
+        transaction = null;
     }
 }

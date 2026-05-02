@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import type { Tag } from '@/features/tag/models/tag.models'
 import type { Article } from '@/features/article/models/article.models'
 

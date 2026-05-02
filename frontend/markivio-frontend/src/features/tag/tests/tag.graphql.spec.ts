@@ -72,7 +72,7 @@ describe('tag.graphql composables', () => {
         { id: null, name: 'Tag2', color: '#00ff00' },
       ])
 
-      const result = useCreateTags(tagsInput as any)
+      const result = useCreateTags(tagsInput)
 
       expect(result.createTags).toBeDefined()
       expect(result.tags).toBeDefined()
