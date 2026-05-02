@@ -26,8 +26,8 @@ builder
     .ConfigAuth(config)
     .ConfigHealthCheck()
     .ConfigDI(config)
-    .ConfigGraphQl()
-    .ConfigJson();
+    .ConfigJson()
+    .ConfigGraphQl();
 
 var app = builder.Build();
 app.ConfigAuth()

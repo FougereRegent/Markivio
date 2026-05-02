@@ -12,10 +12,15 @@ public interface IUnitOfWork : IDisposable
 
 public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
 {
-    private IDbContextTransaction transaction = null!;
+    private IDbContextTransaction? transaction = null;
 
     public async Task BeginTransactionAsync(CancellationToken token = default)
     {
+		if(transaction is not null) {
+			await transaction.RollbackAsync(token);
+			await transaction.DisposeAsync();
+			transaction = null;
+		}
         transaction = await dbcontext.Database.BeginTransactionAsync(token);
     }
 
@@ -39,5 +44,8 @@ public class UnitOfWork(MarkivioContext dbcontext) : IUnitOfWork
 
         await dbcontext.SaveChangesAsync(token);
         await transaction.CommitAsync(token);
+
+		await transaction.DisposeAsync();
+		transaction = null;
     }
 }

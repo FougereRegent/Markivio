@@ -1,3 +1,4 @@
+#pragma warning disable CS8601
 #pragma warning disable RMG020
 #pragma warning disable RMG012
 using Markivio.Application.Dto;

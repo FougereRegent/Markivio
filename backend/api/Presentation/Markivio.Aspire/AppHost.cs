@@ -11,6 +11,7 @@ var postgres = builder.AddPostgres("postgres")
 
 var db = postgres.AddDatabase("markivio");
 var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
+					.WithOtlpExporter()
                     .WaitFor(db)
                     .WithReference(db)
                     .WithEnvironment("MARKIVIO_AUTHORITY", env["MARKIVIO_AUTHORITY"])

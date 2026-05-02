@@ -8,9 +8,13 @@ public sealed class TagValueObject : BaseValueObject
 {
 
     public string Name { get; set; }
-    public string Color { get; set; }
+    public string Color { get; set;}
 
-    private TagValueObject() { }
+    private TagValueObject()
+    {
+        Name = string.Empty;
+        Color = string.Empty;
+    }
 
     public TagValueObject(string name, string color)
     {

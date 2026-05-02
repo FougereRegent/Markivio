@@ -16,20 +16,5 @@ public class MutationType : ObjectType<Mutation>
         descriptor.MapUserMutation()
         .MapTagMutation()
         .MapCreateArticle();
-
-        descriptor
-          .Field(f => f.CreateArticle(default!, default!, default!))
-          .UseTransactionMiddleware()
-          .Type<ArticleInformationType>();
-
-        descriptor
-            .Field(f => f.UpdateArticle(default!, default!, default!))
-            .UseTransactionMiddleware()
-            .Type<ArticleInformationType>();
-
-        descriptor
-            .Field(f => f.AddTags(default!, default!))
-            .UseTransactionMiddleware()
-            .Type<ArticleInformationType>();
     }
 }

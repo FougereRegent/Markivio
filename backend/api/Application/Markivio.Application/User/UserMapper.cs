@@ -1,3 +1,4 @@
+#pragma warning disable RMG020
 using Markivio.Application.Dto;
 using Markivio.Domain.Entities;
 using Markivio.Domain.ValueObject;
@@ -24,3 +25,5 @@ public partial class UserMapper
             update.LastName);
     }
 }
+
+#pragma warning restore RMG020
