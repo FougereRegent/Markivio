@@ -10,10 +10,18 @@ var postgres = builder.AddPostgres("postgres")
                         .WithDataVolume("markivio-db");
 
 var db = postgres.AddDatabase("markivio");
+
+var username = builder.AddParameter("username", secret: true);
+var password = builder.AddParameter("password", secret: true);
+
+var rabbitmq = builder.AddRabbitMQ("broker", username, password)
+				.WithManagementPlugin();
+
 var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
                     .WithOtlpExporter()
                     .WaitFor(db)
                     .WithReference(db)
+					.WithReference(rabbitmq)
                     .WithEnvironment("MARKIVIO_AUTHORITY", env["MARKIVIO_AUTHORITY"])
                     .WithEnvironment("MARKIVIO_AUDIENCE", env["MARKIVIO_AUDIENCE"])
                     .WithEnvironment("MARKIVIO_AUTH_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
