@@ -33,8 +33,8 @@ type WebSiteReadability struct {
 	client *http.Client
 }
 
-func NewReadability(client *http.Client) WebSiteReadability {
-	return WebSiteReadability{
+func NewReadability(client *http.Client) *WebSiteReadability {
+	return &WebSiteReadability{
 		client: client,
 	}
 }
