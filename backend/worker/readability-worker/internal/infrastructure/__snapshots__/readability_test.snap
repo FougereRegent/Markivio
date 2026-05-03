@@ -1,0 +1,20 @@
+
+[TestCommonHeaders - 1]
+infrastructure.headers{"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "Accept-Encoding":"gzip, deflate", "Accept-Language":"fr-FR,fr;q=0.9,en;q=0.8", "Cache-Control":"max-age=0", "Connection":"keep-alive", "Sec-Fetch-Dest":"document", "Sec-Fetch-Mode":"navigate", "Sec-Fetch-Site":"none", "Sec-Fetch-User":"?1", "Upgrade-Insecure-Requests":"1", "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"}
+---
+
+[TestReadability - 1]
+5b70d2c3a52822b583ee1aeae68ffc16d626513e300b6b294a1e457655803335
+---
+
+[TestReadability - 2]
+95d534c397780c7e6e73bd95a9837f36dcd92fadc31346dbd5a990a53e77094c
+---
+
+[TestReadability - 3]
+fdc7c8507f29c4dfdd0a33f5a0858f31faa5aeb0c801ddf4e3ce550d828c6236
+---
+
+[TestReadability - 4]
+d469dbdd67c8fa7e3f294263efc5f0b86c21a020f976553b53584f258cdcbd21
+---
