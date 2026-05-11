@@ -2,8 +2,10 @@ package interfaces
 
 import "context"
 
+
+// In do callback passing your logic or other works
+type DoCallback func(ctx context.Context) error
+
 type UnitOfWork interface {
-	BeginTransaction(ctx context.Context) error
-	Commit(ctx context.Context) error
-	Rollback(ctx context.Context) error
+	Do(ctx context.Context, callback DoCallback) error
 }

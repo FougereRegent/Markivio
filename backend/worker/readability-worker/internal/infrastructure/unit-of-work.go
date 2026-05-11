@@ -2,57 +2,63 @@ package infrastructure
 
 import (
 	"context"
-	"errors"
+	"sync"
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces"
 	"github.com/jackc/pgx/v5"
 )
 
-type unitOfWork struct {
-	connection *pgx.Conn
-	transaction pgx.Tx
+const (
+	TransactionKey string = "transaction"
+)
+
+type PgIface interface {
+	Begin(ctx context.Context) (pgx.Tx, error)
+	BeginTx(ctx context.Context, opts pgx.TxOptions) (pgx.Tx, error)
 }
 
-func NewUnitOfWork(connection *pgx.Conn) interfaces.UnitOfWork {
+type unitOfWork struct {
+	connection PgIface
+	transaction pgx.Tx
+	mu sync.Mutex
+}
+
+func NewUnitOfWork(connection PgIface) interfaces.UnitOfWork {
 	return &unitOfWork{
 		connection: connection,
 		transaction: nil,
+		mu: sync.Mutex{},
 	}
 }
 
-func (u *unitOfWork) BeginTransaction(ctx context.Context) error {
+func (u *unitOfWork) Do(ctx context.Context, callback interfaces.DoCallback) error {
 	var err error
-	if u.transaction != nil {
-		u.transaction.Rollback(ctx)
-		u.transaction = nil
+	conn := u.connection
+	mu := &u.mu
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if u.transaction == nil {
+		u.transaction, err = conn.BeginTx(ctx, pgx.TxOptions{
+			IsoLevel: pgx.ReadCommitted,
+		})
+		if err != nil {
+			return err
+		}
 	}
-	u.transaction, err = u.connection.BeginTx(ctx, pgx.TxOptions{
-		IsoLevel: pgx.ReadCommitted,
-	})
-	return err
-}
 
-func (u *unitOfWork) Commit(ctx context.Context) error {
-	return u.atomicOperation(func (tx pgx.Tx, ctx context.Context) error  {
-		return tx.Commit(ctx)
-	}, ctx)
-}
-
-func (u *unitOfWork) Rollback(ctx context.Context) error {
-	return u.atomicOperation(func (tx pgx.Tx, ctx context.Context) error {
-		return tx.Rollback(ctx)
-	}, ctx)
-}
-
-func (u *unitOfWork) atomicOperation(op func (tx pgx.Tx, ctx context.Context) error , ctx context.Context) error {
-	tx := u.transaction
-	if tx == nil {
-		return errors.New("Can't have transaction")
-	}
-	if err := op(tx, ctx); err != nil {
+	defer func() {
 		u.transaction = nil
+	}()
+	defer u.transaction.Rollback(ctx)
+
+	newCtx := context.WithValue(ctx, TransactionKey, &u.transaction)
+	if err = callback(newCtx); err == nil {
+		u.transaction.Commit(newCtx)
+	} else {
 		return err
 	}
-	u.transaction = nil
+
 	return nil
 }
