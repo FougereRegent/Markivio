@@ -3,7 +3,7 @@ package interfaces
 import "context"
 
 type UnitOfWork interface {
-	Commit(ctx context.Context)
-	Rollback(ctx context.Context)
-	CommitAndRestart(ctx context.Context)
+	BeginTransaction(ctx context.Context) error
+	Commit(ctx context.Context) error
+	Rollback(ctx context.Context) error
 }
