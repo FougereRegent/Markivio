@@ -42,4 +42,21 @@ var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-fro
                     .WithEnvironment("VITE_MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
                     .WithEnvironment("VITE_MARKIVIO_GRAPHQL_API", "https://localhost:8080/graphql");
 
+var worker = builder.AddGolangApp(name: "worker", 
+		workingDirectory: "../../../worker/readability-worker/",
+		executable: "./...",
+		buildTags: ["dev"])
+		.WaitFor(db)
+		.WaitFor(rabbitmq)
+		.WithEnvironment(context => 
+		{
+			context.EnvironmentVariables["WORKER_PG_USERNAME"] = postgres.Resource.UserNameParameter!;
+			context.EnvironmentVariables["WORKER_PG_PASSWORD"] = postgres.Resource.PasswordParameter!;
+			context.EnvironmentVariables["WORKER_PG_HOST"] = postgres.Resource.PrimaryEndpoint.Property(EndpointProperty.Host);
+			context.EnvironmentVariables["WORKER_PG_PORT"] = postgres.Resource.PrimaryEndpoint.Property(EndpointProperty.Port);
+			context.EnvironmentVariables["WORKER_PG_DB"] = postgres.Resource.Databases!;
+			context.EnvironmentVariables["WORKER_MQ_USER"] = rabbitmq.Resource.UserNameParameter!;
+			context.EnvironmentVariables["WORKER_MQ_PASSWORD"] = rabbitmq.Resource.PasswordParameter!;
+		});
+
 builder.Build().Run();
