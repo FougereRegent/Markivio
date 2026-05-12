@@ -3,15 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
 
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/domain"
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/infrastructure"
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/usecases"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/logger"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -25,6 +18,8 @@ const (
 	PgDatabase    EnvName = "WORKER_PG_DB"
 	MqUserEnv     EnvName = "WORKER_MQ_USER"
 	MqPasswordEnv EnvName = "WORKER_MQ_PASSWORD"
+	MqHostEnv EnvName = "WORKER_MQ_HOST"
+	MqPortEnv EnvName = "WORKER_MQ_PORT"
 )
 
 type Config struct {
@@ -35,32 +30,23 @@ type Config struct {
 	PgDb string
 	MqUser     string
 	MqPassword string
+	MqHost string
+	MqPort string
 }
 
 var config Config
 
 func main() {
 	pgpool := initDb()
+	defer pgpool.Close()
 
-	artRepo := infrastructure.NewPostgresArticleRepository(pgpool)
-	artReadbility := infrastructure.NewReadabilityScraper(&http.Client{})
-	artUsecase := usescases.NewArticleUseCase(
-		artReadbility,
-		artRepo,
-	)
-
-	err := artUsecase.HandleReadability(domain.CreateReadabilityEvt{
-		ArticleId: uuid.UUID{},
-		Url:       os.Args[1],
-	})
-
-	if err != nil {
-		log.Panicf("%s", err)
+	if err := pgpool.Ping(context.Background()); err != nil {
+		logger.PanicIfError(err, "Cannot ping postgres")
 	}
 }
 
 func initDb() *pgxpool.Pool {
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		config.PgUsername,
 		config.PgPassword,
 		config.PgHost,

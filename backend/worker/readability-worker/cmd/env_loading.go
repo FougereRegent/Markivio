@@ -1,4 +1,4 @@
-//go:build prod
+//go:build container
 package main
 
 
@@ -13,5 +13,7 @@ func init() {
 		PgPort: os.Getenv(string(PgPortEnv)),
 		MqUser:     os.Getenv(string(MqUserEnv)),
 		MqPassword: os.Getenv(string(MqPasswordEnv)),
+		MqHost: os.Getenv(string(MqHostEnv)),
+		MqPort: os.Getenv(string(MqPortEnv)),
 	}
 }
