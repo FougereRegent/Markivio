@@ -42,7 +42,7 @@ func TestReadability(t *testing.T) {
 			Url: "https://github.com/stretchr/testify#installation",
 		},
 	}
-	w := WebSiteReadability{
+	w := ReadabilityScraper{
 		client: &http.Client{},
 	}
 	//Act & Arrange

@@ -1,8 +1,8 @@
-package logfail
+package logger
 
 import "log"
 
-func LogPanic(err error, msg string) {
+func PanicIfError(err error, msg string) {
 	if err != nil {
 		log.Panicf("%s: %s", msg, err)
 	}

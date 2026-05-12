@@ -9,8 +9,8 @@ import (
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/domain"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/infrastructure"
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/usescases"
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/logfail"
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/usecases"
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/logger"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -53,8 +53,8 @@ func init() {
 func main() {
 	pgpool := initDb()
 
-	artRepo := infrastructure.NewArticleDbRepository(pgpool)
-	artReadbility := infrastructure.NewReadability(&http.Client{})
+	artRepo := infrastructure.NewPostgresArticleRepository(pgpool)
+	artReadbility := infrastructure.NewReadabilityScraper(&http.Client{})
 	artUsecase := usescases.NewArticleUseCase(
 		artReadbility,
 		artRepo,
@@ -79,7 +79,7 @@ func initDb() *pgxpool.Pool {
 		config.PgDb,
 	)
 	pool, err := pgxpool.New(context.Background(), dsn)
-	logfail.LogPanic(err, "Cannot connect to psql please check your creds")
+	logger.PanicIfError(err, "Cannot connect to psql please check your creds")
 
 	return pool
 }

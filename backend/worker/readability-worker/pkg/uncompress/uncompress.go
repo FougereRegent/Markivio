@@ -1,38 +1,38 @@
 package uncompress
 
 import (
+	"compress/bzip2"
 	"compress/flate"
 	"compress/gzip"
-	"compress/bzip2"
 	"io"
 )
 
-type COMPRESS_TYPE string
+type CompressType string
 
 const (
-	GZIP COMPRESS_TYPE = "gzip"
-	DEFLATE COMPRESS_TYPE = "deflate"
-	BR COMPRESS_TYPE = "br"
+	Gzip    CompressType = "gzip"
+	Deflate CompressType = "deflate"
+	BR      CompressType = "br"
 )
 
 type UncompressAlg interface {
 	Uncompress(input io.Reader) (io.Reader, error)
 }
 
-type gzipUncompressAlg struct {}
+type gzipUncompressAlg struct{}
 
-type deflateUncompressAlg struct {}
+type deflateUncompressAlg struct{}
 
-type brUncompressAlg struct {}
+type brUncompressAlg struct{}
 
-func New(compressType COMPRESS_TYPE) UncompressAlg {
+func New(compressType CompressType) UncompressAlg {
 	switch compressType {
-	case GZIP:
+	case Gzip:
 		return &gzipUncompressAlg{}
-	case DEFLATE:
+	case Deflate:
 		return &deflateUncompressAlg{}
 	case BR:
-		return  &brUncompressAlg{}
+		return &brUncompressAlg{}
 	default:
 		return nil
 	}
