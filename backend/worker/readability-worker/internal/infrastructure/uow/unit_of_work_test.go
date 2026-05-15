@@ -1,4 +1,4 @@
-package infrastructure
+package uow
 
 import (
 	"context"
@@ -8,6 +8,13 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/pashagolub/pgxmock/v5"
 )
+
+type LogMock struct{}
+
+func (l *LogMock)Debug(msg string, args ...any){}
+func (l *LogMock)Info(msg string, args ...any){}
+func (l *LogMock)Warn(msg string, args ...any){}
+func (l *LogMock)Error(msg string, args ...any){}
 
 func callbackSuccess(ctx context.Context) error {
 	return nil
@@ -27,7 +34,7 @@ func TestUnitOfWorkShouldCommit(t *testing.T) {
 		IsoLevel: pgx.ReadCommitted,
 	})
 	mock.ExpectCommit()
-	unitOfWork := NewUnitOfWork(mock)
+	unitOfWork := NewUnitOfWork(mock, &LogMock{})
 
 	unitOfWork.Do(context.Background(), callbackSuccess)
 
@@ -47,7 +54,7 @@ func TestUnitOfWorkShouldRollback(t *testing.T) {
 	})
 	mock.ExpectRollback().Maybe().Times(1)
 	mock.ExpectCommit().Maybe().Times(0)
-	unitOfWork := NewUnitOfWork(mock)
+	unitOfWork := NewUnitOfWork(mock, &LogMock{})
 
 	if err = unitOfWork.Do(context.Background(), callbackFailed); err == nil {
 		t.Fatal()
@@ -66,7 +73,7 @@ func TestUnitOfWorkContextContainsTransaction(t *testing.T) {
 
 	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	mock.ExpectCommit()
-	uow := NewUnitOfWork(mock)
+	uow := NewUnitOfWork(mock, &LogMock{})
 
 	err = uow.Do(context.Background(), func(ctx context.Context) error {
 		tx := ctx.Value(TransactionKey)
@@ -96,7 +103,7 @@ func TestUnitOfWorkBeginTxError(t *testing.T) {
 
 	expectedErr := errors.New("connection failed")
 	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted}).WillReturnError(expectedErr)
-	uow := NewUnitOfWork(mock)
+	uow := NewUnitOfWork(mock, &LogMock{})
 
 	err = uow.Do(context.Background(), callbackSuccess)
 	if !errors.Is(err, expectedErr) {
@@ -118,7 +125,7 @@ func TestUnitOfWorkTransactionResetAfterDo(t *testing.T) {
 	mock.ExpectCommit()
 	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	mock.ExpectCommit()
-	uow := NewUnitOfWork(mock)
+	uow := NewUnitOfWork(mock, &LogMock{})
 
 	if err = uow.Do(context.Background(), callbackSuccess); err != nil {
 		t.Fatal(err)

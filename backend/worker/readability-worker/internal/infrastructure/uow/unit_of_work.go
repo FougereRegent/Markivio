@@ -1,10 +1,11 @@
-package infrastructure
+package uow
 
 import (
 	"context"
 	"sync"
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces"
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -21,13 +22,16 @@ type unitOfWork struct {
 	connection PgIface
 	transaction pgx.Tx
 	mu sync.Mutex
+
+	logger logger.ILog
 }
 
-func NewUnitOfWork(connection PgIface) interfaces.UnitOfWork {
+func NewUnitOfWork(connection PgIface, logger logger.ILog) interfaces.UnitOfWork {
 	return &unitOfWork{
 		connection: connection,
 		transaction: nil,
 		mu: sync.Mutex{},
+		logger: logger,
 	}
 }
 
@@ -51,12 +55,14 @@ func (u *unitOfWork) Do(ctx context.Context, callback interfaces.DoCallback) err
 	defer func() {
 		u.transaction = nil
 	}()
-	defer u.transaction.Rollback(ctx)
 
 	newCtx := context.WithValue(ctx, TransactionKey, &u.transaction)
 	if err = callback(newCtx); err == nil {
 		u.transaction.Commit(newCtx)
+		u.logger.Info("unit-of-work: commit transaction")
 	} else {
+		u.logger.Info("unit-of-work: rollback transaction")
+		u.transaction.Rollback(ctx)
 		return err
 	}
 

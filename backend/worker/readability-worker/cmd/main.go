@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"log/slog"
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/infrastructure/worker"
+	mylogger "github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/helplog"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -13,9 +13,10 @@ import (
 var config Config
 var pgpool *pgxpool.Pool
 var rabbitMqUri string
-var logger *slog.Logger
+var logger mylogger.ILog
 
 func init() {
+	logger = initLog()
 	pgpool = initDb()
 	rabbitMqUri = worker.UriBuilder(worker.RabbitMqConn{
 		User:     config.MqUser,
@@ -34,10 +35,10 @@ func main() {
 		helplog.PanicIfError(err, "Cannot ping postgres")
 	}
 
-	w, err := worker.NewWorker(nil, worker.WorkerOpts{
+	w, err := worker.NewWorker(logger, worker.WorkerOpts{
 		PoolSize:    10,
 		RabbitMqUri: rabbitMqUri,
-		QeueuName:   "readability-worker",
+		QeueuName: "readability-worker",
 	})
 
 	if err != nil {

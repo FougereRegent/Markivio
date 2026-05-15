@@ -3,10 +3,11 @@ package worker
 import (
 	"context"
 	"errors"
-	"log"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
 )
 
 type mockClient struct {
@@ -106,8 +107,15 @@ func (m *mockDelivery) Requeue(ctx context.Context) error {
 	return m.requeueErr
 }
 
-func newLogger() *log.Logger {
-	return log.Default()
+type mockLogger struct{}
+
+func (m *mockLogger) Debug(msg string, args ...any) {}
+func (m *mockLogger) Info(msg string, args ...any)  {}
+func (m *mockLogger) Warn(msg string, args ...any)  {}
+func (m *mockLogger) Error(msg string, args ...any)   {}
+
+func newLogger() logger.ILog {
+	return &mockLogger{}
 }
 
 func TestNewWorker_Success(t *testing.T) {
@@ -466,7 +474,7 @@ func TestClose(t *testing.T) {
 }
 
 func TestNewWorker_CustomLogger(t *testing.T) {
-	logger := log.New(log.Writer(), "custom: ", log.LstdFlags)
+	logger := &mockLogger{}
 	client := &mockClient{
 		conn: &mockConnection{
 			consumer: &mockConsumer{
@@ -488,7 +496,7 @@ func TestNewWorker_CustomLogger(t *testing.T) {
 	if w.queueName != "custom-queue" {
 		t.Fatalf("expected queueName 'custom-queue', got %s", w.queueName)
 	}
-	if w.Logger == nil {
+	if w.logger == nil {
 		t.Fatal("expected logger to be set")
 	}
 }

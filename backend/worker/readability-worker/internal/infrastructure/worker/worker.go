@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"sync"
 
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
 	rmq "github.com/rabbitmq/rabbitmq-amqp-go-client/pkg/rabbitmqamqp"
 )
 
@@ -33,7 +33,7 @@ type RMQDelivery interface {
 type Worker struct {
 	poolSize  int
 	queueName string
-	*log.Logger
+	logger logger.ILog
 
 	client RMQClient
 	conn   RMQConnection
@@ -48,18 +48,18 @@ type WorkerOpts struct {
 
 type UnitProcess func(data string, ctx context.Context) error
 
-func NewWorker(logger *log.Logger, opts WorkerOpts) (*Worker, error) {
+func NewWorker(logger logger.ILog, opts WorkerOpts) (*Worker, error) {
 	env := rmq.NewEnvironment(opts.RabbitMqUri, nil)
 	return newWorkerWithClient(logger, opts, &rmqClient{env: env})
 }
 
-func newWorkerWithClient(logger *log.Logger, opts WorkerOpts, client RMQClient) (*Worker, error) {
+func newWorkerWithClient(logger logger.ILog, opts WorkerOpts, client RMQClient) (*Worker, error) {
 	w := &Worker{
 		poolSize:  opts.PoolSize,
 		queueName: opts.QeueuName,
-		Logger:    logger,
 		wg:        &sync.WaitGroup{},
 		client:    client,
+		logger: logger,
 	}
 	if err := w.init(); err != nil {
 		return nil, err
@@ -95,6 +95,7 @@ func (w *Worker) Close() {
 func (w *Worker) createConsumer(unitProcess UnitProcess, consumerName string, ctx context.Context) (func(), error) {
 	consumer, err := w.conn.NewConsumer(ctx, w.queueName, consumerName)
 	if err != nil {
+		w.logger.Error(err.Error())
 		return nil, err
 	}
 
@@ -109,17 +110,20 @@ func (w *Worker) createConsumer(unitProcess UnitProcess, consumerName string, ct
 				}
 				continue
 			}
-			fmt.Printf("Consumer %s received data \n", consumerName)
+			w.logger.Info(fmt.Sprintf("Consumer %s: received data \n", consumerName))
 			data := delivery.Data()
 			if data == nil {
+				w.logger.Warn("No data")
 				continue
 			}
 
 			err = unitProcess(string(data), ctx)
 
 			if err != nil {
+				w.logger.Warn(fmt.Sprintf("Consumer %s: requeue message", consumerName))
 				delivery.Requeue(ctx)
 			} else {
+				w.logger.Info(fmt.Sprintf("Consumer %s: ack message", consumerName))
 				delivery.Accept(ctx)
 			}
 		}
