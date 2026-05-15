@@ -15,25 +15,25 @@ type EnvName string
 const (
 	PgUsernameEnv EnvName = "WORKER_PG_USERNAME"
 	PgPasswordEnv EnvName = "WORKER_PG_PASSWORD"
-	PgHostEnv EnvName = "WORKER_PG_HOST"
-	PgPortEnv EnvName = "WORKER_PG_PORT"
+	PgHostEnv     EnvName = "WORKER_PG_HOST"
+	PgPortEnv     EnvName = "WORKER_PG_PORT"
 	PgDatabase    EnvName = "WORKER_PG_DB"
 	MqUserEnv     EnvName = "WORKER_MQ_USER"
 	MqPasswordEnv EnvName = "WORKER_MQ_PASSWORD"
-	MqHostEnv EnvName = "WORKER_MQ_HOST"
-	MqPortEnv EnvName = "WORKER_MQ_PORT"
+	MqHostEnv     EnvName = "WORKER_MQ_HOST"
+	MqPortEnv     EnvName = "WORKER_MQ_PORT"
 )
 
 type Config struct {
 	PgUsername string
 	PgPassword string
-	PgPort string
-	PgHost string
-	PgDb string
+	PgPort     string
+	PgHost     string
+	PgDb       string
 	MqUser     string
 	MqPassword string
-	MqHost string
-	MqPort string
+	MqHost     string
+	MqPort     string
 }
 
 var config Config
@@ -47,12 +47,18 @@ func main() {
 		logger.PanicIfError(err, "Cannot ping postgres")
 	}
 
-	rabbitMqUri := initUriRabbitMq()
+	rabbitMqUri := worker.UriBuilder(worker.RabbitMqConn{
+		User:     config.MqUser,
+		Password: config.MqPassword,
+		Host:     config.MqHost,
+		Port:     config.MqPort,
+	},
+	)
 
 	w, err := worker.NewWorker(nil, worker.WorkerOpts{
-		PoolSize: 10,
+		PoolSize:    10,
 		RabbitMqUri: rabbitMqUri,
-		QeueuName: "readability-worker",
+		QeueuName:   "readability-worker",
 	})
 
 	if err != nil {
@@ -62,7 +68,7 @@ func main() {
 	forever := make(chan struct{})
 	w.Run(func(data string, ctx context.Context) error {
 		log.Println(data)
-		return nil 
+		return nil
 	})
 	<-forever
 }
@@ -79,13 +85,4 @@ func initDb() *pgxpool.Pool {
 	logger.PanicIfError(err, "Cannot connect to psql please check your creds")
 
 	return pool
-}
-
-func initUriRabbitMq() string {
-	brokerUri := fmt.Sprintf("amqp://%s:%s@%s:%s", 
-		config.MqUser,
-		config.MqPassword,
-		config.MqHost,
-		config.MqPort)
-	return brokerUri
 }
