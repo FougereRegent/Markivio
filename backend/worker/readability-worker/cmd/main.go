@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/infrastructure/worker"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -37,12 +39,32 @@ type Config struct {
 var config Config
 
 func main() {
+	ctx := context.Background()
 	pgpool := initDb()
 	defer pgpool.Close()
 
-	if err := pgpool.Ping(context.Background()); err != nil {
+	if err := pgpool.Ping(ctx); err != nil {
 		logger.PanicIfError(err, "Cannot ping postgres")
 	}
+
+	rabbitMqUri := initUriRabbitMq()
+
+	w, err := worker.NewWorker(nil, worker.WorkerOpts{
+		PoolSize: 10,
+		RabbitMqUri: rabbitMqUri,
+		QeueuName: "readability-worker",
+	})
+
+	if err != nil {
+		logger.PanicIfError(err, "Cannot create worker")
+	}
+
+	forever := make(chan struct{})
+	w.Run(func(data string, ctx context.Context) error {
+		log.Println(data)
+		return nil 
+	})
+	<-forever
 }
 
 func initDb() *pgxpool.Pool {
@@ -59,10 +81,11 @@ func initDb() *pgxpool.Pool {
 	return pool
 }
 
-func initLogger() {
-
-}
-
-func initReadabilityHandler() {
-
+func initUriRabbitMq() string {
+	brokerUri := fmt.Sprintf("amqp://%s:%s@%s:%s", 
+		config.MqUser,
+		config.MqPassword,
+		config.MqHost,
+		config.MqPort)
+	return brokerUri
 }
