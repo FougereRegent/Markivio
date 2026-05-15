@@ -57,3 +57,77 @@ func TestUnitOfWorkShouldRollback(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestUnitOfWorkContextContainsTransaction(t *testing.T) {
+	mock, err := pgxmock.NewConn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	mock.ExpectCommit()
+	uow := NewUnitOfWork(mock)
+
+	err = uow.Do(context.Background(), func(ctx context.Context) error {
+		tx := ctx.Value(TransactionKey)
+		if tx == nil {
+			return errors.New("transaction not found in context")
+		}
+		_, ok := tx.(*pgx.Tx)
+		if !ok {
+			return errors.New("context value is not *pgx.Tx")
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUnitOfWorkBeginTxError(t *testing.T) {
+	mock, err := pgxmock.NewConn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedErr := errors.New("connection failed")
+	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted}).WillReturnError(expectedErr)
+	uow := NewUnitOfWork(mock)
+
+	err = uow.Do(context.Background(), callbackSuccess)
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("expected %v, got %v", expectedErr, err)
+	}
+
+	if err = mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUnitOfWorkTransactionResetAfterDo(t *testing.T) {
+	mock, err := pgxmock.NewConn()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	mock.ExpectCommit()
+	mock.ExpectBeginTx(pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	mock.ExpectCommit()
+	uow := NewUnitOfWork(mock)
+
+	if err = uow.Do(context.Background(), callbackSuccess); err != nil {
+		t.Fatal(err)
+	}
+	if err = uow.Do(context.Background(), callbackSuccess); err != nil {
+		t.Fatal(err)
+	}
+
+	if err = mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
+	}
+}
