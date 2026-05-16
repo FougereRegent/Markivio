@@ -18,6 +18,10 @@ type PgIface interface {
 	BeginTx(ctx context.Context, opts pgx.TxOptions) (pgx.Tx, error)
 }
 
+type DbConn interface {
+	Query(ctx context.Context, query string, args ...any) (pgx.Rows, error)
+}
+
 type unitOfWork struct {
 	connection PgIface
 	transaction pgx.Tx
