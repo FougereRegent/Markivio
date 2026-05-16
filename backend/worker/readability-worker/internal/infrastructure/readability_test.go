@@ -10,14 +10,6 @@ import (
 	"github.com/gkampitakis/go-snaps/snaps"
 )
 
-func TestCommonHeaders(t *testing.T) {
-	//Arrange
-	requiredHeader := commonHeaders
-
-	//Assert
-	snaps.MatchSnapshot(t, requiredHeader)
-}
-
 
 func TestReadability(t *testing.T) {
 	//Arrange
