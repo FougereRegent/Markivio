@@ -42,7 +42,7 @@ func main() {
 	}
 
 	w, err := worker.NewWorker(logger, worker.WorkerOpts{
-		PoolSize:    10,
+		PoolSize:    1,
 		RabbitMqUri: rabbitMqUri,
 		QeueuName: "readability-worker",
 	})
@@ -70,11 +70,16 @@ func work(data string, ctx context.Context) error {
 		return nil
 	}
 
-	unitOfWork.Do(ctx, func(ctx context.Context) error {
-		return useCase.HandleReadability(evt, ctx)
+	err = unitOfWork.Do(ctx, func(ctx context.Context) error {
+		if err := useCase.HandleReadability(evt, ctx); err != nil {
+			logger.Error(err.Error())
+			return err
+		} else {
+			return nil
+		}
 	})
 
-	return nil
+	return err
 }
 
 func assembleUseCase() *usescases.ArticleUseCase {

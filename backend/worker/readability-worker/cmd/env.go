@@ -7,7 +7,7 @@ const (
 	PgPasswordEnv EnvName = "WORKER_PG_PASSWORD"
 	PgHostEnv     EnvName = "WORKER_PG_HOST"
 	PgPortEnv     EnvName = "WORKER_PG_PORT"
-	PgDatabase    EnvName = "WORKER_PG_DB"
+	PgDbEnv    EnvName = "WORKER_PG_DB"
 	MqUserEnv     EnvName = "WORKER_MQ_USER"
 	MqPasswordEnv EnvName = "WORKER_MQ_PASSWORD"
 	MqHostEnv     EnvName = "WORKER_MQ_HOST"

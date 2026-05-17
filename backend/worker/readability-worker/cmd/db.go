@@ -9,7 +9,7 @@ import (
 )
 
 func initDb() *pgxpool.Pool {
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?search_path=public",
 		config.PgUsername,
 		config.PgPassword,
 		config.PgHost,

@@ -3,8 +3,6 @@ package usescases
 import (
 	"context"
 	"io"
-	"log/slog"
-
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/domain"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces"
 )
@@ -32,7 +30,14 @@ func (a *ArticleUseCase) HandleReadability(createReadability domain.CreateReadab
 		return err
 	}
 
-	slog.Info(string(content))
+	article := domain.Article{
+		Id: createReadability.ArticleId,
+		ArticleContent: string(content),
+	}
+
+	if _, err = a.articleRepo.UpdateArticleContent(ctx, &article); err != nil {
+		return err
+	}
 	return nil
 }
 

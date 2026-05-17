@@ -121,7 +121,8 @@ func (w *Worker) createConsumer(unitProcess UnitProcess, consumerName string, ct
 
 			if err != nil {
 				w.logger.Warn(fmt.Sprintf("Consumer %s: requeue message", consumerName))
-				delivery.Requeue(ctx)
+				w.logger.Error(err.Error())
+				//delivery.Requeue(ctx)
 			} else {
 				w.logger.Info(fmt.Sprintf("Consumer %s: ack message", consumerName))
 				delivery.Accept(ctx)

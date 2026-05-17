@@ -11,6 +11,7 @@ func init() {
 		PgPassword: os.Getenv(string(PgPasswordEnv)),
 		PgHost: os.Getenv(string(PgHostEnv)),
 		PgPort: os.Getenv(string(PgPortEnv)),
+		PgDb: os.Getenv(string(PgDbEnv)),
 		MqUser:     os.Getenv(string(MqUserEnv)),
 		MqPassword: os.Getenv(string(MqPasswordEnv)),
 		MqHost: os.Getenv(string(MqHostEnv)),

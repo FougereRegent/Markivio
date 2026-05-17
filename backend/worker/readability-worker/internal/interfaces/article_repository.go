@@ -8,5 +8,5 @@ import (
 
 
 type ArticleRepository interface {
-	UpdateArticleUrl(ctx context.Context, article *domain.Article) (*domain.Article, error)
+	UpdateArticleContent(ctx context.Context, article *domain.Article) (*domain.Article, error)
 }

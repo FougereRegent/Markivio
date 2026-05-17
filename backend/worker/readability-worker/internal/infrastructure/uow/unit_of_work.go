@@ -2,6 +2,7 @@ package uow
 
 import (
 	"context"
+	"errors"
 	"sync"
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces"
@@ -23,19 +24,19 @@ type DbConn interface {
 }
 
 type unitOfWork struct {
-	connection PgIface
+	connection  PgIface
 	transaction pgx.Tx
-	mu sync.Mutex
+	mu          sync.Mutex
 
 	logger logger.ILog
 }
 
 func NewUnitOfWork(connection PgIface, logger logger.ILog) interfaces.UnitOfWork {
 	return &unitOfWork{
-		connection: connection,
+		connection:  connection,
 		transaction: nil,
-		mu: sync.Mutex{},
-		logger: logger,
+		mu:          sync.Mutex{},
+		logger:      logger,
 	}
 }
 
@@ -47,13 +48,15 @@ func (u *unitOfWork) Do(ctx context.Context, callback interfaces.DoCallback) err
 	mu.Lock()
 	defer mu.Unlock()
 
-	if u.transaction == nil {
-		u.transaction, err = conn.BeginTx(ctx, pgx.TxOptions{
-			IsoLevel: pgx.ReadCommitted,
-		})
-		if err != nil {
-			return err
-		}
+	if u.transaction != nil {
+		u.transaction.Rollback(ctx)
+	}
+
+	u.transaction, err = conn.BeginTx(context.Background(), pgx.TxOptions{
+		IsoLevel: pgx.ReadCommitted,
+	})
+	if err != nil {
+		return err
 	}
 
 	defer func() {
@@ -62,13 +65,12 @@ func (u *unitOfWork) Do(ctx context.Context, callback interfaces.DoCallback) err
 
 	newCtx := context.WithValue(ctx, TransactionKey, &u.transaction)
 	if err = callback(newCtx); err == nil {
-		u.transaction.Commit(newCtx)
 		u.logger.Info("unit-of-work: commit transaction")
+		return u.transaction.Commit(context.Background())
 	} else {
 		u.logger.Info("unit-of-work: rollback transaction")
-		u.transaction.Rollback(ctx)
-		return err
+		return errors.Join(err,
+			u.transaction.Rollback(context.Background()),
+		)
 	}
-
-	return nil
 }
