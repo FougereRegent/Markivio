@@ -1,4 +1,3 @@
-using Scalar.AspNetCore;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
 using Microsoft.EntityFrameworkCore;

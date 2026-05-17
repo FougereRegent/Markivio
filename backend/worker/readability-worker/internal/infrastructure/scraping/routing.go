@@ -29,7 +29,7 @@ func (s *Scraper) Scrap(url string, ctx context.Context) (io.Reader, error) {
 	var scraper IScraper
 
 	scraper = NewHttpScrapper(s.httpClient)
-	reader, err := scraper.Scrap(url, nil)
+	reader, err := scraper.Scrap(url, ctx)
 	if err != nil {
 		return nil, err
 	}

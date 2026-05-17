@@ -17,6 +17,9 @@ func NewHeadlessScraper() IScraper {
 }
 
 func (h *HeadlessScraper) Scrap(url string, ctx context.Context) (io.Reader, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	// IMPORTANT: un contexte Chrome par goroutine
 	ctx, cancelTimeout := context.WithTimeout(ctx, 25*time.Second)
 	ctx, cancel := chromedp.NewContext(ctx)

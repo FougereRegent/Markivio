@@ -1,6 +1,7 @@
 package infrastructure
 
 import (
+	"context"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -42,7 +43,7 @@ func TestReadability(t *testing.T) {
 		name := fmt.Sprintf("TestReadability_%s", url.Name)
 		t.Run(name, func(te *testing.T) {
 			hash := sha256.New()
-			result, err := w.ConvertWebSiteToMarkdown(url.Url, nil)
+			result, err := w.ConvertWebSiteToMarkdown(url.Url, context.Background())
 			if err != nil {
 				t.Fail()
 			}
