@@ -1,6 +1,7 @@
 package scraping
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -44,7 +45,7 @@ func newRequest(url string) (*http.Request, error) {
 	return req, nil
 }
 
-func (s *HttpScrapper) Scrap(url string) (io.Reader, error) {
+func (s *HttpScrapper) Scrap(url string, ctx context.Context) (io.Reader, error) {
 	request, err := newRequest(url)
 	if err != nil {
 		return nil, err

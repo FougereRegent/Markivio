@@ -2,7 +2,7 @@ package scraping
 
 import (
 	"bytes"
-	"errors"
+	"context"
 	"io"
 	"net/http"
 
@@ -10,10 +10,10 @@ import (
 )
 
 type IScraper interface {
-	Scrap(url string) (io.Reader, error)
+	Scrap(url string, ctx context.Context) (io.Reader, error)
 }
-
 type Scraper struct {
+
 	httpClient *http.Client
 	logger logger.ILog
 }
@@ -25,11 +25,11 @@ func NewScraper(httpClient *http.Client, logger logger.ILog) IScraper {
 	}
 }
 
-func (s *Scraper) Scrap(url string) (io.Reader, error) {
+func (s *Scraper) Scrap(url string, ctx context.Context) (io.Reader, error) {
 	var scraper IScraper
 
 	scraper = NewHttpScrapper(s.httpClient)
-	reader, err := scraper.Scrap(url)
+	reader, err := scraper.Scrap(url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,8 @@ func (s *Scraper) Scrap(url string) (io.Reader, error) {
 	if score.ScriptRatio < score.TextRatio {
 		return scoringReader, nil
 	} else {
-		s.logger.Warn("Headless Scrapping")
-		return nil, errors.New("Not Implemented")
+		scraper = NewHeadlessScraper()
 	}
+
+	return scraper.Scrap(url, ctx)
 }

@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"net/http"
 	"net/url"
@@ -23,10 +24,10 @@ func NewReadabilityScraper(client *http.Client, logger logger.ILog) *Readability
 	}
 }
 
-func (r *ReadabilityScraper) ConvertWebSiteToMarkdown(urlSite string) (io.Reader, error) {
+func (r *ReadabilityScraper) ConvertWebSiteToMarkdown(urlSite string, ctx context.Context) (io.Reader, error) {
 	var b bytes.Buffer
 	httpScrapper := scraping.NewScraper(r.client, r.logger)
-	reader, err := httpScrapper.Scrap(urlSite)
+	reader, err := httpScrapper.Scrap(urlSite, ctx)
 	if err != nil {
 		return nil, err
 	}

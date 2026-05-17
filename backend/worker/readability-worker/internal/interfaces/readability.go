@@ -1,8 +1,11 @@
 package interfaces
 
-import "io"
+import (
+	"context"
+	"io"
+)
 
 type Readability interface {
-	ConvertWebSiteToMarkdown(url string) (io.Reader, error)
+	ConvertWebSiteToMarkdown(url string, ctx context.Context) (io.Reader, error)
 }
 

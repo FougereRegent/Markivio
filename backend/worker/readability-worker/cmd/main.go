@@ -71,7 +71,7 @@ func work(data string, ctx context.Context) error {
 	}
 
 	unitOfWork.Do(ctx, func(ctx context.Context) error {
-		return useCase.HandleReadability(evt)
+		return useCase.HandleReadability(evt, ctx)
 	})
 
 	return nil

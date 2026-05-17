@@ -1,6 +1,7 @@
 package usescases
 
 import (
+	"context"
 	"io"
 	"log/slog"
 
@@ -20,8 +21,8 @@ func NewArticleUseCase(read interfaces.Readability, repo interfaces.ArticleRepos
 	}
 }
 
-func (a *ArticleUseCase) HandleReadability(createReadability domain.CreateReadabilityEvt) (error) {
-	siteReader, err := a.read.ConvertWebSiteToMarkdown(createReadability.Url)
+func (a *ArticleUseCase) HandleReadability(createReadability domain.CreateReadabilityEvt, ctx context.Context) (error) {
+	siteReader, err := a.read.ConvertWebSiteToMarkdown(createReadability.Url, ctx)
 	if err != nil {
 		return err
 	}
