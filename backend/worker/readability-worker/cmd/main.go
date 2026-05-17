@@ -83,7 +83,7 @@ func assembleUseCase() *usescases.ArticleUseCase {
 	}
 
 	repo := infrastructure.NewPostgresArticleRepository()
-	read := infrastructure.NewReadabilityScraper(&httpClient)
+	read := infrastructure.NewReadabilityScraper(&httpClient, logger)
 	art := usescases.NewArticleUseCase(read, repo)
 
 	return art

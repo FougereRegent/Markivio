@@ -27,8 +27,8 @@ var commonHeaders = Headers{
 	"Cache-Control":   "max-age=0",
 }
 
-func NewHttpScrapper(client *http.Client) HttpScrapper {
-	return HttpScrapper{
+func NewHttpScrapper(client *http.Client) IScraper {
+	return &HttpScrapper{
 		httpClient: client,
 	}
 }
@@ -44,7 +44,7 @@ func newRequest(url string) (*http.Request, error) {
 	return req, nil
 }
 
-func (s *HttpScrapper) DoRequest(url string) (io.Reader, error) {
+func (s *HttpScrapper) Scrap(url string) (io.Reader, error) {
 	request, err := newRequest(url)
 	if err != nil {
 		return nil, err

@@ -8,23 +8,25 @@ import (
 
 	"codeberg.org/readeck/go-readability/v2"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/infrastructure/scraping"
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/uncompress"
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
 )
 
 type ReadabilityScraper struct {
 	client *http.Client
+	logger logger.ILog
 }
 
-func NewReadabilityScraper(client *http.Client) *ReadabilityScraper {
+func NewReadabilityScraper(client *http.Client, logger logger.ILog) *ReadabilityScraper {
 	return &ReadabilityScraper{
 		client: client,
+		logger: logger,
 	}
 }
 
 func (r *ReadabilityScraper) ConvertWebSiteToMarkdown(urlSite string) (io.Reader, error) {
 	var b bytes.Buffer
-	httpScrapper := scraping.NewHttpScrapper(r.client)
-	reader, err := httpScrapper.DoRequest(urlSite)
+	httpScrapper := scraping.NewScraper(r.client, r.logger)
+	reader, err := httpScrapper.Scrap(urlSite)
 	if err != nil {
 		return nil, err
 	}
@@ -36,19 +38,4 @@ func (r *ReadabilityScraper) ConvertWebSiteToMarkdown(urlSite string) (io.Reader
 	}
 	article.RenderHTML(&b)
 	return &b, nil
-}
-
-func (r *ReadabilityScraper) doRequest(req *http.Request) (io.Reader, error) {
-	resp, err := r.client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	compressHeader := resp.Header.Get("content-encoding")
-	if compressHeader == "" {
-		return resp.Body, nil
-	}
-
-	uncomp := uncompress.New(uncompress.CompressType(compressHeader))
-	return uncomp.Uncompress(resp.Body)
 }
