@@ -4,12 +4,14 @@ go 1.26.2
 
 require (
 	codeberg.org/readeck/go-readability/v2 v2.1.1
+	github.com/deckarep/golang-set/v2 v2.9.0
 	github.com/gkampitakis/go-snaps v0.5.21
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/joho/godotenv v1.5.1
 	github.com/pashagolub/pgxmock/v5 v5.0.1
 	github.com/rabbitmq/rabbitmq-amqp-go-client v1.0.0
+	golang.org/x/net v0.54.0
 )
 
 require (
@@ -34,9 +36,9 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
+	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	go.opentelemetry.io/otel v1.40.0 // indirect
 	go.opentelemetry.io/otel/metric v1.40.0 // indirect
-	golang.org/x/net v0.54.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
 )
