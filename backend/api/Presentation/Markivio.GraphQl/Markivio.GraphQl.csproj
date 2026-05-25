@@ -43,6 +43,7 @@
     <ProjectReference Include="..\..\Application\Markivio.Application\Markivio.Application.csproj" />
     <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
     <ProjectReference Include="..\..\Infra\Markivio.Auth\Markivio.Auth.csproj" />
+    <ProjectReference Include="..\..\Infra\Markivio.Async\Markivio.Async.csproj" />
   </ItemGroup>
 
 </Project>

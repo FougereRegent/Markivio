@@ -1,4 +1,8 @@
 using Markivio.Auth;
+using Markivio.Infra.Async;
+using Markivio.Infra.Async.Worker;
+using Markivio.Application.Interfaces;
+using Markivio.Application.Dto;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Repositories;
 using Markivio.Persistence.Config;
@@ -97,6 +101,9 @@ public static class ConfigServiceInjection
                 pre.OpenTelemetry();
             });
         });
+
+		builder.Services.AddSingleton<RabbitMqProvider>()
+			.AddScoped<IWorkerPublisher<ReadableArticleMessage>, ArticleWorker>();
         return builder;
     }
 }

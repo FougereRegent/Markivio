@@ -27,6 +27,12 @@ var graphqlApi = builder.AddProject<Projects.Markivio_GraphQl>("graphql-api")
                     .WithEnvironment("MARKIVIO_AUTH_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
                     .WithEnvironment("MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
                     .WithEnvironment("MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
+					.WithEnvironment(context => {
+							context.EnvironmentVariables["RABBIT_MQ__USER"] = rabbitmq.Resource.UserNameParameter!;
+							context.EnvironmentVariables["RABBIT_MQ__PASSWORD"] = rabbitmq.Resource.PasswordParameter!;
+							context.EnvironmentVariables["RABBIT_MQ__HOST"] = rabbitmq.Resource.PrimaryEndpoint.Property(EndpointProperty.Host);
+							context.EnvironmentVariables["RABBIT_MQ__PORT"] = rabbitmq.Resource.PrimaryEndpoint.Property(EndpointProperty.Port);
+							})
                     .WithUrl("/scalar")
                     .WithUrl("/graphql");
 

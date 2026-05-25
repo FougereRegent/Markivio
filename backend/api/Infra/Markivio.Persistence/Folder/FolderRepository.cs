@@ -4,6 +4,6 @@ using Markivio.Persistence.Config;
 
 namespace Markivio.Persistence.Repositories;
 
-public class FolderRepository(MarkivioContext context) : GenericRepository<Folder>(context), IFolderRepository
+public class FolderRepository(MarkivioContext context, IUnitOfWork unitOfWork) : GenericRepository<Folder>(context, unitOfWork), IFolderRepository
 {
 }

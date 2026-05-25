@@ -1,19 +1,19 @@
 using RabbitMQ.AMQP.Client;
 using RabbitMQ.AMQP.Client.Impl;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Collections.Frozen;
+using Markivio.Infra.Async.Worker;
 
 namespace Markivio.Infra.Async;
 
 public class RabbitMqProvider : IAsyncDisposable
 {
 	private const string rabbitMqPattern = "amqp://{0}:{1}@{2}:{3}/%2f";
-	private IEnvironment _environment;
-	private IConnection _connection;
+	private IEnvironment _environment = null!;
+	private IConnection _connection = null!;
 	private readonly IConfiguration _configuration;
+	private readonly Dictionary<string, IPublisher> _publishers = new Dictionary<string, IPublisher>();
 
-	public IReadOnlyDictionary<string, IPublisher> Publishers {get; private set;} = new Dictionary<string, IPublisher>();
+	public IReadOnlyDictionary<string, IPublisher> Publishers { get => _publishers; }
 
 	public RabbitMqProvider(IConfiguration configuration) {
 		_configuration = configuration;
@@ -38,6 +38,12 @@ public class RabbitMqProvider : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+		foreach(var keyValues in _publishers) {
+			var publisher = keyValues.Value;
+			if(publisher.State != State.Closed)
+				await publisher.CloseAsync();
+			publisher.Dispose();
+		}
 		await _environment.CloseAsync();
 		await _connection.CloseAsync();
     }
@@ -45,9 +51,16 @@ public class RabbitMqProvider : IAsyncDisposable
 	private async Task QueueBuilder(CancellationToken cancellationToken = default!) {
 		var management = _connection.Management();
 		// Declare Queue
-		var webSitePublisher = await management.Queue("readability-worker")
+		var queueSpec = await management.Queue(ArticleWorker.QueueName)
 			.Type(QueueType.QUORUM)
+			.DeclareAsync();
+
+
+		// Declare publisher
+		var publisher = await _connection.PublisherBuilder()
+			.Queue(queueSpec.Name())
 			.BuildAsync();
-		Publishers.Add("ReadabilityWorker", webSitePublisher);
+
+		_publishers.Add(ArticleWorker.QueueName, publisher);
 	}
 }
