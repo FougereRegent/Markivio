@@ -3,6 +3,7 @@ package uow
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces"
@@ -56,7 +57,7 @@ func (u *unitOfWork) Do(ctx context.Context, callback interfaces.DoCallback) err
 		IsoLevel: pgx.ReadCommitted,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("unit-of-work: begin tx: %w", err)
 	}
 
 	defer func() {
@@ -66,11 +67,15 @@ func (u *unitOfWork) Do(ctx context.Context, callback interfaces.DoCallback) err
 	newCtx := context.WithValue(ctx, TransactionKey, &u.transaction)
 	if err = callback(newCtx); err == nil {
 		u.logger.Info("unit-of-work: commit transaction")
-		return u.transaction.Commit(context.Background())
-	} else {
-		u.logger.Info("unit-of-work: rollback transaction")
-		return errors.Join(err,
-			u.transaction.Rollback(context.Background()),
-		)
+		if commitErr := u.transaction.Commit(context.Background()); commitErr != nil {
+			return fmt.Errorf("unit-of-work: commit: %w", commitErr)
+		}
+		return nil
 	}
+
+	u.logger.Info("unit-of-work: rollback transaction")
+	return errors.Join(
+		fmt.Errorf("unit-of-work: callback: %w", err),
+		u.transaction.Rollback(context.Background()),
+	)
 }

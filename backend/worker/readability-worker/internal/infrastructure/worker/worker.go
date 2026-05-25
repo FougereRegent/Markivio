@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"sync"
 
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
@@ -33,7 +34,7 @@ type RMQDelivery interface {
 type Worker struct {
 	poolSize  int
 	queueName string
-	logger logger.ILog
+	logger    logger.ILog
 
 	client RMQClient
 	conn   RMQConnection
@@ -59,10 +60,10 @@ func newWorkerWithClient(logger logger.ILog, opts WorkerOpts, client RMQClient) 
 		queueName: opts.QeueuName,
 		wg:        &sync.WaitGroup{},
 		client:    client,
-		logger: logger,
+		logger:    logger,
 	}
 	if err := w.init(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("worker init: %w", err)
 	}
 	return w, nil
 }
@@ -71,9 +72,12 @@ func (w *Worker) init() error {
 	var err error
 	w.conn, err = w.client.NewConnection(context.Background())
 	if err != nil {
-		return err
+		return fmt.Errorf("new connection: %w", err)
 	}
-	return w.conn.DeclareQueue(context.Background(), w.queueName)
+	if err := w.conn.DeclareQueue(context.Background(), w.queueName); err != nil {
+		return fmt.Errorf("declare queue %s: %w", w.queueName, err)
+	}
+	return nil
 }
 
 func (w *Worker) Run(unitProcess UnitProcess) error {
@@ -81,11 +85,24 @@ func (w *Worker) Run(unitProcess UnitProcess) error {
 	for id := 0; id < w.poolSize; id++ {
 		workerFunc, err := w.createConsumer(unitProcess, fmt.Sprintf("consumer_%d", id), ctx)
 		if err != nil {
-			return err
+			return fmt.Errorf("create consumer %d: %w", id, err)
 		}
-		go workerFunc()
+		go w.safeRun(workerFunc, id)
 	}
 	return nil
+}
+
+func (w *Worker) safeRun(fn func(), id int) {
+	defer func() {
+		if r := recover(); r != nil {
+			w.logger.Error("worker goroutine panicked",
+				"consumer", id,
+				"panic", r,
+				"stack", string(debug.Stack()),
+			)
+		}
+	}()
+	fn()
 }
 
 func (w *Worker) Close() {
@@ -95,8 +112,11 @@ func (w *Worker) Close() {
 func (w *Worker) createConsumer(unitProcess UnitProcess, consumerName string, ctx context.Context) (func(), error) {
 	consumer, err := w.conn.NewConsumer(ctx, w.queueName, consumerName)
 	if err != nil {
-		w.logger.Error(err.Error())
-		return nil, err
+		w.logger.Error("failed to create consumer",
+			"consumerName", consumerName,
+			"error", err,
+		)
+		return nil, fmt.Errorf("new consumer %s: %w", consumerName, err)
 	}
 
 	w.wg.Add(1)
@@ -106,26 +126,53 @@ func (w *Worker) createConsumer(unitProcess UnitProcess, consumerName string, ct
 			delivery, err := consumer.Receive(ctx)
 			if err != nil {
 				if errors.Is(err, context.Canceled) {
+					w.logger.Info("consumer stopped (context cancelled)", "consumerName", consumerName)
 					return
 				}
+				w.logger.Error("consumer receive error, skipping",
+					"consumerName", consumerName,
+					"error", err,
+				)
 				continue
 			}
-			w.logger.Info(fmt.Sprintf("Consumer %s: received data \n", consumerName))
+
 			data := delivery.Data()
 			if data == nil {
-				w.logger.Warn("No data")
+				w.logger.Warn("received nil message data, skipping",
+					"consumerName", consumerName,
+				)
+				delivery.Accept(ctx)
 				continue
 			}
+
+			w.logger.Info("processing message",
+				"consumerName", consumerName,
+				"dataLength", len(data),
+			)
 
 			err = unitProcess(string(data), ctx)
 
 			if err != nil {
-				w.logger.Warn(fmt.Sprintf("Consumer %s: requeue message", consumerName))
-				w.logger.Error(err.Error())
-				delivery.Requeue(ctx)
+				w.logger.Warn("message processing failed, requeueing",
+					"consumerName", consumerName,
+					"error", err,
+				)
+				if requeueErr := delivery.Requeue(ctx); requeueErr != nil {
+					w.logger.Error("failed to requeue message",
+						"consumerName", consumerName,
+						"error", requeueErr,
+					)
+				}
 			} else {
-				w.logger.Info(fmt.Sprintf("Consumer %s: ack message", consumerName))
-				delivery.Accept(ctx)
+				w.logger.Info("message processed successfully, acking",
+					"consumerName", consumerName,
+				)
+				if ackErr := delivery.Accept(ctx); ackErr != nil {
+					w.logger.Error("failed to ack message",
+						"consumerName", consumerName,
+						"error", ackErr,
+					)
+				}
 			}
 		}
 	}, nil
@@ -138,7 +185,7 @@ type rmqClient struct {
 func (c *rmqClient) NewConnection(ctx context.Context) (RMQConnection, error) {
 	conn, err := c.env.NewConnection(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("rmq new connection: %w", err)
 	}
 	return &rmqConnection{conn: conn}, nil
 }
@@ -155,7 +202,10 @@ func (c *rmqConnection) DeclareQueue(ctx context.Context, name string) error {
 	_, err := c.conn.Management().DeclareQueue(ctx, &rmq.QuorumQueueSpecification{
 		Name: name,
 	})
-	return err
+	if err != nil {
+		return fmt.Errorf("rmq declare queue %s: %w", name, err)
+	}
+	return nil
 }
 
 func (c *rmqConnection) NewConsumer(ctx context.Context, queueName string, consumerName string) (RMQConsumer, error) {
@@ -163,7 +213,7 @@ func (c *rmqConnection) NewConsumer(ctx context.Context, queueName string, consu
 		Id: consumerName,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("rmq new consumer %s on %s: %w", consumerName, queueName, err)
 	}
 	return &rmqConsumer{consumer: consumer}, nil
 }
@@ -175,7 +225,7 @@ type rmqConsumer struct {
 func (c *rmqConsumer) Receive(ctx context.Context) (RMQDelivery, error) {
 	delivery, err := c.consumer.Receive(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("rmq receive: %w", err)
 	}
 	return &rmqDelivery{delivery: delivery}, nil
 }

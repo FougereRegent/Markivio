@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -38,22 +39,21 @@ func main() {
 	defer pgpool.Close()
 
 	if err := pgpool.Ping(ctx); err != nil {
-		helplog.PanicIfError(err, "Cannot ping postgres")
+		helplog.FatalIfError(err, "Cannot ping postgres")
 	}
 
 	w, err := worker.NewWorker(logger, worker.WorkerOpts{
 		PoolSize:    1,
 		RabbitMqUri: rabbitMqUri,
-		QeueuName: "readability-worker",
+		QeueuName:   "readability-worker",
 	})
 
 	if err != nil {
-		helplog.PanicIfError(err, "Cannot create worker")
+		helplog.FatalIfError(err, "Cannot create worker")
 	}
 
 	forever := make(chan struct{})
 
-	//Main loop
 	w.Run(work)
 
 	<-forever
@@ -67,17 +67,42 @@ func work(data string, ctx context.Context) error {
 
 	err := json.Unmarshal([]byte(data), &evt)
 	if err != nil {
-		return nil
+		logger.Error("failed to unmarshal message",
+			"data", data,
+			"error", err,
+		)
+		return fmt.Errorf("unmarshal event: %w", domain.NewInvalidMessageError(err))
 	}
+
+	logger.Info("processing readability event",
+		"articleId", evt.ArticleId,
+		"url", evt.Url,
+	)
 
 	err = unitOfWork.Do(ctx, func(ctx context.Context) error {
 		if err := useCase.HandleReadability(evt, ctx); err != nil {
-			logger.Error(err.Error())
+			logger.Error("handle readability failed",
+				"articleId", evt.ArticleId,
+				"url", evt.Url,
+				"error", err,
+			)
 			return err
-		} else {
-			return nil
 		}
+		return nil
 	})
+
+	if err != nil {
+		logger.Warn("work unit failed, message will be requeued",
+			"articleId", evt.ArticleId,
+			"url", evt.Url,
+			"error", err,
+		)
+	} else {
+		logger.Info("work unit completed successfully",
+			"articleId", evt.ArticleId,
+			"url", evt.Url,
+		)
+	}
 
 	return err
 }

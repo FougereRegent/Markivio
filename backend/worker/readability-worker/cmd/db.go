@@ -17,7 +17,7 @@ func initDb() *pgxpool.Pool {
 		config.PgDb,
 	)
 	pool, err := pgxpool.New(context.Background(), dsn)
-	helplog.PanicIfError(err, "Cannot connect to psql please check your creds")
+	helplog.FatalIfError(err, "Cannot connect to psql please check your creds")
 
 	return pool
 }

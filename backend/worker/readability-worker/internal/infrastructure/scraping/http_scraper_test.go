@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/domain"
 	"github.com/gkampitakis/go-snaps/snaps"
 )
 
@@ -104,8 +106,15 @@ func TestHttpScrapper_Scrap_ServerError(t *testing.T) {
 
 	s := NewHttpScrapper(srv.Client())
 	_, err := s.Scrap(srv.URL, context.Background())
-	if err != nil {
-		t.Fatalf("Scrap() should not return error on 500 (HTTP response is still valid): %v", err)
+	if err == nil {
+		t.Fatal("expected error for HTTP 500, got nil")
+	}
+	var domainErr *domain.DomainError
+	if !errors.As(err, &domainErr) {
+		t.Fatalf("expected domain.DomainError, got %T", err)
+	}
+	if domainErr.Code != domain.ErrCodeHTTPStatus {
+		t.Errorf("error code = %s, want %s", domainErr.Code, domain.ErrCodeHTTPStatus)
 	}
 }
 
@@ -114,6 +123,13 @@ func TestHttpScrapper_Scrap_InvalidURL(t *testing.T) {
 	_, err := s.Scrap("://invalid", context.Background())
 	if err == nil {
 		t.Error("expected error for invalid URL, got nil")
+	}
+	var domainErr *domain.DomainError
+	if !errors.As(err, &domainErr) {
+		t.Fatalf("expected domain.DomainError, got %T", err)
+	}
+	if domainErr.Code != domain.ErrCodeInvalidURL {
+		t.Errorf("error code = %s, want %s", domainErr.Code, domain.ErrCodeInvalidURL)
 	}
 }
 

@@ -2,13 +2,15 @@ package scraping
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/domain"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/pkg/uncompress"
 )
 
-type HttpScrapper struct{
+type HttpScrapper struct {
 	httpClient *http.Client
 }
 
@@ -37,7 +39,7 @@ func NewHttpScrapper(client *http.Client) IScraper {
 func newRequest(url string) (*http.Request, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("newRequest: %w", err)
 	}
 	for key, val := range commonHeaders {
 		req.Header.Set(key, val)
@@ -48,12 +50,17 @@ func newRequest(url string) (*http.Request, error) {
 func (s *HttpScrapper) Scrap(url string, ctx context.Context) (io.Reader, error) {
 	request, err := newRequest(url)
 	if err != nil {
-		return nil, err
+		return nil, domain.NewInvalidURLError(url, err)
 	}
 
 	resp, err := s.httpClient.Do(request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("http request: %w", err)
+	}
+
+	if resp.StatusCode >= 400 {
+		resp.Body.Close()
+		return nil, domain.NewHTTPStatusError(url, resp.StatusCode)
 	}
 
 	compressHeader := resp.Header.Get("content-encoding")
@@ -61,6 +68,16 @@ func (s *HttpScrapper) Scrap(url string, ctx context.Context) (io.Reader, error)
 		return resp.Body, nil
 	}
 
-	uncomp := uncompress.New(uncompress.CompressType(compressHeader))
-	return uncomp.Uncompress(resp.Body)
+	uncomp, err := uncompress.New(uncompress.CompressType(compressHeader))
+	if err != nil {
+		resp.Body.Close()
+		return nil, fmt.Errorf("decompress %s: %w", compressHeader, err)
+	}
+
+	reader, err := uncomp.Uncompress(resp.Body)
+	if err != nil {
+		resp.Body.Close()
+		return nil, fmt.Errorf("uncompress body: %w", err)
+	}
+	return reader, nil
 }

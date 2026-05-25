@@ -3,12 +3,12 @@ package helplog
 import (
 	"fmt"
 	"log/slog"
+	"os"
 )
 
-func PanicIfError(err error, msg string) {
+func FatalIfError(err error, msg string) {
 	if err != nil {
 		slog.Error(fmt.Sprintf("%s: %s", msg, err))
-		panic(err)
+		os.Exit(1)
 	}
 }
-

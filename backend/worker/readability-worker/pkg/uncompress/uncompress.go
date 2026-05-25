@@ -4,6 +4,7 @@ import (
 	"compress/bzip2"
 	"compress/flate"
 	"compress/gzip"
+	"fmt"
 	"io"
 )
 
@@ -15,6 +16,8 @@ const (
 	BR      CompressType = "br"
 )
 
+var ErrUnknownCompression = fmt.Errorf("unknown compression type")
+
 type UncompressAlg interface {
 	Uncompress(input io.Reader) (io.Reader, error)
 }
@@ -25,16 +28,16 @@ type deflateUncompressAlg struct{}
 
 type brUncompressAlg struct{}
 
-func New(compressType CompressType) UncompressAlg {
+func New(compressType CompressType) (UncompressAlg, error) {
 	switch compressType {
 	case Gzip:
-		return &gzipUncompressAlg{}
+		return &gzipUncompressAlg{}, nil
 	case Deflate:
-		return &deflateUncompressAlg{}
+		return &deflateUncompressAlg{}, nil
 	case BR:
-		return &brUncompressAlg{}
+		return &brUncompressAlg{}, nil
 	default:
-		return nil
+		return nil, fmt.Errorf("%w: %q", ErrUnknownCompression, compressType)
 	}
 }
 

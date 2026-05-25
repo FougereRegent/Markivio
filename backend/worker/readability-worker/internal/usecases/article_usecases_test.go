@@ -88,8 +88,11 @@ func TestHandleReadability_ConvertError(t *testing.T) {
 	}
 
 	err := uc.HandleReadability(evt, context.Background())
-	if err != expectedErr {
-		t.Errorf("err = %v, want %v", err, expectedErr)
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !errors.Is(err, expectedErr) {
+		t.Errorf("err should wrap %v, got %v", expectedErr, err)
 	}
 }
 
@@ -115,7 +118,10 @@ func TestHandleReadability_RepoError(t *testing.T) {
 	}
 
 	err := uc.HandleReadability(evt, context.Background())
-	if err != expectedErr {
-		t.Errorf("err = %v, want %v", err, expectedErr)
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if !errors.Is(err, expectedErr) {
+		t.Errorf("err should wrap %v, got %v", expectedErr, err)
 	}
 }

@@ -391,8 +391,8 @@ func TestCreateConsumer_NilData(t *testing.T) {
 
 	select {
 	case <-delivery.accepted:
-		t.Error("delivery should NOT have been accepted for nil data")
-	default:
+	case <-time.After(100 * time.Millisecond):
+		t.Error("delivery should have been accepted for nil data")
 	}
 
 	select {
