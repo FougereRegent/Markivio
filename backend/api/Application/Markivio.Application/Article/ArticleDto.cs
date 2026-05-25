@@ -45,3 +45,8 @@ public record UpdateArticle(
         string? Description,
         TagArticle[] Tags
         );
+
+public record ReadableArticleMessage(
+		Guid Id,
+		string Url
+		);

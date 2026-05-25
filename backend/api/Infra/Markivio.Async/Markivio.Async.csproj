@@ -11,4 +11,8 @@
     <PackageReference Include="RabbitMQ.AMQP.Client" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\Markivio.Application\Markivio.Application.csproj" />
+  </ItemGroup>
+
 </Project>

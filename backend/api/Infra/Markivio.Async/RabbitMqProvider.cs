@@ -1,6 +1,8 @@
 using RabbitMQ.AMQP.Client;
 using RabbitMQ.AMQP.Client.Impl;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Collections.Frozen;
 
 namespace Markivio.Infra.Async;
 
@@ -10,6 +12,8 @@ public class RabbitMqProvider : IAsyncDisposable
 	private IEnvironment _environment;
 	private IConnection _connection;
 	private readonly IConfiguration _configuration;
+
+	public IReadOnlyDictionary<string, IPublisher> Publishers {get; private set;} = new Dictionary<string, IPublisher>();
 
 	public RabbitMqProvider(IConfiguration configuration) {
 		_configuration = configuration;
@@ -39,6 +43,11 @@ public class RabbitMqProvider : IAsyncDisposable
     }
 
 	private async Task QueueBuilder(CancellationToken cancellationToken = default!) {
-
+		var management = _connection.Management();
+		// Declare Queue
+		var webSitePublisher = await management.Queue("readability-worker")
+			.Type(QueueType.QUORUM)
+			.BuildAsync();
+		Publishers.Add("ReadabilityWorker", webSitePublisher);
 	}
 }
