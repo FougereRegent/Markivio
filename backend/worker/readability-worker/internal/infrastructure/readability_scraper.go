@@ -11,7 +11,8 @@ import (
 	"codeberg.org/readeck/go-readability/v2"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/domain"
 	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/infrastructure/scraping"
-	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"
+	"github.com/FougereRegent/Markivio/backend/worker/readability-worker/internal/interfaces/logger"	
+	htmltomarkdown "github.com/JohannesKaufmann/html-to-markdown/v2"
 )
 
 type ReadabilityScraper struct {
@@ -52,10 +53,21 @@ func (r *ReadabilityScraper) ConvertWebSiteToMarkdown(urlSite string, ctx contex
 		return nil, fmt.Errorf("readability.FromReader(%s): %w", urlSite, err)
 	}
 	article.RenderHTML(&b)
+	markdown, err := htmltomarkdown.ConvertReader(&b)
+	if err != nil {
+		r.logger.Error("markdown convertion failed", "error", err)
+		return nil, fmt.Errorf("htmltomarkdown.ConvertReader(): %w", err)
+	}
+
 	r.logger.Info("successfully converted article",
 		"url", urlSite,
 		"title", article.Title,
 		"contentLength", b.Len(),
 	)
-	return &b, nil
+	mardownReader := bytes.NewBuffer(markdown)
+	return mardownReader, nil
+}
+
+func convertToMarkdown(contentReader io.Reader) (io.Reader, error) {
+	return nil, nil
 }
