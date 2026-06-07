@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Dialog } from 'primevue'
-import { computed } from 'vue'
 import MarkdownRender from './MarkdownRender.vue'
 
 const props = defineProps({
@@ -11,7 +10,6 @@ const props = defineProps({
 })
 
 const visible = defineModel('visible', { required: true, type: Boolean })
-const testComputed = computed(() => props.content)
 
 function showSourceArticle() {
   window.open(props.source, '_blank')?.focus()

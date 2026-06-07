@@ -21,13 +21,13 @@ const md = markdownit({
 
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return '<pre><code class="hljs">' +
+        return '<pre><code>' +
           hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
           '</code></pre>';
-      } catch (__) { }
+      } catch { }
     }
 
-    return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
+    return '<pre><code>' + md.utils.escapeHtml(str) + '</code></pre>';
   }
 });
 
