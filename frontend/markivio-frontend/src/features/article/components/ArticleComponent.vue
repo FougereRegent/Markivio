@@ -5,6 +5,7 @@ import DialogSource from '@/components/DialogSource.vue'
 import { ref } from 'vue'
 import { useGetSourceUrl, type UrlSource } from '@/features/article/composables/article.graphql'
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
+import DialogContent from '@/components/DialogContent.vue'
 
 export type ArticleProps = {
   id: string
@@ -25,23 +26,32 @@ const urlSource = ref<UrlSource | null>(null)
 const { runQuery } = useGetSourceUrl(props.id)
 const drawer = useAddEditDrawer();
 
-const visible = ref(false)
+const dialogUrlVisible = ref(false)
+const dialogContentVisible = ref(false);
 
 async function showSourceArticle() {
   const result = await runQuery()
 
-  if (!result) return
+  if (!result) return;
 
   urlSource.value = result
 
-  if (result.framable) visible.value = true
+  if (result.framable) dialogUrlVisible.value = true
   else window.open(result.source, '_blanck')?.focus()
 }
 
-function showMarkdownArticle() {}
+async function showMarkdownArticle() {
+  const result = await runQuery();
+  if (!result) return;
+
+  urlSource.value = result;
+
+  dialogContentVisible.value = true
+}
 
 function editArticle() {
   drawer.open(true, props.id);
+
 }
 </script>
 
@@ -84,10 +94,16 @@ function editArticle() {
       </div>
     </div>
     <DialogSource
-      v-model:visible="visible"
+      v-model:visible="dialogUrlVisible"
       :title="props.title"
       :id="props.id"
       :source="urlSource?.source ?? ''"
+    />
+    <DialogContent
+        v-model:visible="dialogContentVisible"
+        :title="props.title"
+        :id="props.id"
+        :content="urlSource?.content ?? ''"
     />
   </div>
 </template>

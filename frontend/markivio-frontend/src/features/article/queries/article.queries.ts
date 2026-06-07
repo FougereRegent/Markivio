@@ -22,12 +22,13 @@ export type GetArticlesInformationQuery = {
   }
 }
 
-export type GetSourceUrlQuery = {
+export type GetSourceUrlAndContentQuery = {
   articles: {
     items: Array<{
       id: string
       source: string
       isFramable: boolean
+      content: string
     }>
   }
 }
@@ -91,12 +92,13 @@ export const UpdateArticle: TypedDocumentNode<AddArticleReturn> = gql`
   }
 `
 
-export const GetUrlByArticleId: TypedDocumentNode<GetSourceUrlQuery> = gql`
+export const GetUrlAndContentByArticleId: TypedDocumentNode<GetSourceUrlAndContentQuery> = gql`
   query Articles($id: UUID!) {
     articles(where: { id: { eq: $id } }, skip: 0, take: 1) {
       items {
         id
         source
+        content
         isFramable
       }
     }
