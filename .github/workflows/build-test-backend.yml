@@ -18,7 +18,7 @@ on:
 
 jobs:
   build-api:
-    runs-on: markivio-arc-runner
+    runs-on: ubuntu-latest
     name: build & test api
     steps:
       - uses: actions/checkout@v6
@@ -46,7 +46,7 @@ jobs:
         name: unit tests
 
   build-worker:
-    runs-on: markivio-arc-runner
+    runs-on: ubuntu-24.04
     name: build & test worker
     steps:
       - uses: actions/checkout@v6
@@ -54,6 +54,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: ${{ inputs.go-version }}
+
       - run: make build-container
         name: build in container mode
         working-directory: ./backend/worker/readability-worker

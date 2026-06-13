@@ -10,7 +10,9 @@ on:
       
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: markivio-arc-runner
+    container:
+      image: node:${{ inputs.node-version }}
     name: build & test frontend
     
     steps:
