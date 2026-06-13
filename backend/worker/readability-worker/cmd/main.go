@@ -22,6 +22,10 @@ var pgpool *pgxpool.Pool
 var rabbitMqUri string
 var logger mylogger.ILog
 
+const (
+	WORKER_VERSION string = "v1.0.0"
+)
+
 func init() {
 	logger = initLog()
 	pgpool = initDb()
