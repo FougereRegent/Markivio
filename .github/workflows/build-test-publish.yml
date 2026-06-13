@@ -13,6 +13,7 @@ jobs:
     uses: ./.github/workflows/build-test-backend.yml
     with:
       dotnet-version: 10
+      go-version: "1.23"
 
   build-frontend:
     uses: ./.github/workflows/build-test-frontend.yml
