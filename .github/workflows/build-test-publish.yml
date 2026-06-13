@@ -70,9 +70,17 @@ jobs:
           username: ${{ vars.HARBOR_USERNAME }}
           password: ${{ secrets.HARBOR_PASSWORD }}
 
-      - name: build and push
+      - name: build and push api
         uses: docker/build-push-action@v7
         with:
           push: true
           tags: registry.damien-venant.ovh/markivio/markivio-graphql:${{ needs.release.outputs.version }}
           build-args: SEM_VERSION=${{ needs.release.outputs.version }}
+
+      - name: build and push worker
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: registry.damien-venant.ovh/markivio/markivio-readability-worker:${{ needs.release.outputs.version }}
+          build-args: SEM_VERSION=${{ needs.release.outputs.version }}
+          context: ./backend/worker/readability-worker
