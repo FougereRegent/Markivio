@@ -1,0 +1,56 @@
+image:
+  repository: registry.damien-venant.ovh/helm-cookbook-example/go-example
+  tag: 1.0.1
+  pullPolicy: Always
+
+imagePullSecrets:
+  secretRef: regcred
+
+config:
+  EXAMPLE-ENV: EXAMPLE-VALUE
+
+secretRef: secret-test
+
+service:
+  name: http
+  port: 9090
+
+ingressRoute:
+  enabled: true
+  domain: "test-cookbook.damien-venant.ovh"
+
+autoscaling:
+  enabled: false
+  replicaCount: 2
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+ressource:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "100m"
+    memory: "128Mi"
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 9090
+  initialDelaySeconds: 60
+  periodSeconds: 30
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 9090
+  periodSeconds: 5
+
+jobs:
+  enabled: true
+  restartPolicy: Never
+  jobs: 
+    - name: migrate
+      args: ["migrate"]

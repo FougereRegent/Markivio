@@ -1,0 +1,28 @@
+{{- if .Values.jobs.enabled }}
+{{- $root := . }}
+{{- range .Values.jobs.jobs }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "deploy.fullname" $root }}-job-{{ .name }}
+  labels: 
+    {{- include "deploy.labels" $root | nindent 4 }}
+spec:
+  template:
+    spec:
+      {{- if $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        - name: {{ $root.Values.imagePullSecrets.secretRef }}
+      {{- end }}
+      restartPolicy: {{ $root.Values.jobs.restartPolicy | default "Never" }}
+      containers:
+      - name: {{ .name | quote }}
+        image: {{ .image | default $root.Values.image.repository }}
+        {{- with .command }}
+        command: {{ . }}
+        {{- end }}
+        {{- with .args }}
+        args: {{ . }}
+        {{- end }}
+{{- end }}
+{{- end }}
