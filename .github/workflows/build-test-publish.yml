@@ -84,3 +84,16 @@ jobs:
           tags: registry.damien-venant.ovh/markivio/markivio-readability-worker:${{ needs.release.outputs.version }}
           build-args: SEM_VERSION=${{ needs.release.outputs.version }}
           context: ./backend/worker/readability-worker
+  change-version:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - run: |
+          sed "s/tag: [0-9]\.[0-9]\.[0-9]/tag: 1.0.0/" -i deploy/**/values.yaml"
+        name: change version
+
+      - run: git add . && git commit --ammend && git push --force
+        name: commit version

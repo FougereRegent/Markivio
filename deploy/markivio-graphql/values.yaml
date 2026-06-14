@@ -1,6 +1,6 @@
 image:
   repository: registry.damien-venant.ovh/markivio/markivio-graphql
-  tag: 1.4.0
+  tag: 1.0.0
   pullPolicy: Always
 
 imagePullSecrets:
