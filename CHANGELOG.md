@@ -1,3 +1,11 @@
+# [1.4.0](https://github.com/FougereRegent/Markivio/compare/v1.3.0...v1.4.0) (2026-06-14)
+
+
+### Features
+
+* add readability ([#32](https://github.com/FougereRegent/Markivio/issues/32)) ([20de911](https://github.com/FougereRegent/Markivio/commit/20de9111b3980d32df49772f88a6d3e28b7cf7ce))
+* change version ([6346b94](https://github.com/FougereRegent/Markivio/commit/6346b94b6ffafb4e4e87a2c6aceea0ea5cef29d5))
+
 # [1.3.0](https://github.com/FougereRegent/Markivio/compare/v1.2.0...v1.3.0) (2026-04-28)
 
 
