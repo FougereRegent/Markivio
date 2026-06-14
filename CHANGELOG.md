@@ -3,6 +3,14 @@
 
 ### Bug Fixes
 
+* fix ci ([9278bf8](https://github.com/FougereRegent/Markivio/commit/9278bf80eec7d3e64c4dd38a36257ef9d6f828f0))
+* fix ci ([ab878f8](https://github.com/FougereRegent/Markivio/commit/ab878f81cfa78c4dfff89270bfbc200cac54c8ed))
+
+## [1.5.1](https://github.com/FougereRegent/Markivio/compare/v1.5.0...v1.5.1) (2026-06-14)
+
+
+### Bug Fixes
+
 * fix ci ([ab878f8](https://github.com/FougereRegent/Markivio/commit/ab878f81cfa78c4dfff89270bfbc200cac54c8ed))
 
 # [1.5.0](https://github.com/FougereRegent/Markivio/compare/v1.4.0...v1.5.0) (2026-06-14)
