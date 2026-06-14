@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/FougereRegent/Markivio/compare/v1.4.0...v1.5.0) (2026-06-14)
+
+
+### Features
+
+* change ci ([#36](https://github.com/FougereRegent/Markivio/issues/36)) ([907cae2](https://github.com/FougereRegent/Markivio/commit/907cae214c3f826e4318b9f775793dec91813088))
+
 # [1.4.0](https://github.com/FougereRegent/Markivio/compare/v1.3.0...v1.4.0) (2026-06-14)
 
 
