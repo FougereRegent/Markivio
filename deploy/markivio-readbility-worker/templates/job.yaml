@@ -10,19 +10,22 @@ metadata:
 spec:
   template:
     spec:
-      {{- if $root.Values.imagePullSecrets }}
       imagePullSecrets:
         - name: {{ $root.Values.imagePullSecrets.secretRef }}
-      {{- end }}
       restartPolicy: {{ $root.Values.jobs.restartPolicy | default "Never" }}
       containers:
       - name: {{ .name | quote }}
-        image: {{ .image | default $root.Values.image.repository }}
+        image: "{{ .image | default $root.Values.image.repository }}:{{ .tag | default $root.Values.image.tag }}"
         {{- with .command }}
         command: {{ . }}
         {{- end }}
         {{- with .args }}
         args: {{ . }}
         {{- end }}
+        envFrom: 
+        - configMapRef: 
+            name: {{ include "deploy.fullname" $root }}-configmap
+        - secretRef:
+            name: {{ $root.Values.secretRef | quote }}
 {{- end }}
 {{- end }}

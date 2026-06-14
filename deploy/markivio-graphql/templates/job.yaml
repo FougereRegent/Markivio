@@ -22,5 +22,10 @@ spec:
         {{- with .args }}
         args: {{ . }}
         {{- end }}
+        envFrom: 
+        - configMapRef: 
+            name: {{ include "deploy.fullname" $root }}-configmap
+        - secretRef:
+            name: {{ $root.Values.secretRef | quote }}
 {{- end }}
 {{- end }}

@@ -13,7 +13,7 @@ config:
   MARKIVIO_AUTH_DOMAIN: "markivio.eu.auth0.com"
   MARKIVIO_AUTH_AUDIENCE: "https://localhost:8080/"
   RABBIT_MQ__HOST: "markivio-rabbitmq-prod"
-  RABBIT_MQ__PORT: '5432'
+  RABBIT_MQ__PORT: '5672'
 
 secretRef: markivio-graphql-secret
 
