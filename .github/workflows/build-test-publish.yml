@@ -98,5 +98,5 @@ jobs:
         name: change version
 
       - run: |
-         git add . && git commit --amend && git push --force
+         git add . && git commit --amend && git tag ${{ needs.release.outputs.version }} && git push --force && git push  ${{ needs.release.outputs.version }}
         name: commit version
