@@ -1,0 +1,46 @@
+image:
+  repository: registry.damien-venant.ovh/markivio/markivio-readability-worker
+  tag: 1.4.1
+  pullPolicy: Always
+
+imagePullSecrets:
+  secretRef: regcrd
+
+config:
+  WORKER_PG_USERNAME: "markivio"
+  WORKER_PG_HOST: "192.168.1.210"
+  WORKER_PG_PORT: "5432"
+  WORKER_PG_DB: "markivio"
+  WORKER_MQ_USER: "default_user_9dAWzKTSUBc7CmxafQ2"
+  WORKER_MQ_HOST: "markivio-rabbitmq-prod"
+  WORKER_MQ_PORT: "5672"
+
+secretRef: markivio-worker-secret
+
+service:
+  name: http
+  port: 9090
+
+ingressRoute:
+  enabled: true
+  domain: "test-cookbook.damien-venant.ovh"
+
+autoscaling:
+  enabled: false
+  replicaCount: 1
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+ressource:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+
+
+jobs:
+  enabled: false

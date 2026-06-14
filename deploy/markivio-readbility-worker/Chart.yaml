@@ -1,0 +1,6 @@
+apiVersion: v2
+name: markivio-readability-worker
+description: It's worker that used to scrap, transform a html page into markdown
+type: application
+version: 0.1.0
+appVersion: "1.1.0"
