@@ -24,6 +24,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="RabbitMQ.AMQP.Client" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Sinks.Async" />
@@ -42,6 +43,7 @@
     <ProjectReference Include="..\..\Application\Markivio.Application\Markivio.Application.csproj" />
     <ProjectReference Include="..\..\Pkg\Markivio.Extensions\Markivio.Extensions.csproj" />
     <ProjectReference Include="..\..\Infra\Markivio.Auth\Markivio.Auth.csproj" />
+    <ProjectReference Include="..\..\Infra\Markivio.Async\Markivio.Async.csproj" />
   </ItemGroup>
 
 </Project>

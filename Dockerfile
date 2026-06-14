@@ -22,9 +22,6 @@ FROM node:22.17.0 AS front-builder
 WORKDIR /build
 ARG SEM_VERSION=v0.0.0
 ARG VITE_MARKIVIO_GRAPHQL_API="/graphql"
-ARG VITE_MARKIVIO_AUTH_AUDIENCE="https://localhost:8080/"
-ARG VITE_MARKIVIO_AUTH_DOMAIN="markivio.eu.auth0.com"
-ARG VITE_MARKIVIO_AUTH_CLIENT_ID="TWlbVAgnOznEURGzFbvAru15iGY2CbAW"
 
 #install pnpm
 RUN npm install -g pnpm@latest-10

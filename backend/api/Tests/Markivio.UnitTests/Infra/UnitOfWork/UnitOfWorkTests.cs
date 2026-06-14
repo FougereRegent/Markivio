@@ -75,7 +75,7 @@ public class UnitOfWorkTests
     }
 
     [Fact]
-    public async Task RollbackChangesAsync_Should_ThrowError_When_TransactionIsNull()
+    public async Task RollbackChangesAsync_Should_NotThrow_When_TransactionIsNull()
     {
         CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
@@ -83,7 +83,7 @@ public class UnitOfWorkTests
           .Returns(Task.CompletedTask);
 
         //Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () => await unitOfWork.RollbackChangesAsync(token));
+        await Should.NotThrowAsync(async () => await unitOfWork.RollbackChangesAsync(token));
 
     }
 
@@ -105,7 +105,7 @@ public class UnitOfWorkTests
     }
 
     [Fact]
-    public async Task SaveChangesAsync_Should_ThrowError_When_TransactionIsNull()
+    public async Task SaveChangesAsync_Should_NotThrow_When_TransactionIsNull()
     {
         CancellationToken token = new CancellationToken();
         UnitOfWork unitOfWork = new UnitOfWork(dbContextMock.Object);
@@ -113,6 +113,6 @@ public class UnitOfWorkTests
           .Returns(Task.CompletedTask);
 
         //Act & Assert
-        await Should.ThrowAsync<InvalidOperationException>(async () => await unitOfWork.SaveChangesAsync(token));
+        await Should.NotThrowAsync(async () => await unitOfWork.SaveChangesAsync(token));
     }
 }

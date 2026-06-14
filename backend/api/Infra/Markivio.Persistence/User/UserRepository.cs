@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markivio.Persistence.Repositories;
 
-public class UserRepository(MarkivioContext context) : GenericRepository<User>(context), IUserRepository
+public class UserRepository(MarkivioContext context, IUnitOfWork unitOfWork) : GenericRepository<User>(context, unitOfWork), IUserRepository
 {
     public async Task<User?> GetUserByAuthId(string authId, CancellationToken token = default)
     {

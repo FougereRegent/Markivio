@@ -59,7 +59,9 @@ public static class ApiConfig
         public WebApplication ConfigApi()
         {
             app.UseDefaultFiles();
+#if !DEBUG
             app.UseStaticFiles();
+#endif
 
             app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();

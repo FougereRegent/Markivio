@@ -2,6 +2,7 @@ using Bogus;
 using FluentResults;
 using Markivio.Application.Dto;
 using Markivio.Application.Errors;
+using Markivio.Application.Interfaces;
 using Markivio.Application.UseCases;
 using Markivio.Domain.Auth;
 using Markivio.Domain.Entities;
@@ -18,6 +19,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     private readonly Mock<ITagUseCase> tagUseCaseMock = new();
     private readonly Mock<IArticleRepository> articleRepositoryMock = new();
     private readonly Mock<ITagRepository> tagRepositoryMock = new();
+    private readonly Mock<IWorkerPublisher<ReadableArticleMessage>> workerMock = new();
 
     private readonly ArticleUseCase useCase;
 
@@ -27,7 +29,8 @@ public sealed class ArticleUseCaseTests : BaseTests
             tagUseCaseMock.Object,
             articleRepositoryMock.Object,
             tagRepositoryMock.Object,
-            authUserMock.Object);
+            authUserMock.Object,
+            workerMock.Object);
     }
 
     private User CreateValidUser()

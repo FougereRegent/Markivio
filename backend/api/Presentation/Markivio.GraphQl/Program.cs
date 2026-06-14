@@ -1,4 +1,3 @@
-using Scalar.AspNetCore;
 using Markivio.Presentation.Dto;
 using Markivio.Presentation.Config;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +39,8 @@ if (ShouldRunMigration(app, args))
     if (ShouldExitAfterMigration(args)) return;
 }
 
+await ConfigureQueue(app);
+
 var api = app.MapGroup("/api");
 api.GetConfig()
     .GetVersion();
@@ -64,4 +65,11 @@ static async Task ApplyMigration(WebApplication application)
     using var scope = application.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<Markivio.Persistence.Config.MarkivioContext>();
     await db.Database.MigrateAsync();
+}
+
+static async Task ConfigureQueue(WebApplication application)
+{
+    using var scope = application.Services.CreateScope();
+    var rabbitMqProvider = scope.ServiceProvider.GetRequiredService<Markivio.Infra.Async.RabbitMqProvider>();
+    await rabbitMqProvider.InitializeAsync();
 }

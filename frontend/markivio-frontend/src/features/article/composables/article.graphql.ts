@@ -1,7 +1,7 @@
 import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue';
 import { type Article } from '@/features/article/models/article.models'
 import type { Tag } from '@/features/tag/models/tag.models';
-import { AddArticles, GetArticleById, GetArticles, GetUrlByArticleId, UpdateArticle } from '@/features/article/queries/article.queries'
+import { AddArticles, GetArticleById, GetArticles, GetUrlAndContentByArticleId, UpdateArticle } from '@/features/article/queries/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
 
@@ -9,6 +9,7 @@ export type UrlSource = {
   id: string
   source: string
   framable: boolean
+  content: string
 }
 
 export function useGetArticles(offset: Ref<number>, limit: number) {
@@ -56,7 +57,7 @@ export function useGetSourceUrl(id: string) {
   const { client } = useClientHandle()
   const runQuery = async () => {
     const result = await client
-      .query(GetUrlByArticleId, {
+      .query(GetUrlAndContentByArticleId, {
         id: id,
       })
       .toPromise()
@@ -66,6 +67,7 @@ export function useGetSourceUrl(id: string) {
       id: article?.id,
       source: article?.source,
       framable: article?.isFramable,
+      content: article?.content
     } as UrlSource
   }
 

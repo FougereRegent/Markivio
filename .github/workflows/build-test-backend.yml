@@ -11,9 +11,13 @@ on:
         required: false
         type: string
         default: 0.0.0
+      go-version:
+        required: true
+        type: string
+        default: "1.23"
 
 jobs:
-  build:
+  build-api:
     runs-on: ubuntu-latest
     name: build & test api
     steps:
@@ -40,4 +44,26 @@ jobs:
       - run: dotnet test
         working-directory: ./backend/api
         name: unit tests
+
+  build-worker:
+    runs-on: ubuntu-24.04
+    name: build & test worker
+    steps:
+      - uses: actions/checkout@v6
+        name: checkout
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ inputs.go-version }}
+
+      - run: make build-container
+        name: build in container mode
+        working-directory: ./backend/worker/readability-worker
+      - run: make build-local
+        name: build in local mode
+        working-directory: ./backend/worker/readability-worker
+      - run: make test
+        name: unit tests
+        working-directory: ./backend/worker/readability-worker
+
+
 

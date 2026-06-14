@@ -10,6 +10,7 @@ public class ArticleInformation
     public bool IsFramable { get; set; } = false;
     public UserInformation User { get; set; }
     public List<TagInformation> Tags { get; set; } = new List<TagInformation>();
+    public string Content { get; set; } = string.Empty;
 }
 
 public record ArticleGetByName(
@@ -44,4 +45,9 @@ public record UpdateArticle(
         string Title,
         string? Description,
         TagArticle[] Tags
+        );
+
+public record ReadableArticleMessage(
+        Guid Id,
+        string Url
         );

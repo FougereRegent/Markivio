@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markivio.Persistence.Repositories;
 
-public class ArticleRepository(MarkivioContext context, HttpClient httpClient) : GenericRepository<Article>(context), IArticleRepository
+public class ArticleRepository(MarkivioContext context, HttpClient httpClient, IUnitOfWork unitOfWork) : GenericRepository<Article>(context, unitOfWork), IArticleRepository
 {
     private readonly HttpClient _httpClient = httpClient;
 
