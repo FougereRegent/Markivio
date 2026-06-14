@@ -19,4 +19,4 @@ RUN adduser -s /bin/bash -H -D -u 1000 worker worker && chown -R worker /app
 COPY --from=worker-builder /build/readability-worker .
 SHELL [ "bash" ]
 
-ENTRYPOINT [ "./", "readability-worker" ]
+ENTRYPOINT [ "./readability-worker" ]
