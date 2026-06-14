@@ -21,12 +21,12 @@ public interface IArticleUseCase
     Task<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
 }
 
-public class ArticleUseCase(ITagUseCase tagUseCase, 
-		IArticleRepository articleRepository, 
-		ITagRepository tagRepository, 
-		IAuthUser authUser, 
-		IWorkerPublisher<ReadableArticleMessage> worker
-		) : IArticleUseCase
+public class ArticleUseCase(ITagUseCase tagUseCase,
+        IArticleRepository articleRepository,
+        ITagRepository tagRepository,
+        IAuthUser authUser,
+        IWorkerPublisher<ReadableArticleMessage> worker
+        ) : IArticleUseCase
 {
     public Task<Result<ArticleInformation>> GetById(Guid id, CancellationToken cancelationToken = default)
     {
@@ -73,9 +73,9 @@ public class ArticleUseCase(ITagUseCase tagUseCase,
         }
 
         Article resultArticle = articleRepository.Save(article);
-		await articleRepository.SaveAndCommit(cancellationToken);
+        await articleRepository.SaveAndCommit(cancellationToken);
 
-		await worker.SendMessageAsync(new ReadableArticleMessage(Id: resultArticle.Id, Url: resultArticle.ArticleContent.Source), cancellationToken);
+        await worker.SendMessageAsync(new ReadableArticleMessage(Id: resultArticle.Id, Url: resultArticle.ArticleContent.Source), cancellationToken);
 
         return mapper.Map(resultArticle);
     }
@@ -163,9 +163,9 @@ public class ArticleUseCase(ITagUseCase tagUseCase,
         }
 
         articleRepository.Update(article);
-		await articleRepository.SaveAndCommit(cancellationToken);
+        await articleRepository.SaveAndCommit(cancellationToken);
 
-		await worker.SendMessageAsync(new ReadableArticleMessage(Id: article.Id, Url: article.ArticleContent.Source), cancellationToken);
+        await worker.SendMessageAsync(new ReadableArticleMessage(Id: article.Id, Url: article.ArticleContent.Source), cancellationToken);
         return Result.Ok(mapper.Map(article));
     }
 

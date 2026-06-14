@@ -8,12 +8,12 @@ namespace Markivio.Persistence.Repositories;
 public class GenericRepository<T> : IGenericRepository<T> where T : Entity
 {
     protected readonly MarkivioContext _context;
-	protected readonly IUnitOfWork _unitOfWork;
+    protected readonly IUnitOfWork _unitOfWork;
 
     public GenericRepository(MarkivioContext context, IUnitOfWork unitOfWork)
     {
         _context = context;
-		_unitOfWork = unitOfWork;
+        _unitOfWork = unitOfWork;
     }
 
     public void Delete(T entity) =>
@@ -46,7 +46,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : Entity
 
     public async Task SaveAndCommit(CancellationToken token = default)
     {
-		await _unitOfWork.SaveChangesAsync(token);
+        await _unitOfWork.SaveChangesAsync(token);
 
     }
 

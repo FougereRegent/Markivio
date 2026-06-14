@@ -8,17 +8,17 @@ namespace Markivio.Infra.Async.Worker;
 
 public class ArticleWorker(RabbitMqProvider rabbitMqProvider) : IWorkerPublisher<ReadableArticleMessage>
 {
-	internal const string QueueName = "readability-worker";
+    internal const string QueueName = "readability-worker";
 
     public async Task SendMessageAsync(ReadableArticleMessage message, CancellationToken token = default!)
     {
-		var publisher = rabbitMqProvider.Publishers[QueueName];
-		var jsonPayload = SerializerHelper.Serialize<ReadableArticleMessage>(message);
-		var rabbitMqMessage = new AmqpMessage(Encoding.UTF8.GetBytes(jsonPayload));
-		var result = await publisher.PublishAsync(rabbitMqMessage, token);
-		if(result.Outcome.State != RabbitMQ.AMQP.Client.OutcomeState.Accepted) 
-		{
+        var publisher = rabbitMqProvider.Publishers[QueueName];
+        var jsonPayload = SerializerHelper.Serialize<ReadableArticleMessage>(message);
+        var rabbitMqMessage = new AmqpMessage(Encoding.UTF8.GetBytes(jsonPayload));
+        var result = await publisher.PublishAsync(rabbitMqMessage, token);
+        if (result.Outcome.State != RabbitMQ.AMQP.Client.OutcomeState.Accepted)
+        {
 
-		}
+        }
     }
 }

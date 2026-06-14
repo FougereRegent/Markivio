@@ -67,8 +67,9 @@ static async Task ApplyMigration(WebApplication application)
     await db.Database.MigrateAsync();
 }
 
-static async Task ConfigureQueue(WebApplication application) {
-	using var scope = application.Services.CreateScope();
-	var rabbitMqProvider = scope.ServiceProvider.GetRequiredService<Markivio.Infra.Async.RabbitMqProvider>();
-	await rabbitMqProvider.InitializeAsync();
+static async Task ConfigureQueue(WebApplication application)
+{
+    using var scope = application.Services.CreateScope();
+    var rabbitMqProvider = scope.ServiceProvider.GetRequiredService<Markivio.Infra.Async.RabbitMqProvider>();
+    await rabbitMqProvider.InitializeAsync();
 }

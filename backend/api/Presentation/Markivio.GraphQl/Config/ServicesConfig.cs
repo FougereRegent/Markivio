@@ -102,8 +102,8 @@ public static class ConfigServiceInjection
             });
         });
 
-		builder.Services.AddSingleton<RabbitMqProvider>()
-			.AddScoped<IWorkerPublisher<ReadableArticleMessage>, ArticleWorker>();
+        builder.Services.AddSingleton<RabbitMqProvider>()
+            .AddScoped<IWorkerPublisher<ReadableArticleMessage>, ArticleWorker>();
         return builder;
     }
 }

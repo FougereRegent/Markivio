@@ -16,5 +16,5 @@ public interface IGenericRepository<T> where T : Entity
     Task<T?> GetById(Guid id, CancellationToken cancellationToken = default);
     IQueryable<T> GetByIds(IEnumerable<Guid> ids);
 
-	Task SaveAndCommit(CancellationToken token = default!);
+    Task SaveAndCommit(CancellationToken token = default!);
 }
