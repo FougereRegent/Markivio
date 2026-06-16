@@ -1,3 +1,10 @@
+## [1.5.4](https://github.com/FougereRegent/Markivio/compare/v1.5.3...v1.5.4) (2026-06-16)
+
+
+### Bug Fixes
+
+* helm chart ([c9a1a57](https://github.com/FougereRegent/Markivio/commit/c9a1a579d08a438aa39982b74f1de668fc2d76fd))
+
 ## [1.5.3](https://github.com/FougereRegent/Markivio/compare/v1.5.2...v1.5.3) (2026-06-16)
 
 
