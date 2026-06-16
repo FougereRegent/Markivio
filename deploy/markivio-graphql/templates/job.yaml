@@ -7,6 +7,9 @@ metadata:
   name: {{ include "deploy.fullname" $root }}-job-{{ .name }}-{{ $root.Chart.revision }}
   labels: 
     {{- include "deploy.labels" $root | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   template:
     spec:
