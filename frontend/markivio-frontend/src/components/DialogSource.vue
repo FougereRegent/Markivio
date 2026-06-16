@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { Dialog } from 'primevue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   id: String,
@@ -39,7 +42,7 @@ function showSourceArticle() {
         <iframe
           ref="iframeRef"
           id="inlineFrameExample"
-          title="Exemple de cadre intégré"
+          :title="t('dialog.iframeTitle')"
           class="h-11/12 w-11/12 border border-gray-300 rounded-xl"
           loading="lazy"
           :src="props.source"

@@ -5,7 +5,9 @@ import { computed } from 'vue'
 import { useGetMyUser, useUpdateUserInformation } from '@/features/auth/composables/user.graphql'
 import { useZodValidation } from '@/features/auth/composables/zod.composable'
 import { UserSchema } from '@/features/auth/models/user.models'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { userInfo } = useGetMyUser()
 const { updateUser } = useUpdateUserInformation(userInfo)
 const { validate, errors } = useZodValidation(UserSchema, userInfo)
@@ -26,12 +28,12 @@ async function submit() {
 <template>
   <div class="p-5 h-full">
     <div class="flex flex-row justify-between">
-      <h1 class="text-4xl text-gray-900">Account Settings</h1>
-      <Button size="large" label="Save" class="w-2/12" @click="submit" />
+      <h1 class="text-4xl text-gray-900">{{ t('profile.accountSettings') }}</h1>
+      <Button size="large" :label="t('profile.save')" class="w-2/12" @click="submit" />
     </div>
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
-        <label for="firstName">First Name</label>
+        <label for="firstName">{{ t('profile.firstName') }}</label>
         <InputText
           id="firstName"
           type="text"
@@ -42,7 +44,7 @@ async function submit() {
         />
       </FloatLabel>
       <FloatLabel>
-        <label for="lastName">Last Name</label>
+        <label for="lastName">{{ t('profile.lastName') }}</label>
         <InputText
           id="lastName"
           type="text"
@@ -52,7 +54,7 @@ async function submit() {
         />
       </FloatLabel>
       <FloatLabel>
-        <label for="email">Email</label>
+        <label for="email">{{ t('profile.email') }}</label>
         <InputText
           id="email"
           type="text"

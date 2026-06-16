@@ -1,0 +1,49 @@
+{
+  "signIn": {
+    "title": "Sign In",
+    "continue": "Continue",
+    "subtitle": "Sign in with different account"
+  },
+  "header": {
+    "search": "Search ...",
+    "addLink": "Add Link"
+  },
+  "nav": {
+    "allArticles": "All Articles",
+    "favorites": "Favorites",
+    "tags": "Tags",
+    "folder": "Folder"
+  },
+  "userMenu": {
+    "editProfile": "Edit Profile",
+    "logout": "Logout"
+  },
+  "profile": {
+    "accountSettings": "Account Settings",
+    "save": "Save",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email"
+  },
+  "drawer": {
+    "source": "Source",
+    "title": "Title",
+    "description": "Description",
+    "addTag": "Add tag ...",
+    "submit": "Submit",
+    "create": "Create",
+    "edit": "Edit"
+  },
+  "tag": {
+    "createTag": "Create Tag",
+    "tagName": "Tag Name",
+    "create": "Create"
+  },
+  "dialog": {
+    "iframeTitle": "Embedded frame example"
+  },
+  "common": {
+    "loading": "Loading",
+    "userIcon": "User icon"
+  }
+}

@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import TagCreatorComponent from '@/features/tag/components/TagCreatorComponent.vue'
 
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}))
+
 // Mock composables
 vi.mock('@/features/tag/composables/tag.graphql', () => ({
   useCreateTags: () => ({
