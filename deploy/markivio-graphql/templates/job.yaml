@@ -4,7 +4,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "deploy.fullname" $root }}-job-{{ .name }}-{{ $root.Chart.revision }}
+  name: {{ include "deploy.fullname" $root }}-job-{{ .name }}
   labels: 
     {{- include "deploy.labels" $root | nindent 4 }}
   annotations:
