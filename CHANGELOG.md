@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/FougereRegent/Markivio/compare/v1.5.5...v1.6.0) (2026-06-16)
+
+
+### Features
+
+* add multilingual ([#37](https://github.com/FougereRegent/Markivio/issues/37)) ([cc62672](https://github.com/FougereRegent/Markivio/commit/cc62672ad987674c96b9602d806964b58d6da467))
+
 ## [1.5.5](https://github.com/FougereRegent/Markivio/compare/v1.5.4...v1.5.5) (2026-06-16)
 
 
