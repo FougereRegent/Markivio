@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/FougereRegent/Markivio/compare/v1.6.0...v1.6.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* add transaction ([#38](https://github.com/FougereRegent/Markivio/issues/38)) ([0ee1a8e](https://github.com/FougereRegent/Markivio/commit/0ee1a8e7484a5b518fe0a9ff3b8f11eedc1ba2d2))
+
 # [1.6.0](https://github.com/FougereRegent/Markivio/compare/v1.5.5...v1.6.0) (2026-06-16)
 
 
