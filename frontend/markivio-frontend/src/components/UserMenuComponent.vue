@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import router from '@/router'
 import { useAuthStore } from '@/features/auth/stores/auth-store'
+import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 const authStore = useAuthStore()
+const { t } = useI18n()
 
-const items = [
+const items = computed(() => [
   {
-    label: 'Edit Profile',
+    label: t('userMenu.editProfile'),
     icon: 'ri-edit-line',
     command: () => router.push({ name: 'updateUser' }),
   },
-  { label: 'Logout', icon: 'ri-logout-box-line', command: async () => await authStore.logout() },
-]
+  { label: t('userMenu.logout'), icon: 'ri-logout-box-line', command: async () => await authStore.logout() },
+])
 </script>
 
 <template>

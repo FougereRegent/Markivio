@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import DrawerAddOrEdit from '@/features/drawer/components/DrawerAddOrEdit.vue'
 
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({ t: (key: string) => key }),
+}))
+
 // Mock stores and composables
 vi.mock('@/stores/add-edit-drawer-store', () => ({
   useAddEditDrawer: () => ({

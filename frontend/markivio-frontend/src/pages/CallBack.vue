@@ -1,5 +1,9 @@
-<template>
-  <div>Loading</div>
-</template>
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 
-<script setup lang="ts"></script>
+const { t } = useI18n()
+</script>
+
+<template>
+  <div>{{ t('common.loading') }}</div>
+</template>

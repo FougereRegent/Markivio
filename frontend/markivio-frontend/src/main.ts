@@ -6,21 +6,25 @@ import PrimeVue from 'primevue/config'
 import MyPreset from './themes/themes'
 import './assets/style.css'
 import { createPinia } from 'pinia'
-import * as z from 'zod'
 import { ToastService } from 'primevue'
 import { httpClient } from './config/urql.config'
 import { CONFIG } from './config/constante.config'
 import urql from '@urql/vue'
+import { i18n } from './i18n'
+import { useLocaleStore } from './stores/locale-store'
 
 const app = createApp(App)
 const pinia = createPinia()
 
-z.config(z.locales.fr())
+app.use(pinia)
+app.use(i18n)
+
+const localeStore = useLocaleStore()
+localeStore.setLocale(localeStore.locale)
 
 app
   .use(router)
   .use(ToastService)
-  .use(pinia)
   .use(
     createAuth0({
       domain: CONFIG.domain,

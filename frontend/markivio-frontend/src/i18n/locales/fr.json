@@ -1,0 +1,49 @@
+{
+  "signIn": {
+    "title": "Connexion",
+    "continue": "Continuer",
+    "subtitle": "Se connecter avec un autre compte"
+  },
+  "header": {
+    "search": "Rechercher ...",
+    "addLink": "Ajouter un lien"
+  },
+  "nav": {
+    "allArticles": "Tous les articles",
+    "favorites": "Favoris",
+    "tags": "Étiquettes",
+    "folder": "Dossier"
+  },
+  "userMenu": {
+    "editProfile": "Modifier le profil",
+    "logout": "Déconnexion"
+  },
+  "profile": {
+    "accountSettings": "Paramètres du compte",
+    "save": "Enregistrer",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email"
+  },
+  "drawer": {
+    "source": "Source",
+    "title": "Titre",
+    "description": "Description",
+    "addTag": "Ajouter une étiquette ...",
+    "submit": "Soumettre",
+    "create": "Créer",
+    "edit": "Modifier"
+  },
+  "tag": {
+    "createTag": "Créer une étiquette",
+    "tagName": "Nom de l'étiquette",
+    "create": "Créer"
+  },
+  "dialog": {
+    "iframeTitle": "Exemple de cadre intégré"
+  },
+  "common": {
+    "loading": "Chargement",
+    "userIcon": "Icône utilisateur"
+  }
+}

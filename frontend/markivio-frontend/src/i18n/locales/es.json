@@ -1,0 +1,49 @@
+{
+  "signIn": {
+    "title": "Iniciar sesión",
+    "continue": "Continuar",
+    "subtitle": "Iniciar sesión con otra cuenta"
+  },
+  "header": {
+    "search": "Buscar ...",
+    "addLink": "Añadir enlace"
+  },
+  "nav": {
+    "allArticles": "Todos los artículos",
+    "favorites": "Favoritos",
+    "tags": "Etiquetas",
+    "folder": "Carpeta"
+  },
+  "userMenu": {
+    "editProfile": "Editar perfil",
+    "logout": "Cerrar sesión"
+  },
+  "profile": {
+    "accountSettings": "Configuración de la cuenta",
+    "save": "Guardar",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico"
+  },
+  "drawer": {
+    "source": "Fuente",
+    "title": "Título",
+    "description": "Descripción",
+    "addTag": "Añadir etiqueta ...",
+    "submit": "Enviar",
+    "create": "Crear",
+    "edit": "Editar"
+  },
+  "tag": {
+    "createTag": "Crear etiqueta",
+    "tagName": "Nombre de la etiqueta",
+    "create": "Crear"
+  },
+  "dialog": {
+    "iframeTitle": "Ejemplo de marco incrustado"
+  },
+  "common": {
+    "loading": "Cargando",
+    "userIcon": "Icono de usuario"
+  }
+}
