@@ -15,6 +15,6 @@ public class MutationType : ObjectType<Mutation>
 
         descriptor.MapUserMutation()
         .MapTagMutation()
-        .MapCreateArticle();
+        .MapArticleMutation();
     }
 }
