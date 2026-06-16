@@ -1,3 +1,10 @@
+## [1.5.5](https://github.com/FougereRegent/Markivio/compare/v1.5.4...v1.5.5) (2026-06-16)
+
+
+### Bug Fixes
+
+* remove chart revision ([88a4272](https://github.com/FougereRegent/Markivio/commit/88a42724b8c7bbde1f08b804b3f94bef631955d2))
+
 ## [1.5.4](https://github.com/FougereRegent/Markivio/compare/v1.5.3...v1.5.4) (2026-06-16)
 
 
