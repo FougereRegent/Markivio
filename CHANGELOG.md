@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/FougereRegent/Markivio/compare/v1.5.1...v1.5.2) (2026-06-16)
+
+
+### Bug Fixes
+
+* delete old chart ([a76cb57](https://github.com/FougereRegent/Markivio/commit/a76cb5701030b628f18ebab346052686688392f4))
+
 ## [1.5.1](https://github.com/FougereRegent/Markivio/compare/v1.5.0...v1.5.1) (2026-06-14)
 
 
