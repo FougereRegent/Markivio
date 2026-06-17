@@ -1,3 +1,10 @@
+## [1.6.5](https://github.com/FougereRegent/Markivio/compare/v1.6.4...v1.6.5) (2026-06-17)
+
+
+### Bug Fixes
+
+* ci graphql ([fc40b06](https://github.com/FougereRegent/Markivio/commit/fc40b06a3715ab62bd53540b7e44a498116256a7))
+
 ## [1.6.4](https://github.com/FougereRegent/Markivio/compare/v1.6.3...v1.6.4) (2026-06-17)
 
 
