@@ -1,3 +1,10 @@
+## [1.6.3](https://github.com/FougereRegent/Markivio/compare/v1.6.2...v1.6.3) (2026-06-17)
+
+
+### Bug Fixes
+
+* fix ci ([ddd9b49](https://github.com/FougereRegent/Markivio/commit/ddd9b49b6a6712eb94f4673af2da9734bb5679ba))
+
 ## [1.6.2](https://github.com/FougereRegent/Markivio/compare/v1.6.1...v1.6.2) (2026-06-17)
 
 
