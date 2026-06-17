@@ -13,7 +13,7 @@ RUN sed -e "s/\(SEM_VERSION\)=\"v[0-9]\.[0-9]\.[0-9]\"/\1=\"${SEM_VERSION}\"/" -
 FROM alpine AS runtime
 WORKDIR /app
 
-RUN apk update && apk add bash && apk add gcompat
+RUN apk update && apk add bash && apk add gcompat && apk add chromium
 RUN adduser -s /bin/bash -H -D -u 1000 worker worker && chown -R worker /app 
 
 COPY --from=worker-builder /build/readability-worker .
