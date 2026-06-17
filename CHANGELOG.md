@@ -1,3 +1,10 @@
+## [1.6.4](https://github.com/FougereRegent/Markivio/compare/v1.6.3...v1.6.4) (2026-06-17)
+
+
+### Bug Fixes
+
+* add chrome in worker and ci ([724c7e7](https://github.com/FougereRegent/Markivio/commit/724c7e702cfa52bc6c48630172481e718e6bbbef))
+
 ## [1.6.3](https://github.com/FougereRegent/Markivio/compare/v1.6.2...v1.6.3) (2026-06-17)
 
 
