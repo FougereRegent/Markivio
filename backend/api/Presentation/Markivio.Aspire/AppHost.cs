@@ -48,7 +48,8 @@ var frontend = builder.AddViteApp("frontend", "../../../../frontend/markivio-fro
                     .WithEnvironment("VITE_MARKIVIO_AUTH_CLIENT_ID", env["MARKIVIO_AUTH_CLIENT_ID"])
                     .WithEnvironment("VITE_MARKIVIO_AUTH_DOMAIN", env["MARKIVIO_AUTH_DOMAIN"])
                     .WithEnvironment("VITE_MARKIVIO_AUTH_AUDIENCE", env["MARKIVIO_AUTH_AUDIENCE"])
-                    .WithEnvironment("VITE_MARKIVIO_GRAPHQL_API", "https://localhost:8080/graphql");
+                    .WithEnvironment("VITE_MARKIVIO_GRAPHQL_API", "https://localhost:8080/graphql")
+					.WithEnvironment("VITE_APP_VERSION", "1.0.0");
 
 var worker = builder.AddGolangApp(name: "worker",
         workingDirectory: "../../../worker/readability-worker/",
