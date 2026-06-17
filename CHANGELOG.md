@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/FougereRegent/Markivio/compare/v1.6.1...v1.6.2) (2026-06-17)
+
+
+### Bug Fixes
+
+* bugs dual account ([#40](https://github.com/FougereRegent/Markivio/issues/40)) ([f95ea5a](https://github.com/FougereRegent/Markivio/commit/f95ea5a7133b838e88e5fdd7d8efd338e2304366))
+
 ## [1.6.1](https://github.com/FougereRegent/Markivio/compare/v1.6.0...v1.6.1) (2026-06-16)
 
 
