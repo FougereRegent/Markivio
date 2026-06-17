@@ -22,6 +22,7 @@ public class AuthUser(
 
     public async Task<User?> GetUserInfoByToken(string jwtToken, CancellationToken cancellationToken = default)
     {
+        const string defaultName = "default";
         HttpClient client = httpClientFactory.CreateClient();
         JwtTokenInfo tok = JwtTokenExtentions.ParseToken(jwtToken);
 
@@ -47,16 +48,28 @@ public class AuthUser(
             {
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower,
-            });
+            }, cancellationToken);
             return userInfoFromAuth;
         });
-
-        return new User(new Domain.ValueObject.IdentityValueObject(
-                    userName: userInfo?.NickName ?? string.Empty,
-                    firstName: userInfo?.GivenName ?? string.Empty,
-                    lastName: userInfo?.FamilyName ?? string.Empty
+        if (userInfo == null)
+        {
+            return new User(new Domain.ValueObject.IdentityValueObject(
+                        userName: defaultName,
+                        firstName: defaultName,
+                        lastName: defaultName
                     ),
                 emailValue: new Domain.ValueObject.EmailValueObject(userInfo?.Email ?? string.Empty))
+            {
+                AuthId = authId,
+            };
+        }
+
+        return new User(new Domain.ValueObject.IdentityValueObject(
+                    userName: string.IsNullOrEmpty(userInfo.NickName) ? defaultName : userInfo.NickName,
+                    firstName: string.IsNullOrEmpty(userInfo.GivenName) ? defaultName : userInfo.GivenName,
+                    lastName: string.IsNullOrEmpty(userInfo.FamilyName) ? defaultName : userInfo.FamilyName
+                ),
+            emailValue: new Domain.ValueObject.EmailValueObject(userInfo?.Email ?? string.Empty))
         {
             AuthId = authId,
         };
