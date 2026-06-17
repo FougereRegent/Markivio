@@ -7,10 +7,14 @@ using Markivio.Domain.Auth;
 using Markivio.Domain.Repositories;
 using Markivio.Extensions.Identity;
 using Markivio.Domain.Entities;
+using System.Collections.Concurrent;
+
 namespace Markivio.Presentation.Interceptor;
 
 public class AuthUserInterceptor : DefaultHttpRequestInterceptor
 {
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> _lockSystem = new ConcurrentDictionary<string, SemaphoreSlim>();
+
     public override async ValueTask OnCreateAsync(HttpContext context,
         HotChocolate.Execution.IRequestExecutor requestExecutor,
         HotChocolate.Execution.OperationRequestBuilder requestBuilder,
@@ -27,6 +31,8 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
             string token = authHeader.Substring("Bearer ".Length);
             requestBuilder.SetGlobalState("token", token);
 
+            var sem = _lockSystem.GetOrAdd("token", new SemaphoreSlim(1, 1));
+            await sem.WaitAsync();
             User? user = await CheckIfUserExist(context, requestBuilder, token, cancellationToken);
             if (user is null)
             {
@@ -36,6 +42,7 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
                 if (result.IsFailed)
                 {
                     await unitOfWork.RollbackChangesAsync(cancellationToken);
+                    sem.Release();
                     throw new GraphQLException(ErrorBuilder.New()
                         .SetMessage(string.Join(Environment.NewLine, result.Errors.Select(pre => pre.Message)))
                         .Build());
@@ -48,6 +55,8 @@ public class AuthUserInterceptor : DefaultHttpRequestInterceptor
             {
                 requestBuilder.SetGlobalState("auth-user", user);
             }
+            sem.Release();
+            _lockSystem.TryRemove(token, out var _);
         }
         await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
     }
