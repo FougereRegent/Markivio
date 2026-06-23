@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useVersionStore } from '@/stores/version-store';
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const { version } = useVersionStore()
 </script>
 
 <template>
@@ -23,5 +25,8 @@ const { t } = useI18n()
       <NavElementComponent :name="t('nav.favorites')" icon-class="ri-folder-line" />
       <NavElementComponent :name="t('nav.tags')" icon-class="ri-folder-line" />
     </div>
+  </div>
+  <div class="px-3">
+    <p>{{version}}</p>
   </div>
 </template>
