@@ -27,7 +27,8 @@ watch(
       <Toast position="top-right" group="tr" />
       <Toast position="bottom-right" group="br" />
       <Splitter class="h-full pb-2" layout="horizontal">
-        <SplitterPanel :min-size="10" :size="15" class="bg-white">
+        <SplitterPanel :min-size="10" :size="15" class="bg-white flex-col flex
+        justify-between">
           <NavBarComponent />
         </SplitterPanel>
         <SplitterPanel :min-size="65" :size="85" class="bg-neutral-100 h-full">
