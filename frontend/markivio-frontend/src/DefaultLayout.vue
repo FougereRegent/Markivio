@@ -20,26 +20,25 @@ watch(
 
 <template>
   <div class="h-screen flex flex-col">
-    <header class="p-3 h-3/32">
+    <header class="p-3 h-2/32">
       <HeaderComponent />
     </header>
-    <div class="px-2 h-29/32">
+    <div class="h-30/32">
       <Toast position="top-right" group="tr" />
       <Toast position="bottom-right" group="br" />
-      <Splitter class="h-full pb-2" layout="horizontal">
-        <SplitterPanel :min-size="10" :size="15" class="bg-white flex-col flex
-        justify-between">
+      <div class="flex flex-row h-full w-full pb-2 border-gray-300 border-t-2">
+        <div class="p-1">
           <NavBarComponent />
-        </SplitterPanel>
-        <SplitterPanel :min-size="65" :size="85" class="bg-neutral-100 h-full">
-          <ScrollPanel class="h-full" v-show="!loadingStore.isLoading">
+        </div>
+        <div class="flex flex-2">
+          <ScrollPanel class="h-full w-full bg-gray-100" v-show="!loadingStore.isLoading">
             <RouterView />
           </ScrollPanel>
           <div class="p-5 h-full flex flex-col justify-center" v-show="loadingStore.isLoading">
             <ProgressSpinner />
           </div>
-        </SplitterPanel>
-      </Splitter>
+        </div>
+      </div>
     </div>
   </div>
 </template>
