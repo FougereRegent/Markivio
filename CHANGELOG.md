@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/FougereRegent/Markivio/compare/v1.6.5...v1.7.0) (2026-06-23)
+
+
+### Features
+
+* add version on frontend ([#41](https://github.com/FougereRegent/Markivio/issues/41)) ([a2605ad](https://github.com/FougereRegent/Markivio/commit/a2605adddfb6fc0ea967e8e391052cd5e891fd9e))
+
 ## [1.6.5](https://github.com/FougereRegent/Markivio/compare/v1.6.4...v1.6.5) (2026-06-17)
 
 
