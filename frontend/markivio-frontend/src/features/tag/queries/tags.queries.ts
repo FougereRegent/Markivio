@@ -24,6 +24,17 @@ export type TagsInformationQuery = {
   }>
 }
 
+export type TagsStatsQuery = {
+  tagsStats: {
+    items: Array<{
+      name: string,
+      color: string,
+      articleNumber: number
+    }>
+    totalCount: number
+  }
+}
+
 export const GetAllTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
   query Tags($skip: Int!, $take: Int!, $tagName: String) {
     tags(skip: $skip, take: $take, tagName: $tagName) {
@@ -52,4 +63,19 @@ export const AddTags: TypedDocumentNode<GetTagsInformationQuery> = gql`
       }
     }
   }
-`
+`;
+
+export const GetTagsAndAssociatedArticleNumber: TypedDocumentNode<TagsStatsQuery> = gql`
+  query TagsStats($skip: Int!, $take: Int!) {
+    tagsStats(order: [ {
+       articleNumber: DESC
+    }], skip: $skip, take: $take) {
+        items {
+            name
+            color
+            articleNumber
+        }
+        totalCount
+    }
+  }
+`;

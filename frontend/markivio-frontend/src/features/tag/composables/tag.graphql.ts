@@ -1,5 +1,5 @@
 import type { Tag } from '@/features/tag/models/tag.models'
-import { AddTags, GetAllTags } from '@/features/tag/queries/tags.queries'
+import { AddTags, GetAllTags, GetTagsAndAssociatedArticleNumber } from '@/features/tag/queries/tags.queries'
 import { useMutation, useQuery } from '@urql/vue'
 import { computed, type Ref } from 'vue'
 
@@ -56,4 +56,18 @@ export function useCreateTags(input: Ref<Tag> | Ref<Tag[]>) {
   }
 
   return { tags, error, fetching, createTags }
+}
+
+export function useGetTenMostUsedTags() {
+  const limit: number = 10;
+  const { data, error, fetching } = useQuery({
+    query: GetTagsAndAssociatedArticleNumber,
+    variables: {
+      skip: 0,
+      take: limit
+    }
+  })
+
+  const tags = computed(() => data.value?.tagsStats.items);
+  return { tags, error, fetching };
 }
