@@ -2,6 +2,9 @@
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue';
 import { useVersionStore } from '@/stores/version-store';
+import type { MenuPassThroughOptionType } from 'primevue';
+import { pt } from 'zod/v4/locales';
+import type { MenuItemCommandEvent } from 'primevue/menuitem';
 
 const { t } = useI18n();
 const { version } = useVersionStore();
@@ -38,7 +41,8 @@ const items = ref([
   },
   {
     label: "Tags",
-    icon: "ri-bookmark-line",
+    icon: "ri-add-line",
+    command: (evt: MenuItemCommandEvent) => { console.log("hello") },
     items: [
       {
         label: "React",
@@ -82,16 +86,25 @@ const items = ref([
   },
   {
     separator: true,
+  },
+  {
+    items: [{
+    label: "Corbeille",
+    icon: "ri-delete-bin-line"
+    }]
   }
 ])
 </script>
 
 <template>
-  <Menu :model="items" class="md:w-60 h-full">
+  <Menu :model="items" class="md:w-60 h-full flex flex-col justify-between" :pt="{root: {style: {border: 'none',
+                boxShadow:'none'}}}">
     <template #submenulabel="{ item }">
-      <div class="flex flex-row justify-between w-full">
-        <span class="text-primary font-semibold text-2xl">{{ item.label }}</span>
-        <i class="text-gray-400 text-2xl ml-auto" :class="item.icon" />
+      <div class="flex flex-row justify-between w-full h-full">
+        <span class="text-gray-400 font-semibold text-2xl">{{ item.label }}</span>
+        <i class="text-gray-400 text-2xl ml-auto"
+           :class="item.icon"
+          @click="item.command"/>
       </div>
     </template>
     <template #item="{ item, props }">
@@ -101,12 +114,12 @@ const items = ref([
             :style="{ backgroundColor: item.color }"></span>
           <i class="text-gray-400 text-2xl" :class="item.icon" v-if="item.icon" />
           <span class="text-xl">{{ item.label }}</span>
-          <span class="ml-auto">{{item.badge}}</span>
+          <span class="ml-auto">{{ item.badge }}</span>
         </div>
       </a>
     </template>
-    <template #end class="mt-auto">
-      <span class="inline-flex flex-col items-start">{{ version }}</span>
+    <template #end>
+      <p class="text-gray-300 font-light italic px-2">Version : {{version}}</p>
     </template>
   </Menu>
 </template>
