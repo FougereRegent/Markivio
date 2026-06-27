@@ -1,6 +1,7 @@
 #pragma warning disable RMG020
 using Markivio.Application.Dto;
 using Markivio.Domain.Entities;
+using Markivio.Domain.Repositories;
 using Markivio.Domain.ValueObject;
 using Riok.Mapperly.Abstractions;
 
@@ -21,6 +22,8 @@ public partial class TagMapper
 public static partial class TagMapperProjection
 {
     public static partial IQueryable<TagInformation> ProjectionToTagInformation(this IQueryable<Tag> tags);
+
+	public static partial IQueryable<TagStats> ProjectionToTagStat(this IQueryable<TagStatistique> query);
 
     [MapNestedProperties(nameof(Tag.TagValue))]
     private static partial TagInformation Map(Tag tag);
