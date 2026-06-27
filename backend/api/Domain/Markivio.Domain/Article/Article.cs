@@ -2,7 +2,7 @@ using Markivio.Domain.Exceptions;
 
 namespace Markivio.Domain.Entities;
 
-public sealed class Article : EntityWithTenancy
+public sealed class Article : EntityWithSoftDeleteAndTenancy
 {
     private const string REGEX_SOURCE = @"^(?:http[s]?:\/\/.)?(?:www\.)?[-a-zA-ZÀ-ÿà-ÿ0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b(?:[-a-zA-ZÀ-ÿà-ÿ0-9@:%_\+.~#?&\/\/=]*)";
     private const int TAGS_LIMIT = 20;
@@ -13,7 +13,9 @@ public sealed class Article : EntityWithTenancy
     public ArticleContent ArticleContent { get; set; } = null!;
     public List<Tag> Tags { get; set; } = new List<Tag>();
 
+    public bool IsFavorite { get; set; } = false;
     public bool IsFramable { get; set; } = true;
+    public ArticleReading Reading { get; set; }
 
     private Article() { }
 
