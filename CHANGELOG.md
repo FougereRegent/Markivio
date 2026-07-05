@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/FougereRegent/Markivio/compare/v1.7.0...v1.8.0) (2026-07-05)
+
+
+### Features
+
+* remake nav bar ([#42](https://github.com/FougereRegent/Markivio/issues/42)) ([73e3041](https://github.com/FougereRegent/Markivio/commit/73e3041833f27d4e590076e3edf8256eed578a2c))
+
 # [1.7.0](https://github.com/FougereRegent/Markivio/compare/v1.6.5...v1.7.0) (2026-06-23)
 
 
