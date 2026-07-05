@@ -12,9 +12,9 @@ public static class GetTagsAndNumberArticlesAssociated
                 .Field("tagsStats")
                 .Resolve(context =>
                 {
-					var tagUseCase = context.Services.GetRequiredService<ITagUseCase>();
-					return tagUseCase.GetAllTagsAndNumberAssociatedArticle();
-				})
+                    var tagUseCase = context.Services.GetRequiredService<ITagUseCase>();
+                    return tagUseCase.GetAllTagsAndNumberAssociatedArticle();
+                })
                 .UseOffsetPaging(options: GraphqlOptions.OffsetPagingOptions)
                 .UseSorting();
             return descriptor;

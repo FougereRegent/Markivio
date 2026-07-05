@@ -20,7 +20,7 @@ public interface ITagUseCase
     bool TagsExist<T>(IEnumerable<T> values, TagExistConditionEnum conditionEnum);
     Result<TagInformation[]> CreateTag(CreateTag[] creatingTags);
     IQueryable<TagInformation> GetAllTags(string tagName);
-	IQueryable<TagStats> GetAllTagsAndNumberAssociatedArticle();
+    IQueryable<TagStats> GetAllTagsAndNumberAssociatedArticle();
 }
 
 public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITagUseCase
@@ -37,9 +37,9 @@ public class TagUseCase(ITagRepository tagRepository, IAuthUser authUser) : ITag
         return query.ProjectionToTagInformation();
     }
 
-	public IQueryable<TagStats> GetAllTagsAndNumberAssociatedArticle() => 
-		tagRepository.GetAllTagsWithStatistique()
-		.ProjectionToTagStat();
+    public IQueryable<TagStats> GetAllTagsAndNumberAssociatedArticle() =>
+        tagRepository.GetAllTagsWithStatistique()
+        .ProjectionToTagStat();
 
     public Result<TagInformation[]> CreateTag(CreateTag[] creatingTags)
     {

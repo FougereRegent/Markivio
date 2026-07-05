@@ -35,16 +35,16 @@ internal class ArticleDbConfiguration : IEntityTypeConfiguration<Article>
             .Property(pre => pre.IsFramable)
             .HasDefaultValue(false);
 
-		builder
-			.Property(pre => pre.IsRemoved)
-			.HasDefaultValue(false);
+        builder
+            .Property(pre => pre.IsRemoved)
+            .HasDefaultValue(false);
 
-		builder
-			.Property(pre => pre.IsFavorite)
-			.HasDefaultValue(false);
+        builder
+            .Property(pre => pre.IsFavorite)
+            .HasDefaultValue(false);
 
-		builder
-			.Property(pre => pre.Reading)
-			.HasConversion(pre => pre.ToString(), pre => (ArticleReading)Enum.Parse(typeof(ArticleReading), pre));
+        builder
+            .Property(pre => pre.Reading)
+            .HasConversion(pre => pre.ToString(), pre => (ArticleReading)Enum.Parse(typeof(ArticleReading), pre));
     }
 }

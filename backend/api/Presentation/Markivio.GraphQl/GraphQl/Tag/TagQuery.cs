@@ -7,7 +7,7 @@ public static class TagQuery
         public IObjectTypeDescriptor<Query> MapTagQuery()
         {
             descriptor.MapGetTags()
-				.MapGetTagsAndNumberArticlesAssociated();
+                .MapGetTagsAndNumberArticlesAssociated();
             return descriptor;
         }
     }
