@@ -2,7 +2,6 @@
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue';
 import { useVersionStore } from '@/stores/version-store';
-import type { MenuItemCommandEvent } from 'primevue/menuitem';
 import { useGetTenMostUsedTags } from '@/features/tag/composables/tag.graphql';
 import { useArticleStore } from '@/stores/article-store';
 
@@ -52,7 +51,7 @@ const items = computed(() => [
   {
     label: t("nav.tags"),
     icon: "ri-add-line",
-    command: (evt: MenuItemCommandEvent) => { console.log("hello") },
+    command: () => { console.log("hello") },
     items: tags.value?.map(pre => ({
       label: pre.name,
       color: pre.color,
