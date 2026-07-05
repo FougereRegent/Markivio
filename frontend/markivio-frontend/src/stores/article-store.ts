@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useGetArticles } from '@/features/article/composables/article.graphql'
 
 

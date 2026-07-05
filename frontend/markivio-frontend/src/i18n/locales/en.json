@@ -11,6 +11,11 @@
   "nav": {
     "allArticles": "All Articles",
     "favorites": "Favorites",
+    "toRead": "To Read",
+    "allTags": "All Tags",
+    "archived": "Archived",
+    "handleTags": "Manage Tags",
+    "bin": "Trash",
     "tags": "Tags",
     "folder": "Folder"
   },

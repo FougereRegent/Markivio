@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useVersionStore } from '@/stores/version-store';
 import type { MenuItemCommandEvent } from 'primevue/menuitem';
 import { useGetTenMostUsedTags } from '@/features/tag/composables/tag.graphql';
@@ -10,7 +10,6 @@ const { t } = useI18n();
 const { version } = useVersionStore();
 
 const { tags } = useGetTenMostUsedTags();
-const selected = ref("Tous les articles");
 const { changeTagNameFilter, changeTypeFilter } = useArticleStore();
 
 type tagsElementBarMenu = {
@@ -25,25 +24,25 @@ const items = computed(() => [
   {
     items: [
       {
-        label: "Tous les articles",
+        label: t("nav.allArticles"),
         icon: "ri-article-line",
         badge: 10,
         command: () => changeTypeFilter()
       },
       {
-        label: "Favoris",
+        label: t("nav.favorites"),
         icon: "ri-star-line",
         badge: 10,
         command: () => changeTypeFilter()
       },
       {
-        label: "A lire",
+        label: t("nav.toRead"),
         icon: "ri-book-line",
         badge: 10,
         command: () => changeTypeFilter()
       },
       {
-        label: "Archives",
+        label: t("nav.archived"),
         icon: "ri-archive-line",
         badge: 10,
         command: () => changeTypeFilter()
@@ -51,7 +50,7 @@ const items = computed(() => [
     ]
   },
   {
-    label: "Tags",
+    label: t("nav.tags"),
     icon: "ri-add-line",
     command: (evt: MenuItemCommandEvent) => { console.log("hello") },
     items: tags.value?.map(pre => ({
@@ -60,10 +59,10 @@ const items = computed(() => [
       badge: pre.articleNumber,
       command: () => changeTagNameFilter(pre.name)
     } as tagsElementBarMenu)).concat([{
-      label: "Tous les tags",
+      label: t("nav.allTags"),
       icon: "ri-bookmark-line",
     }, {
-      label: "Gérer les tags",
+      label: t("nav.handleTags"),
       icon: "ri-settings-5-line"
     }] as Array<tagsElementBarMenu>)
   },
@@ -72,7 +71,7 @@ const items = computed(() => [
   },
   {
     items: [{
-      label: "Corbeille",
+      label: t("nav.bin"),
       icon: "ri-delete-bin-line"
     }]
   }
