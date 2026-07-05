@@ -5,6 +5,10 @@ import { useVersionStore } from '@/stores/version-store';
 import { useGetTenMostUsedTags } from '@/features/tag/composables/tag.graphql';
 import { useArticleStore } from '@/stores/article-store';
 
+const emit = defineEmits<{
+  'close-sidebar': []
+}>()
+
 const { t } = useI18n();
 const { version } = useVersionStore();
 
@@ -79,7 +83,10 @@ const items = computed(() => [
 </script>
 
 <template>
-  <Menu :model="items" class="md:w-60 h-full flex flex-col justify-between" :pt="{
+  <div class="flex justify-end sm:hidden px-2 py-1 border-b border-neutral-200">
+    <Button icon="ri-close-line" severity="secondary" text @click="emit('close-sidebar')" />
+  </div>
+  <Menu :model="items" class="w-60 h-full flex flex-col justify-between" :pt="{
     root: {
       style: {
         border: 'none',

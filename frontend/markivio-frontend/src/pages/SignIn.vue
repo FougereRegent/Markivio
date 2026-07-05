@@ -10,13 +10,13 @@ const { t } = useI18n()
 
 <template>
   <div class="flex items-center justify-center h-screen bg-neutral-100">
-    <div class="flex flex-col p-6 w-5/12 h-6/12 rounded-2xl bg-neutral-50">
+    <div class="flex flex-col p-4 sm:p-6 w-[90%] sm:w-3/4 md:w-1/2 lg:w-5/12 max-w-lg rounded-2xl bg-neutral-50">
       <div class="flex justify-end">
         <LanguageSelector />
       </div>
       <LogoComponent />
       <div class="flex flex-col items-center justify-center h-full">
-        <span class="font-semibold text-4xl mb-2 text-neutral-900 antialiased">{{ t('signIn.title') }}</span>
+        <span class="font-semibold text-2xl sm:text-3xl md:text-4xl mb-2 text-neutral-900 antialiased">{{ t('signIn.title') }}</span>
         <Button class="w-56" @click="authStore.login" :label="t('signIn.continue')" size="large" />
         <div class="flex flex-row justify-between w-56 mt-5">
           <img

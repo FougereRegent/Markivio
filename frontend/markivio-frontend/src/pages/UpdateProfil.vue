@@ -28,8 +28,8 @@ async function submit() {
 <template>
   <div class="p-5 h-full">
     <div class="flex flex-row justify-between">
-      <h1 class="text-4xl text-gray-900">{{ t('profile.accountSettings') }}</h1>
-      <Button size="large" :label="t('profile.save')" class="w-2/12" @click="submit" />
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl text-gray-900">{{ t('profile.accountSettings') }}</h1>
+      <Button size="large" :label="t('profile.save')" class="w-full sm:w-auto md:w-2/12" @click="submit" />
     </div>
     <form class="flex flex-col mt-2 h-5/24 justify-around">
       <FloatLabel>
@@ -39,7 +39,7 @@ async function submit() {
           type="text"
           v-model="userInfo.firstName"
           size="large"
-          class="w-6/12"
+          class="w-full md:w-6/12"
           :invalid="showErrors.firstName"
         />
       </FloatLabel>
@@ -49,7 +49,7 @@ async function submit() {
           id="lastName"
           type="text"
           v-model="userInfo.lastName"
-          class="w-6/12"
+          class="w-full md:w-6/12"
           :invalid="showErrors.lastName"
         />
       </FloatLabel>
@@ -61,7 +61,7 @@ async function submit() {
           v-model="userInfo.email"
           disabled
           size="large"
-          class="w-6/12"
+          class="w-full md:w-6/12"
         />
       </FloatLabel>
     </form>

@@ -61,26 +61,30 @@ function editArticle() {
   >
     <div class="flex flex-col flex-4 w-10 h-full">
       <div class="flex flex-row">
-        <p class="flex-1 text-3xl mb-1 text-gray-900 font-semibold">{{ props.title }}</p>
-        <Button class="mx-1" icon="ri-edit-box-line" severity="secondary" @click="editArticle" />
-        <Button
-          class="mx-1"
-          icon="ri-article-line"
-          severity="secondary"
-          @click="showSourceArticle"
-        />
-        <Button
-          class="mx-1"
-          icon="ri-code-line"
-          severity="secondary"
-          @click="showMarkdownArticle"
-        />
+        <p class="flex-1 text-lg md:text-xl lg:text-2xl 2xl:text-3xl mb-1 text-gray-900 font-semibold break-words">{{ props.title }}</p>
+        <div class="flex shrink-0">
+          <Button class="mx-0.5" icon="ri-edit-box-line" severity="secondary" text @click="editArticle" />
+          <Button
+            class="mx-0.5"
+            icon="ri-article-line"
+            severity="secondary"
+            text
+            @click="showSourceArticle"
+          />
+          <Button
+            class="mx-0.5"
+            icon="ri-code-line"
+            severity="secondary"
+            text
+            @click="showMarkdownArticle"
+          />
+        </div>
       </div>
 
-      <div class="h-8/12 w-11/12 text-s my-2 text-gray-600">
+      <div class="w-full text-sm my-2 text-gray-600">
         <p class="line-clamp-3 text-justify">{{ props.description }}</p>
       </div>
-      <div class="flex flex-row flex-2 gap-3">
+      <div class="flex flex-row flex-wrap gap-2">
         <template v-for="item of props.tags" :key="item.label">
           <Tag
             :value="item.label"
