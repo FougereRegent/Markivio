@@ -16,3 +16,11 @@ public record CreateTag(
     string Name,
     string Color
 );
+
+public class TagStats
+{
+    public string Name { get; init; } = string.Empty;
+    public string Color { get; init; } = string.Empty;
+    public int ArticleNumber { get; init; }
+
+}

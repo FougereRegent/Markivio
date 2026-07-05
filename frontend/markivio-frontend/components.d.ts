@@ -14,7 +14,6 @@ declare module 'vue' {
     AutoComplete: typeof import('primevue/autocomplete')['default']
     Button: typeof import('primevue/button')['default']
     Chip: typeof import('primevue/chip')['default']
-    ColorPicker: typeof import('primevue/colorpicker')['default']
     DialogContent: typeof import('./src/components/DialogContent.vue')['default']
     DialogSource: typeof import('./src/components/DialogSource.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
@@ -27,20 +26,18 @@ declare module 'vue' {
     Menu: typeof import('primevue/menu')['default']
     Message: typeof import('primevue/message')['default']
     NavBarComponent: typeof import('./src/components/NavBarComponent.vue')['default']
-    NavElementComponent: typeof import('./src/components/NavElementComponent.vue')['default']
     Popover: typeof import('primevue/popover')['default']
     ProgressSpinner: typeof import('primevue/progressspinner')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollPanel: typeof import('primevue/scrollpanel')['default']
     SelectButton: typeof import('primevue/selectbutton')['default']
-    Splitter: typeof import('primevue/splitter')['default']
-    SplitterPanel: typeof import('primevue/splitterpanel')['default']
     Toast: typeof import('primevue/toast')['default']
     UserIconComponent: typeof import('./src/components/UserIconComponent.vue')['default']
     UserMenuComponent: typeof import('./src/components/UserMenuComponent.vue')['default']
   }
   export interface GlobalDirectives {
     Ripple: typeof import('primevue/ripple')['default']
+    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }

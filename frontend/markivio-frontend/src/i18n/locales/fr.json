@@ -11,7 +11,12 @@
   "nav": {
     "allArticles": "Tous les articles",
     "favorites": "Favoris",
-    "tags": "Étiquettes",
+	"toRead": "A lire",
+	"allTags": "Tous les tags",
+	"archived": "Archives",
+	"handleTags": "Gérer les tags",
+	"bin": "Corbeille",
+    "tags": "Tags",
     "folder": "Dossier"
   },
   "userMenu": {

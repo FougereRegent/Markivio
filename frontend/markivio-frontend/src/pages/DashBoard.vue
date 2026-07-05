@@ -4,18 +4,20 @@ import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
 import DrawerAddOrEdit from '@/features/drawer/components/DrawerAddOrEdit.vue'
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
-import { useGetArticles } from '@/features/article/composables/article.graphql'
+import { useArticleStore } from '@/stores/article-store'
+import { storeToRefs } from 'pinia'
 
 const articlesProps = ref<ArticleProps[]>([])
 const drawer = useAddEditDrawer()
 const articlesRef = useTemplateRef('articles')
-const offset = ref(0)
+const articleStore = useArticleStore();
+const { executeQuery } = useArticleStore();
+const { offset, articles, hasNext } = storeToRefs(articleStore);
 
-const { articles, hasNext, executeQuery } = useGetArticles(offset, 15)
 const { reset } = useInfiniteScroll(
   articlesRef,
   () => {
-    offset.value = articlesProps.value.length
+    offset.value = articlesProps.value.length;
   },
   {
     distance: 10,
@@ -43,15 +45,15 @@ watch(
     if (!newState && oldState) {
       articlesProps.value = []
       reset()
-      offset.value = 0
-      executeQuery({ requestPolicy: 'network-only' })
+      offset.value = 0;
+      executeQuery();
     }
   },
   { immediate: true },
 )
 
 onMounted(() => {
-  offset.value = 0
+  offset.value = 0;
 })
 </script>
 

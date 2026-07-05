@@ -48,6 +48,7 @@
   --surface-color-800-dark: #e2e8f0;
   --surface-color-900-dark: #f8fafc;
   --surface-color-950-dark: #ffffff;
+
 }
 
 @import 'tailwindcss';

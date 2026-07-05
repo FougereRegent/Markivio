@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import type { Article } from '@/features/article/models/article.models'
 
 
@@ -45,7 +46,8 @@ describe('article.graphql composables', () => {
   describe('useGetArticles', () => {
     it('Should initialize with correct structure', () => {
       const offset = ref(0)
-      const result = useGetArticles(offset, 10)
+      const articleName: Ref<string | null> = ref(null)
+      const result = useGetArticles(offset, 10, articleName)
 
       expect(result.articles).toBeDefined()
       expect(result.error).toBeDefined()
@@ -56,7 +58,8 @@ describe('article.graphql composables', () => {
 
     it('Should return computed articles', () => {
       const offset = ref(0)
-      const { articles } = useGetArticles(offset, 10)
+      const articleName: Ref<string | null> = ref(null)
+      const { articles } = useGetArticles(offset, 10, articleName)
 
       // Test that it returns a computed ref
       expect(articles.value).toBeUndefined() // Initially null data

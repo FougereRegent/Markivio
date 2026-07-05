@@ -11,6 +11,11 @@
   "nav": {
     "allArticles": "Todos los artículos",
     "favorites": "Favoritos",
+    "toRead": "Para leer",
+    "allTags": "Todas las etiquetas",
+    "archived": "Archivados",
+    "handleTags": "Gestionar etiquetas",
+    "bin": "Papelera",
     "tags": "Etiquetas",
     "folder": "Carpeta"
   },

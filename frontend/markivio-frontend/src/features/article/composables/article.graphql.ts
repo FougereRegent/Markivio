@@ -1,7 +1,7 @@
 import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue';
 import { type Article } from '@/features/article/models/article.models'
 import type { Tag } from '@/features/tag/models/tag.models';
-import { AddArticles, GetArticleById, GetArticles, GetUrlAndContentByArticleId, UpdateArticle } from '@/features/article/queries/article.queries'
+import { AddArticles, GetArticleById, GetArticles, GetArticlesByTagName, GetUrlAndContentByArticleId, UpdateArticle } from '@/features/article/queries/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
 
@@ -12,11 +12,10 @@ export type UrlSource = {
   content: string
 }
 
-export function useGetArticles(offset: Ref<number>, limit: number) {
+export function useGetArticles(offset: Ref<number>, limit: number, articleName: Ref<string | null>) {
   const { data, error, fetching, executeQuery } = useQuery({
-    query: GetArticles,
-    variables: computed(() => ({ offset: offset.value, limit: limit })),
-  })
+    query: computed(() => articleName?.value == null ? GetArticles : GetArticlesByTagName),
+    variables: computed(() => ({ offset: offset.value, limit: limit, articleName: articleName?.value }))  })
 
   const hasNext = computed(() => data.value?.articles.pageInfo.hasNextPage ?? false)
   const articles = computed(() =>
@@ -101,11 +100,11 @@ export function useGetArticleById(id: Ref<string | null>, options?: { pause?: Re
     } as Article
   })
 
-  return {article, executeQuery, error}
+  return { article, executeQuery, error }
 }
 
 export function useUpdateArticle() {
-  const { data, executeMutation, fetching, error} = useMutation(UpdateArticle);
+  const { data, executeMutation, fetching, error } = useMutation(UpdateArticle);
 
   function updateArticle(article: Ref<Article>) {
     const art = toValue(article);
@@ -114,10 +113,10 @@ export function useUpdateArticle() {
         id: art.id,
         title: art.title,
         description: art.description,
-        tags: art.tags.map(src => ({id: src.id}))
+        tags: art.tags.map(src => ({ id: src.id }))
       }
     });
   }
 
-  return { data, updateArticle, fetching, error}
+  return { data, updateArticle, fetching, error }
 }

@@ -13,6 +13,10 @@ import urql from '@urql/vue'
 import { i18n } from './i18n'
 import { useLocaleStore } from './stores/locale-store'
 
+import Tooltip from 'primevue/tooltip';
+
+
+
 const app = createApp(App)
 const pinia = createPinia()
 
@@ -46,4 +50,5 @@ app
     },
   })
   .use(urql, httpClient)
+  .directive('tooltip', Tooltip)
   .mount('#app')
