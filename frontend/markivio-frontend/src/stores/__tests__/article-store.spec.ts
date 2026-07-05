@@ -33,7 +33,7 @@ describe('article-store', () => {
   it('should call useGetArticles with correct initial parameters', () => {
     useArticleStore()
     expect(mockUseGetArticles).toHaveBeenCalledOnce()
-    const [offsetRef, limit] = mockUseGetArticles.mock.calls[0]
+    const [offsetRef, limit] = mockUseGetArticles.mock.calls[0]!
     expect(offsetRef.value).toBe(0)
     expect(limit).toBe(15)
   })

@@ -90,7 +90,7 @@ const items = computed(() => [
     <template #submenulabel="{ item }">
       <div class="flex flex-row justify-between w-full h-full">
         <span class="text-gray-400 font-semibold text-xl">{{ item.label }}</span>
-        <i class="text-gray-400 text-xl ml-auto hover:opacity-70" :class="item.icon" @click="item.command" />
+        <i class="text-gray-400 text-xl ml-auto hover:opacity-70" :class="item.icon" @click="(item.command as any)?.()" />
       </div>
     </template>
     <template #item="{ item, props }">
