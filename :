@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch} from 'vue';
 import { useVersionStore } from '@/stores/version-store';
 import type { MenuItemCommandEvent } from 'primevue/menuitem';
 import { useGetTenMostUsedTags } from '@/features/tag/composables/tag.graphql';
@@ -10,14 +10,6 @@ const { version } = useVersionStore();
 
 const { tags } = useGetTenMostUsedTags();
 const selected = ref("Tous les articles");
-
-type tagsElementBarMenu = {
-  label: string,
-  color: string,
-  icon?: string,
-  badge?: number,
-  command?: () => void
-}
 
 const items = computed(() => [
   {
@@ -48,17 +40,14 @@ const items = computed(() => [
     label: "Tags",
     icon: "ri-add-line",
     command: (evt: MenuItemCommandEvent) => { console.log("hello") },
-    items: tags.value?.map(pre => ({
-      label: pre.name,
-      color: pre.color,
-      badge: pre.articleNumber,
-    } as tagsElementBarMenu)).concat([{
-      label: "Tous les tags",
-      icon: "ri-bookmark-line",
-    }, {
-      label: "Gérer les tags",
-      icon: "ri-settings-5-line"
-    }] as Array<tagsElementBarMenu>)
+    items: tags.value?.map(pre => {
+      return {
+        label: pre.name,
+        color: pre.color,
+        badge: pre.articleNumber,
+        command: () => console.log(pre.name),
+      };
+    }),
   },
   {
     separator: true,
@@ -71,6 +60,9 @@ const items = computed(() => [
   }
 ]);
 
+watch(tags, (data) => {
+
+});
 </script>
 
 <template>
@@ -94,7 +86,7 @@ const items = computed(() => [
           <span class="rounded-full w-4 h-4" v-if="item.color != undefined"
             :style="{ backgroundColor: item.color }"></span>
           <i class="text-gray-400 text-xl" :class="item.icon" v-if="item.icon" />
-          <span v-tooltip.right="{ value: item.label, showDelay: 650 }" class="text-l truncate w-35
+            <span v-tooltip.right="{value: item.label, showDelay: 650}" class="text-l truncate w-35
               font-semibold">{{ item.label }}</span>
           <span class="ml-auto">{{ item.badge }}</span>
         </div>
