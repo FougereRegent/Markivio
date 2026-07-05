@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useVersionStore } from '@/stores/version-store';
 import type { MenuItemCommandEvent } from 'primevue/menuitem';
 import { useGetTenMostUsedTags } from '@/features/tag/composables/tag.graphql';
+import { useArticleStore } from '@/stores/article-store';
 
 const { t } = useI18n();
 const { version } = useVersionStore();
 
 const { tags } = useGetTenMostUsedTags();
 const selected = ref("Tous les articles");
+const { changeTagNameFilter, changeTypeFilter } = useArticleStore();
 
 type tagsElementBarMenu = {
   label: string,
@@ -26,21 +28,25 @@ const items = computed(() => [
         label: "Tous les articles",
         icon: "ri-article-line",
         badge: 10,
+        command: () => changeTypeFilter()
       },
       {
         label: "Favoris",
         icon: "ri-star-line",
         badge: 10,
+        command: () => changeTypeFilter()
       },
       {
         label: "A lire",
         icon: "ri-book-line",
         badge: 10,
+        command: () => changeTypeFilter()
       },
       {
         label: "Archives",
         icon: "ri-archive-line",
         badge: 10,
+        command: () => changeTypeFilter()
       },
     ]
   },
@@ -52,6 +58,7 @@ const items = computed(() => [
       label: pre.name,
       color: pre.color,
       badge: pre.articleNumber,
+      command: () => changeTagNameFilter(pre.name)
     } as tagsElementBarMenu)).concat([{
       label: "Tous les tags",
       icon: "ri-bookmark-line",

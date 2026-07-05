@@ -75,6 +75,27 @@ export const GetArticles: TypedDocumentNode<GetArticlesInformationQuery> = gql`
   }
 `
 
+export const GetArticlesByTagName: TypedDocumentNode<GetArticlesInformationQuery> = gql`
+  ${ArticleInformationFragment}
+  ${ArticlePaginationFragment}
+  query Articles($offset: Int!, $limit: Int!, $articleName: String!) {
+    articles(skip: $offset, take: $limit, where : {
+      tags: {
+        some: {
+          name: {
+            eq: $articleName
+          }
+        }
+      }
+    }) {
+      items {
+        ...Article
+      }
+      ...Pagination
+    }
+  }
+`;
+
 export const AddArticles: TypedDocumentNode<AddArticleReturn> = gql`
   mutation AddArticles($input: CreateArticleInput!) {
     createArticle(createArticle: $input) {
