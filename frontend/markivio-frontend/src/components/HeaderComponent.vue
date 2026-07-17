@@ -1,24 +1,16 @@
 <script setup lang="ts">
 import LogoComponent from '@/components/LogoComponent.vue'
 import 'remixicon/fonts/remixicon.css'
-import UserIconComponent from '@/components/UserIconComponent.vue'
-import UserMenuComponent from '@/components/UserMenuComponent.vue'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const emit = defineEmits<{
   'toggle-sidebar': []
 }>()
 
-const popoverRef = ref()
 const drawer = useAddEditDrawer()
 const { t } = useI18n()
-
-const clickIcon = () => {
-  popoverRef.value.toggle(event)
-}
 </script>
 
 <template>
@@ -38,11 +30,6 @@ const clickIcon = () => {
     <div class="flex items-center gap-1 md:gap-2">
       <LanguageSelector />
       <Button icon="ri-add-line" size="small" class="shrink-0" @click="drawer.open(false)" />
-      <div class="h-6 border-l border-neutral-300"></div>
-      <UserIconComponent @click-icon="clickIcon" class="mr-1 md:mr-3" />
     </div>
-    <Popover ref="popoverRef">
-      <UserMenuComponent />
-    </Popover>
   </div>
 </template>

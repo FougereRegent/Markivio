@@ -1,7 +1,7 @@
 import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue';
 import { type Article } from '@/features/article/models/article.models'
 import type { Tag } from '@/features/tag/models/tag.models';
-import { AddArticles, GetArticleById, GetArticles, GetArticlesByTagName, GetUrlAndContentByArticleId, UpdateArticle } from '@/features/article/queries/article.queries'
+import { AddArticles, GetArticleById, GetArticles, GetArticlesByTagName, GetUrlAndContentByArticleId, UpdateArticle, ToggleFavorite } from '@/features/article/queries/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
 
@@ -25,6 +25,7 @@ export function useGetArticles(offset: Ref<number>, limit: number, articleName: 
           id: pre.id,
           title: pre.title,
           description: pre.description,
+          isFavorite: pre.isFavorite,
           tags: pre.tags.map((pre) => ({ color: pre.color, label: pre.name })),
         }) as ArticleProps,
     ),
@@ -119,4 +120,14 @@ export function useUpdateArticle() {
   }
 
   return { data, updateArticle, fetching, error }
+}
+
+export function useToggleFavorite() {
+  const { data, executeMutation, fetching, error } = useMutation(ToggleFavorite);
+
+  function toggleFavorite(id: string) {
+    return executeMutation({ input: { id } });
+  }
+
+  return { data, toggleFavorite, fetching, error }
 }

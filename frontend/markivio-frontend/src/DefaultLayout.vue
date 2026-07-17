@@ -38,13 +38,16 @@ watch(
       <Toast position="bottom-right" group="br" />
       <div class="flex flex-row flex-1 min-h-0 w-full pb-2 border-gray-300 border-t-2">
         <aside :class="sidebarOpen
-          ? 'fixed inset-0 z-40 sm:static sm:inset-auto sm:z-auto sm:block'
-          : 'hidden sm:block'" class="shrink-0">
-          <div v-if="sidebarOpen"
-               class="fixed inset-0 bg-black/50 sm:hidden"
+          ? 'fixed inset-0 z-40 transition-transform duration-300 ease-in-out sm:static sm:inset-auto sm:z-auto sm:block sm:transition-none'
+          : 'fixed inset-0 z-40 -translate-x-full pointer-events-none transition-transform duration-300 ease-in-out sm:static sm:inset-auto sm:z-auto sm:block sm:translate-x-0 sm:pointer-events-auto sm:transition-none'">
+          <div class="fixed inset-0 bg-black/50 sm:hidden transition-opacity duration-300"
+               :class="sidebarOpen ? 'opacity-100' : 'opacity-0'"
                @click="closeSidebar" />
-          <div class="relative z-10 h-full">
-            <div class="p-1 h-full">
+          <div class="relative z-10 h-full w-72 bg-white sm:bg-transparent shadow-xl sm:shadow-none flex flex-col">
+            <div class="sm:hidden flex justify-end px-3 py-2 border-b border-neutral-100">
+              <Button icon="ri-close-line" severity="secondary" text rounded @click="closeSidebar" />
+            </div>
+            <div class="flex-1 min-h-0">
               <NavBarComponent @close-sidebar="closeSidebar" />
             </div>
           </div>

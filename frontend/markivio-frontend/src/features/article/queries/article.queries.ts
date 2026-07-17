@@ -8,6 +8,7 @@ export type GetArticlesInformationQuery = {
       source: string
       title: string
       description?: string
+      isFavorite: boolean
       tags: Array<{
         id: string
         name: string
@@ -45,6 +46,7 @@ fragment Article on ArticleInformation {
     source
     title
     description
+    isFavorite
     tags {
         id
         name
@@ -139,6 +141,15 @@ export const GetArticleById: TypedDocumentNode<GetArticlesInformationQuery> = gq
         ...Article
       }
       ...Pagination
+    }
+  }
+`
+
+export const ToggleFavorite: TypedDocumentNode<AddArticleReturn> = gql`
+  mutation ToggleFavorite($input: ToggleFavoriteInput!) {
+    toggleFavorite(toggleFavorite: $input) {
+      id
+      isFavorite
     }
   }
 `
