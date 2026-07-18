@@ -32,9 +32,9 @@ public class ArticleInformationType : ObjectType<ArticleInformation>
             .Field(f => f.IsFramable)
             .Type<BooleanType>();
 
-		descriptor
-			.Field(f => f.IsFavorite)
-			.Type<BooleanType>();
+        descriptor
+            .Field(f => f.IsFavorite)
+            .Type<BooleanType>();
     }
 }
 

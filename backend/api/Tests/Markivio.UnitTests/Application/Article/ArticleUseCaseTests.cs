@@ -229,7 +229,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync(existing);
 
         tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
-            .Returns Enumerable.Empty<Tag>().AsQueryable();
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
 
         articleRepositoryMock.Setup(pre => pre.GetByTitle(newTitle, It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateArticle(title: newTitle));
@@ -261,7 +261,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync(existing);
 
         tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
-            .Returns Enumerable.Empty<Tag>().AsQueryable();
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
 
         // Act
         Result<ArticleInformation> result = await useCase.UpdateArticle(input);
@@ -293,7 +293,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync(existing);
 
         tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
-            .Returns Enumerable.Empty<Tag>().AsQueryable();
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
 
         articleRepositoryMock.Setup(pre => pre.Update(It.IsAny<Article>()))
             .Returns((Article a) => a);
@@ -326,7 +326,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync(existing);
 
         tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
-            .Returns Enumerable.Empty<Tag>().AsQueryable();
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
 
         articleRepositoryMock.Setup(pre => pre.Update(It.IsAny<Article>()))
             .Returns((Article a) => a);
@@ -357,7 +357,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync(existing);
 
         tagRepositoryMock.Setup(pre => pre.GetByIds(It.IsAny<IEnumerable<Guid>>()))
-            .Returns Enumerable.Empty<Tag>().AsQueryable();
+            .Returns(Enumerable.Empty<Tag>().AsQueryable());
 
         articleRepositoryMock.Setup(pre => pre.Update(It.IsAny<Article>()))
             .Returns((Article a) => a);

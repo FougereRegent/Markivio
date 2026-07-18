@@ -34,8 +34,9 @@ public partial class Mutation
         return resultRemoveTags.ThrowIfResultIsFailed();
     }
 
-	public async Task<ArticleInformation> ToggleFavorite(IArticleUseCase articleUseCase, ArticleById articleById, CancellationToken cancellationToken = default) {
-		var resultToggleArticle = await articleUseCase.SetOrUnsetFavoriteArticle(articleById, cancellationToken);
-		return resultToggleArticle.ThrowIfResultIsFailed();
-	}
+    public async Task<ArticleInformation> ToggleFavorite(IArticleUseCase articleUseCase, ArticleById articleById, CancellationToken cancellationToken = default)
+    {
+        var resultToggleArticle = await articleUseCase.SetOrUnsetFavoriteArticle(articleById, cancellationToken);
+        return resultToggleArticle.ThrowIfResultIsFailed();
+    }
 }

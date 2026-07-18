@@ -8,7 +8,7 @@ public static class ArticleMutation
         {
             descriptor.MapCreateArticle()
                 .MapUpdateArticle()
-				.MapToggleFavorite()
+                .MapToggleFavorite()
                 .MapAddTags();
             return descriptor;
         }

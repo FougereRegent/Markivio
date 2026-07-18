@@ -31,7 +31,7 @@ namespace Markivio.Persistence.Migrations
                 nullable: false,
                 defaultValue: "");
 
-			migrationBuilder.Sql("""
+            migrationBuilder.Sql("""
 					UPDATE public.articles SET reading = 'New'
 					""");
         }

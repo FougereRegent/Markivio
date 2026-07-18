@@ -11,5 +11,5 @@ public class ArticleInformation
     public UserInformation User { get; set; }
     public List<TagInformation> Tags { get; set; } = new List<TagInformation>();
     public string Content { get; set; } = string.Empty;
-	public bool IsFavorite { get; set; }
+    public bool IsFavorite { get; set; }
 }
