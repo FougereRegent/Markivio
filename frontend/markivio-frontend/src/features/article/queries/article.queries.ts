@@ -146,8 +146,10 @@ export const GetArticleById: TypedDocumentNode<GetArticlesInformationQuery> = gq
 `
 
 export const ToggleFavorite: TypedDocumentNode<AddArticleReturn> = gql`
-  mutation ToggleFavorite($input: ToggleFavoriteInput!) {
-    toggleFavorite(toggleFavorite: $input) {
+  mutation ToggleFavorite($input: UUID!) {
+    toggleFavorite(articleById: {
+      articleId: $input
+    }) {
       id
       isFavorite
     }

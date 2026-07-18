@@ -126,7 +126,7 @@ export function useToggleFavorite() {
   const { data, executeMutation, fetching, error } = useMutation(ToggleFavorite);
 
   function toggleFavorite(id: string) {
-    return executeMutation({ input: { id } });
+    return executeMutation({ input: id });
   }
 
   return { data, toggleFavorite, fetching, error }
