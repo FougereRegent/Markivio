@@ -30,6 +30,10 @@ namespace Markivio.Persistence.Migrations
                 type: "text",
                 nullable: false,
                 defaultValue: "");
+
+			migrationBuilder.Sql("""
+					UPDATE public.articles SET reading = 'New'
+					""");
         }
 
         /// <inheritdoc />

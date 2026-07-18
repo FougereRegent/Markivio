@@ -14,5 +14,11 @@ public static class UpdateArticle
             return descriptor;
         }
 
+		public IObjectTypeDescriptor<Mutation> MapToggleFavorite() {
+			descriptor.Field(f => f.ToggleFavorite(default!, default!, default!))
+				.UseTransactionMiddleware()
+				.Type<ArticleInformationType>();
+			return descriptor;
+		}
     }
 }

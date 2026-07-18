@@ -33,4 +33,9 @@ public partial class Mutation
         FluentResults.Result<ArticleInformation> resultRemoveTags = await articleUseCase.RemoveTags(removeTagsToArticle);
         return resultRemoveTags.ThrowIfResultIsFailed();
     }
+
+	public async Task<ArticleInformation> ToggleFavorite(IArticleUseCase articleUseCase, ArticleById articleById, CancellationToken cancellationToken = default) {
+		var resultToggleArticle = await articleUseCase.SetOrUnsetFavoriteArticle(articleById, cancellationToken);
+		return resultToggleArticle.ThrowIfResultIsFailed();
+	}
 }

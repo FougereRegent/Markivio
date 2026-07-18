@@ -73,14 +73,16 @@ async function handleToggleFavorite() {
   >
     <div class="flex flex-col flex-4 w-10 h-full">
       <div class="flex flex-row items-start">
-        <p class="flex-1 text-lg md:text-xl lg:text-2xl 2xl:text-3xl mb-1 text-gray-900 font-semibold break-words">{{ props.title }}</p>
-        <button
-          class="shrink-0 ml-2 mt-1 text-xl transition-colors duration-150"
-          :class="favorite ? 'text-amber-400 hover:text-amber-500' : 'text-gray-300 hover:text-amber-400'"
-          @click="handleToggleFavorite"
-        >
-          <i :class="favorite ? 'ri-star-fill' : 'ri-star-line'" />
-        </button>
+        <div class="flex items-center flex-1 min-w-0">
+          <p class="text-lg md:text-xl lg:text-2xl 2xl:text-3xl mb-1 text-gray-900 font-semibold break-words">{{ props.title }}</p>
+          <button
+            class="shrink-0 ml-2 text-xl transition-colors duration-150"
+            :class="favorite ? 'text-amber-400 hover:text-amber-500' : 'text-gray-300 hover:text-amber-400'"
+            @click="handleToggleFavorite"
+          >
+            <i :class="favorite ? 'ri-star-fill' : 'ri-star-line'" />
+          </button>
+        </div>
         <div class="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <Button
             class="w-9 h-9"
