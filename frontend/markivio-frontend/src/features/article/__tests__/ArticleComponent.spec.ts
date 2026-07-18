@@ -3,7 +3,20 @@ import { mount } from '@vue/test-utils'
 import ArticleComponent from '@/features/article/components/ArticleComponent.vue'
 import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue'
 
-// Mock urql client
+const mockToggleFavorite = vi.fn().mockResolvedValue({ data: {} })
+
+vi.mock('@/features/article/composables/article.graphql', () => ({
+  useGetSourceUrl: vi.fn(() => ({
+    runQuery: vi.fn().mockResolvedValue({ id: '123', source: 'https://example.com', framable: true, content: '' }),
+  })),
+  useToggleFavorite: vi.fn(() => ({
+    toggleFavorite: mockToggleFavorite,
+    data: { value: null },
+    fetching: { value: false },
+    error: { value: null },
+  })),
+}))
+
 vi.mock('@urql/vue', async () => {
   const actual = await vi.importActual('@urql/vue')
   return {
@@ -21,7 +34,6 @@ vi.mock('@urql/vue', async () => {
   }
 })
 
-// Mock store
 vi.mock('@/stores/add-edit-drawer-store', () => ({
   useAddEditDrawer: () => ({
     open: vi.fn(),
@@ -106,5 +118,62 @@ describe('ArticleComponent', () => {
     const wrapper = mountComponent({ tags: [] })
 
     expect(wrapper.props('tags')).toHaveLength(0)
+  })
+
+  describe('Favorite button', () => {
+    it('should render favorite button', () => {
+      const wrapper = mountComponent()
+
+      const favoriteButton = wrapper.find('button')
+      expect(favoriteButton.exists()).toBe(true)
+    })
+
+    it('should display unfilled star when not favorite', () => {
+      const wrapper = mountComponent({ isFavorite: false })
+
+      const starIcon = wrapper.find('i')
+      expect(starIcon.classes()).toContain('ri-star-line')
+    })
+
+    it('should display filled star when favorite', () => {
+      const wrapper = mountComponent({ isFavorite: true })
+
+      const starIcon = wrapper.find('i')
+      expect(starIcon.classes()).toContain('ri-star-fill')
+    })
+
+    it('should toggle favorite on click', async () => {
+      const wrapper = mountComponent({ isFavorite: false })
+
+      const favoriteButton = wrapper.find('button')
+      await favoriteButton.trigger('click')
+
+      expect(mockToggleFavorite).toHaveBeenCalledWith('123')
+    })
+
+    it('should toggle star icon class after click', async () => {
+      const wrapper = mountComponent({ isFavorite: false })
+
+      expect(wrapper.find('i').classes()).toContain('ri-star-line')
+
+      const favoriteButton = wrapper.find('button')
+      await favoriteButton.trigger('click')
+
+      expect(wrapper.find('i').classes()).toContain('ri-star-fill')
+    })
+
+    it('should apply amber color when favorited', () => {
+      const wrapper = mountComponent({ isFavorite: true })
+
+      const favoriteButton = wrapper.find('button')
+      expect(favoriteButton.classes()).toContain('text-amber-400')
+    })
+
+    it('should apply gray color when not favorited', () => {
+      const wrapper = mountComponent({ isFavorite: false })
+
+      const favoriteButton = wrapper.find('button')
+      expect(favoriteButton.classes()).toContain('text-gray-300')
+    })
   })
 })

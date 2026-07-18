@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
   Drawer,
-  IconField,
   Textarea,
   type AutoCompleteCompleteEvent,
   type AutoCompleteOptionSelectEvent,

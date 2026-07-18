@@ -7,10 +7,6 @@ import { useVersionStore } from '@/stores/version-store';
 import { useGetTenMostUsedTags } from '@/features/tag/composables/tag.graphql';
 import { useArticleStore } from '@/stores/article-store';
 
-const emit = defineEmits<{
-  'close-sidebar': []
-}>()
-
 const popoverRef = ref()
 const { t } = useI18n();
 const { version } = useVersionStore();

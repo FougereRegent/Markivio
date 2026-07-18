@@ -5,6 +5,8 @@ import type { Article } from '@/features/article/models/article.models'
 
 
 // Mock urql with gql export
+const mockExecuteMutation = vi.fn().mockResolvedValue({ data: {} })
+
 vi.mock('@urql/vue', async () => {
   const actual = await vi.importActual('@urql/vue')
   return {
@@ -16,7 +18,7 @@ vi.mock('@urql/vue', async () => {
       executeQuery: vi.fn(),
     })),
     useMutation: vi.fn(() => ({
-      executeMutation: vi.fn().mockResolvedValue({ data: {} }),
+      executeMutation: mockExecuteMutation,
       data: ref(null),
       error: ref(null),
       fetching: ref(false),
@@ -36,6 +38,7 @@ import {
   useGetSourceUrl,
   useGetArticleById,
   useUpdateArticle,
+  useToggleFavorite,
 } from '@/features/article/composables/article.graphql'
 
 describe('article.graphql composables', () => {
@@ -113,6 +116,29 @@ describe('article.graphql composables', () => {
       expect(result.data).toBeDefined()
       expect(result.fetching).toBeDefined()
       expect(result.error).toBeDefined()
+    })
+  })
+
+  describe('useToggleFavorite', () => {
+    it('Should initialize with correct structure', () => {
+      const result = useToggleFavorite()
+
+      expect(result.toggleFavorite).toBeDefined()
+      expect(typeof result.toggleFavorite).toBe('function')
+      expect(result.data).toBeDefined()
+      expect(result.fetching).toBeDefined()
+      expect(result.error).toBeDefined()
+    })
+
+    it('Should call executeMutation with correct input', async () => {
+      const result = useToggleFavorite()
+      const mockId = 'article-123'
+
+      await result.toggleFavorite(mockId)
+
+      expect(mockExecuteMutation).toHaveBeenCalledWith({
+        input: { id: mockId },
+      })
     })
   })
 })
