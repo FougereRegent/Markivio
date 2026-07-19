@@ -26,7 +26,6 @@ export type ArticleFiltering = {
 
 export function useGetArticles(offset: Ref<number>, limit: number, articleFiltering: Ref<ArticleFiltering>) {
   const query = computed(() => {
-    debugger;
     if(!articleFiltering.value.byTagName && !articleFiltering.value.byTypeName) {
       return  GetArticles;
     }
