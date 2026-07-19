@@ -18,5 +18,5 @@ pre-push:
       run: dotnet test
       root: "backend/api/"
     test-frontend:
-      run: pnpm test:unit --ci
+      run: pnpm test:unit:ci
       root: "frontend/markivio-frontend/"
