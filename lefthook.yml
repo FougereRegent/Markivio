@@ -5,12 +5,9 @@ commit-msg:
 
 pre-commit:
   parallel: true
-  commands:
-    backend:
-      root: ./backend/api
-      run: |
-        dotnet format
-    frontend:
+  jobs:
+    - run: dotnet format
+      root: ./backend/api/
+      glob: "*.cs"
+    - run:  pnpm lint
       root: ./frontend/markivio-frontend
-      run: |
-        pnpm lint
