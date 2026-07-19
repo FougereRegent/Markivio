@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/FougereRegent/Markivio/compare/v1.9.0...v1.9.1) (2026-07-19)
+
+
+### Bug Fixes
+
+* remove debugger instruction in frontend ([#47](https://github.com/FougereRegent/Markivio/issues/47)) ([fe52d60](https://github.com/FougereRegent/Markivio/commit/fe52d6091e5082fb3e99f74dc69449454e7a6b00))
+
 # [1.9.0](https://github.com/FougereRegent/Markivio/compare/v1.8.0...v1.9.0) (2026-07-19)
 
 
