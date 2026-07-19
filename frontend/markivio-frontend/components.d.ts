@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AutoComplete: typeof import('primevue/autocomplete')['default']
+    BadgeComponent: typeof import('./src/components/BadgeComponent.vue')['default']
     Button: typeof import('primevue/button')['default']
     Chip: typeof import('primevue/chip')['default']
     ColorPicker: typeof import('primevue/colorpicker')['default']

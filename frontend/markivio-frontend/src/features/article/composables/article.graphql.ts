@@ -1,9 +1,16 @@
 import type { ArticleProps } from '@/features/article/components/ArticleComponent.vue';
 import { type Article } from '@/features/article/models/article.models'
 import type { Tag } from '@/features/tag/models/tag.models';
-import { AddArticles, GetArticleById, GetArticles, GetArticlesByTagName, GetUrlAndContentByArticleId, UpdateArticle, ToggleFavorite } from '@/features/article/queries/article.queries'
+import { AddArticles, GetArticleById, GetArticles, GetArticlesByTagName, GetUrlAndContentByArticleId, UpdateArticle, ToggleFavorite, GetArticlesByIsFavorite, GetArticlesByIsNew, GetArticlesByIsReaded, GetArticleStatsByCategories } from '@/features/article/queries/article.queries'
 import { useClientHandle, useMutation, useQuery } from '@urql/vue'
 import { computed, toValue, type Ref } from 'vue'
+
+export enum ArticleTypeFiltering {
+  all = "all" ,
+  favorite =  "favorite",
+  new = "new",
+  archived = "archived"
+};
 
 export type UrlSource = {
   id: string
@@ -12,10 +19,39 @@ export type UrlSource = {
   content: string
 }
 
-export function useGetArticles(offset: Ref<number>, limit: number, articleName: Ref<string | null>) {
+export type ArticleFiltering = {
+  byTagName?: string | null,
+  byTypeName?: ArticleTypeFiltering | null
+};
+
+export function useGetArticles(offset: Ref<number>, limit: number, articleFiltering: Ref<ArticleFiltering>) {
+  const query = computed(() => {
+    debugger;
+    if(!articleFiltering.value.byTagName && !articleFiltering.value.byTypeName) {
+      return  GetArticles;
+    }
+    if(articleFiltering.value.byTagName) {
+      return GetArticlesByTagName;
+    }
+
+    switch(articleFiltering.value.byTypeName)
+    {
+      case ArticleTypeFiltering.all:
+        return GetArticles;
+      case ArticleTypeFiltering.favorite:
+        return GetArticlesByIsFavorite;
+      case ArticleTypeFiltering.new:
+        return GetArticlesByIsNew;
+      case ArticleTypeFiltering.archived:
+        return GetArticlesByIsReaded;
+      default:
+        return GetArticles;
+    }
+
+  });
   const { data, error, fetching, executeQuery } = useQuery({
-    query: computed(() => articleName?.value == null ? GetArticles : GetArticlesByTagName),
-    variables: computed(() => ({ offset: offset.value, limit: limit, articleName: articleName?.value }))  })
+    query: query,
+    variables: computed(() => ({ offset: offset.value, limit: limit, articleName: articleFiltering?.value.byTagName }))  })
 
   const hasNext = computed(() => data.value?.articles.pageInfo.hasNextPage ?? false)
   const articles = computed(() =>
@@ -130,4 +166,12 @@ export function useToggleFavorite() {
   }
 
   return { data, toggleFavorite, fetching, error }
+}
+
+export function useArticleStats() {
+  const { data, executeQuery, fetching, error } = useQuery({
+    query: GetArticleStatsByCategories
+  });
+
+  return {stats: data, executeQuery, fetching, error}
 }

@@ -7,6 +7,12 @@ const { mockUseGetArticles } = vi.hoisted(() => ({
 
 vi.mock('@/features/article/composables/article.graphql', () => ({
   useGetArticles: mockUseGetArticles,
+  ArticleTypeFiltering: {
+    all: 'all',
+    favorite: 'favorite',
+    new: 'new',
+    archived: 'archived',
+  },
 }))
 
 import { useArticleStore } from '@/stores/article-store'
@@ -63,6 +69,19 @@ describe('article-store', () => {
       store.offset = 10
       store.changeTypeFilter()
       expect(store.offset).toBe(0)
+    })
+
+    it('should reset offset to 0 when called with a type', () => {
+      const store = useArticleStore()
+      store.offset = 10
+      store.changeTypeFilter('favorite')
+      expect(store.offset).toBe(0)
+    })
+
+    it('should pass the filtering object to useGetArticles', () => {
+      useArticleStore()
+      const [, , articleFiltering] = mockUseGetArticles.mock.calls[0]!
+      expect(articleFiltering.value).toEqual({ byTypeName: null, byTagName: null })
     })
   })
 

@@ -68,8 +68,7 @@ public sealed class Article : EntityWithSoftDeleteAndTenancy
         }
     }
 
-    public void ToggleIsFavorite()
-    {
-        this.IsFavorite = !this.IsFavorite;
-    }
+	public void ToggleIsFavorite() {
+		this.IsFavorite = !this.IsFavorite;
+	}
 }

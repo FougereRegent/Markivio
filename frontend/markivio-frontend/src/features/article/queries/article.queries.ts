@@ -40,6 +40,17 @@ export type AddArticleReturn = {
   }
 }
 
+export type ArticleStats = {
+  numberOfNewArticle: CountStats,
+  numberOfReadArticle: CountStats,
+  numberOfAllArticle: CountStats,
+  numberOfFavoriteArticle: CountStats
+};
+
+type CountStats = {
+  totalCount: number,
+}
+
 const ArticleInformationFragment = `
 fragment Article on ArticleInformation {
     id
@@ -88,6 +99,57 @@ export const GetArticlesByTagName: TypedDocumentNode<GetArticlesInformationQuery
             eq: $articleName
           }
         }
+      }
+    }) {
+      items {
+        ...Article
+      }
+      ...Pagination
+    }
+  }
+`;
+
+export const GetArticlesByIsFavorite: TypedDocumentNode<GetArticlesInformationQuery> = gql`
+  ${ArticleInformationFragment}
+  ${ArticlePaginationFragment}
+  query Articles($offset: Int!, $limit: Int!) {
+    articles(skip: $offset, take: $limit, where : {
+      isFavorite: {
+        eq: true
+      }
+    }) {
+      items {
+        ...Article
+      }
+      ...Pagination
+    }
+  }
+`;
+
+export const GetArticlesByIsNew: TypedDocumentNode<GetArticlesInformationQuery> = gql`
+  ${ArticleInformationFragment}
+  ${ArticlePaginationFragment}
+  query Articles($offset: Int!, $limit: Int!) {
+    articles(skip: $offset, take: $limit, where : {
+      reading: {
+        eq: New
+      }
+    }) {
+      items {
+        ...Article
+      }
+      ...Pagination
+    }
+  }
+`;
+
+export const GetArticlesByIsReaded: TypedDocumentNode<GetArticlesInformationQuery> = gql`
+  ${ArticleInformationFragment}
+  ${ArticlePaginationFragment}
+  query Articles($offset: Int!, $limit: Int!) {
+    articles(skip: $offset, take: $limit, where : {
+      reading: {
+        eq: Read
       }
     }) {
       items {
@@ -155,3 +217,32 @@ export const ToggleFavorite: TypedDocumentNode<AddArticleReturn> = gql`
     }
   }
 `
+
+export const GetArticleStatsByCategories: TypedDocumentNode<ArticleStats> = gql`
+query Stats {
+    numberOfNewArticle: articles(
+    skip: 0
+    take: 1
+    where: { reading: { eq: New } }
+  ) {
+    totalCount
+  }
+  numberOfReadArticle: articles(
+    skip: 0
+    take: 1
+    where: { reading: { eq: Read } }
+  ) {
+    totalCount
+  }
+  numberOfAllArticle: articles(skip: 0, take: 1) {
+    totalCount
+  }
+  numberOfFavoriteArticle: articles(
+    skip: 0
+    take: 1
+    where: { isFavorite: { eq: true } }
+  ) {
+    totalCount
+  }
+}
+`;
