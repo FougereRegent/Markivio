@@ -21,13 +21,15 @@ function showSourceArticle() {
     modal
     :header="props.title"
     :style="{
-      width: '110rem',
-      height: '55rem',
+      width: '95vw',
+      height: '90vh',
+      maxWidth: '110rem',
+      maxHeight: '55rem',
     }"
   >
     <template #header>
       <div class="inline-flex items-center justify-between gap-2 w-full">
-        <span class="font-bold whitespace-nowrap capitalize text-2xl">{{ props.title }}</span>
+        <span class="font-bold whitespace-normal capitalize text-lg md:text-xl lg:text-2xl">{{ props.title }}</span>
         <Button
           class="mx-6"
           icon="ri-article-line"

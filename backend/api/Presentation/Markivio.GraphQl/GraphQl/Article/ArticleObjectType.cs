@@ -1,6 +1,7 @@
 using Markivio.Application.Dto;
 using Markivio.Presentation.GraphQl.User;
 using Markivio.Presentation.GraphQl.Tag;
+using Markivio.Domain.Entities;
 
 namespace Markivio.Presentation.GraphQl.Article;
 
@@ -31,6 +32,28 @@ public class ArticleInformationType : ObjectType<ArticleInformation>
         descriptor
             .Field(f => f.IsFramable)
             .Type<BooleanType>();
+
+        descriptor
+            .Field(f => f.IsFavorite)
+            .Type<BooleanType>();
+
+        descriptor.Field(f => f.Reading)
+            .Type<ReadingType>();
+    }
+}
+
+public class ReadingType : EnumType<ArticleReading>
+{
+    protected override void Configure(IEnumTypeDescriptor<ArticleReading> descriptor)
+    {
+        descriptor.Name("ReadingStatus");
+
+        descriptor.Value(ArticleReading.New)
+            .Name("New");
+        descriptor.Value(ArticleReading.Read)
+            .Name("Read");
+        descriptor.Value(ArticleReading.Pending)
+            .Name("Pending");
     }
 }
 

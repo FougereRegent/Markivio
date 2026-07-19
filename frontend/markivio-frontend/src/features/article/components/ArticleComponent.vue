@@ -3,7 +3,7 @@ import { Tag } from 'primevue'
 import { contrastColor } from '@/helpers/ui.helpers'
 import DialogSource from '@/components/DialogSource.vue'
 import { ref } from 'vue'
-import { useGetSourceUrl, type UrlSource } from '@/features/article/composables/article.graphql'
+import { useGetSourceUrl, useToggleFavorite, type UrlSource } from '@/features/article/composables/article.graphql'
 import { useAddEditDrawer } from '@/stores/add-edit-drawer-store'
 import DialogContent from '@/components/DialogContent.vue'
 
@@ -11,6 +11,7 @@ export type ArticleProps = {
   id: string
   title: string
   description?: string
+  isFavorite?: boolean
   tags?: Array<{
     label: string
     color: string
@@ -25,6 +26,9 @@ const urlSource = ref<UrlSource | null>(null)
 
 const { runQuery } = useGetSourceUrl(props.id)
 const drawer = useAddEditDrawer();
+const { toggleFavorite } = useToggleFavorite();
+
+const favorite = ref(props.isFavorite ?? false)
 
 const dialogUrlVisible = ref(false)
 const dialogContentVisible = ref(false);
@@ -51,36 +55,66 @@ async function showMarkdownArticle() {
 
 function editArticle() {
   drawer.open(true, props.id);
+}
 
+function deleteArticle() {
+  console.warn('TODO: implement delete for article', props.id);
+}
+
+async function handleToggleFavorite() {
+  favorite.value = !favorite.value;
+  await toggleFavorite(props.id);
 }
 </script>
 
 <template>
   <div
-    class="flex flex-row rounded-md px-4 py-5 border-gray-200 border bg-white hover:bg-gray-50 hover:border-gray-300"
+    class="group flex flex-row rounded-md px-4 py-5 border-gray-200 border bg-white hover:bg-gray-50 hover:border-gray-300"
   >
     <div class="flex flex-col flex-4 w-10 h-full">
-      <div class="flex flex-row">
-        <p class="flex-1 text-3xl mb-1 text-gray-900 font-semibold">{{ props.title }}</p>
-        <Button class="mx-1" icon="ri-edit-box-line" severity="secondary" @click="editArticle" />
-        <Button
-          class="mx-1"
-          icon="ri-article-line"
-          severity="secondary"
-          @click="showSourceArticle"
-        />
-        <Button
-          class="mx-1"
-          icon="ri-code-line"
-          severity="secondary"
-          @click="showMarkdownArticle"
-        />
+      <div class="flex flex-row items-start">
+        <div class="flex items-center flex-1 min-w-0">
+          <p class="text-lg md:text-xl lg:text-2xl 2xl:text-3xl mb-1 text-gray-900 font-semibold break-words">{{ props.title }}</p>
+          <button
+            class="shrink-0 ml-2 text-xl transition-colors duration-150"
+            :class="favorite ? 'text-amber-400 hover:text-amber-500' : 'text-gray-300 hover:text-amber-400'"
+            @click="handleToggleFavorite"
+          >
+            <i :class="favorite ? 'ri-star-fill' : 'ri-star-line'" />
+          </button>
+        </div>
+        <div class="flex shrink-0 items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <Button
+            class="w-9 h-9"
+            icon="ri-edit-box-line"
+            severity="secondary"
+            @click="editArticle"
+          />
+          <Button
+            class="w-9 h-9"
+            icon="ri-article-line"
+            severity="secondary"
+            @click="showSourceArticle"
+          />
+          <Button
+            class="w-9 h-9"
+            icon="ri-code-line"
+            severity="secondary"
+            @click="showMarkdownArticle"
+          />
+          <Button
+            class="w-9 h-9"
+            icon="ri-delete-bin-line"
+            severity="danger"
+            @click="deleteArticle"
+          />
+        </div>
       </div>
 
-      <div class="h-8/12 w-11/12 text-s my-2 text-gray-600">
+      <div class="w-full text-base md:text-lg lg:text-xl my-2 text-gray-600">
         <p class="line-clamp-3 text-justify">{{ props.description }}</p>
       </div>
-      <div class="flex flex-row flex-2 gap-3">
+      <div class="flex flex-row flex-wrap gap-2">
         <template v-for="item of props.tags" :key="item.label">
           <Tag
             :value="item.label"

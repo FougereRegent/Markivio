@@ -19,6 +19,7 @@ public interface IArticleUseCase
 
     Task<Result<ArticleInformation>> AddTags(AddTagsToArticle addTags);
     Task<Result<ArticleInformation>> RemoveTags(RemoveTagsToArticle removeTags);
+    Task<Result<ArticleInformation>> SetOrUnsetFavoriteArticle(ArticleById articleById, CancellationToken cancellationToken = default);
 }
 
 public class ArticleUseCase(ITagUseCase tagUseCase,
@@ -166,6 +167,29 @@ public class ArticleUseCase(ITagUseCase tagUseCase,
         await articleRepository.SaveAndCommit(cancellationToken);
 
         await worker.SendMessageAsync(new ReadableArticleMessage(Id: article.Id, Url: article.ArticleContent.Source), cancellationToken);
+        return Result.Ok(mapper.Map(article));
+    }
+
+    public async Task<Result<ArticleInformation>> SetOrUnsetFavoriteArticle(ArticleById articleById, CancellationToken cancellationToken = default)
+    {
+        var mapper = new ArticleMapper();
+        var article = await articleRepository.GetById(articleById.articleId, cancellationToken);
+
+        if (article is null)
+        {
+            return Result.Fail(new NotFoundError("Artcile doesn't exist"));
+        }
+
+        try
+        {
+            article.ToggleIsFavorite();
+        }
+        catch (DomainException ex)
+        {
+            return Result.Fail(DomainError.Create(ex));
+        }
+
+        articleRepository.Update(article);
         return Result.Ok(mapper.Map(article));
     }
 

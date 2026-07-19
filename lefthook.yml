@@ -4,13 +4,19 @@ commit-msg:
       run: pnpm commitlint --edit {1}
 
 pre-commit:
-  parallel: true
   commands:
-    backend:
-      root: ./backend/api
-      run: |
-        dotnet format
-    frontend:
-      root: ./frontend/markivio-frontend
-      run: |
-        pnpm lint
+    backend-build-and-format:
+      run: dotnet build && dotnet format
+      root: "backend/api/"
+    frontend-build-and-format:
+      run: pnpm build && pnpm lint
+      root: "frontend/markivio-frontend/"
+
+pre-push:
+  commands:
+    test-backend:
+      run: dotnet test
+      root: "backend/api/"
+    test-frontend:
+      run: pnpm test:unit --ci
+      root: "frontend/markivio-frontend/"

@@ -1,24 +1,22 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { useGetArticles } from '@/features/article/composables/article.graphql'
+import { type ArticleFiltering, ArticleTypeFiltering, useGetArticles } from '@/features/article/composables/article.graphql'
 
 
 export const useArticleStore = defineStore('articles', () => {
-  const tagsFilter = ref<string | null>(null);
-  const typeFilter = ref<string>("all");
+  const articleFiltering = ref<ArticleFiltering>({byTypeName: null, byTagName: null});
 
   const offset = ref(0);
-  const {articles, hasNext, executeQuery} = useGetArticles(offset, 15, tagsFilter);
-
+  const {articles, hasNext, executeQuery} = useGetArticles(offset, 15, articleFiltering);
 
   function changeTagNameFilter(tagName: string) {
-    tagsFilter.value = tagName;
+    articleFiltering.value.byTagName = tagName;
     offset.value = 0;
   }
 
-  function changeTypeFilter() {
-    tagsFilter.value = null;
-    typeFilter.value = "";
+  function changeTypeFilter(typeFilter: ArticleTypeFiltering | null = null) {
+    articleFiltering.value.byTagName = null;
+    articleFiltering.value.byTypeName = typeFilter;
     offset.value = 0;
   }
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Dropdown } from 'primevue'
 import { useLocaleStore } from '@/stores/locale-store'
 import type { SupportedLocale } from '@/i18n'
 
@@ -16,12 +17,14 @@ function onChange(value: SupportedLocale) {
 </script>
 
 <template>
-  <SelectButton
+  <Dropdown
     :modelValue="localeStore.locale"
     @update:modelValue="onChange"
     :options="locales"
     optionLabel="label"
     optionValue="value"
     size="small"
+    class="w-20"
+    scrollable
   />
 </template>

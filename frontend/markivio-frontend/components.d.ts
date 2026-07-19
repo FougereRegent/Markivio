@@ -12,8 +12,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AutoComplete: typeof import('primevue/autocomplete')['default']
+    BadgeComponent: typeof import('./src/components/BadgeComponent.vue')['default']
     Button: typeof import('primevue/button')['default']
     Chip: typeof import('primevue/chip')['default']
+    ColorPicker: typeof import('primevue/colorpicker')['default']
     DialogContent: typeof import('./src/components/DialogContent.vue')['default']
     DialogSource: typeof import('./src/components/DialogSource.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
@@ -31,7 +33,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollPanel: typeof import('primevue/scrollpanel')['default']
-    SelectButton: typeof import('primevue/selectbutton')['default']
     Toast: typeof import('primevue/toast')['default']
     UserIconComponent: typeof import('./src/components/UserIconComponent.vue')['default']
     UserMenuComponent: typeof import('./src/components/UserMenuComponent.vue')['default']

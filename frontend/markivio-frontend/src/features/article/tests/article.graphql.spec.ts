@@ -2,21 +2,36 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import type { Article } from '@/features/article/models/article.models'
+import {
+  GetArticles,
+  GetArticlesByTagName,
+  GetArticlesByIsFavorite,
+  GetArticlesByIsNew,
+  GetArticlesByIsReaded,
+} from '@/features/article/queries/article.queries'
 
 
-// Mock urql with gql export
+const { mockExecuteMutation, mockUseQuery } = vi.hoisted(() => ({
+  mockExecuteMutation: vi.fn().mockResolvedValue({ data: {} }),
+  mockUseQuery: vi.fn(() => ({
+    data: ref(null),
+    error: ref(null),
+    fetching: ref(false),
+    executeQuery: vi.fn(),
+  })),
+}))
+
+function getQueryCallArg(callIndex: number): { query: { value: unknown }; variables: { value: unknown } } {
+  return (mockUseQuery.mock.calls as Array<Array<unknown>>)[callIndex]![0] as { query: { value: unknown }; variables: { value: unknown } }
+}
+
 vi.mock('@urql/vue', async () => {
   const actual = await vi.importActual('@urql/vue')
   return {
     ...actual,
-    useQuery: vi.fn(() => ({
-      data: ref(null),
-      error: ref(null),
-      fetching: ref(false),
-      executeQuery: vi.fn(),
-    })),
+    useQuery: mockUseQuery,
     useMutation: vi.fn(() => ({
-      executeMutation: vi.fn().mockResolvedValue({ data: {} }),
+      executeMutation: mockExecuteMutation,
       data: ref(null),
       error: ref(null),
       fetching: ref(false),
@@ -29,13 +44,15 @@ vi.mock('@urql/vue', async () => {
   }
 })
 
-// Import after mocks
 import {
   useGetArticles,
   useCreateArticle,
   useGetSourceUrl,
   useGetArticleById,
   useUpdateArticle,
+  useToggleFavorite,
+  useArticleStats,
+  ArticleTypeFiltering,
 } from '@/features/article/composables/article.graphql'
 
 describe('article.graphql composables', () => {
@@ -46,8 +63,8 @@ describe('article.graphql composables', () => {
   describe('useGetArticles', () => {
     it('Should initialize with correct structure', () => {
       const offset = ref(0)
-      const articleName: Ref<string | null> = ref(null)
-      const result = useGetArticles(offset, 10, articleName)
+      const articleFiltering: Ref<{ byTagName?: string | null; byTypeName?: ArticleTypeFiltering | null }> = ref({ byTagName: null, byTypeName: null })
+      const result = useGetArticles(offset, 10, articleFiltering)
 
       expect(result.articles).toBeDefined()
       expect(result.error).toBeDefined()
@@ -58,11 +75,86 @@ describe('article.graphql composables', () => {
 
     it('Should return computed articles', () => {
       const offset = ref(0)
-      const articleName: Ref<string | null> = ref(null)
-      const { articles } = useGetArticles(offset, 10, articleName)
+      const articleFiltering = ref({ byTagName: null, byTypeName: null })
+      const { articles } = useGetArticles(offset, 10, articleFiltering)
 
-      // Test that it returns a computed ref
-      expect(articles.value).toBeUndefined() // Initially null data
+      expect(articles.value).toBeUndefined()
+    })
+
+    it('Should use GetArticles when no filter is set', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: null, byTypeName: null })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticles)
+    })
+
+    it('Should use GetArticles when byTypeName is "all"', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.all })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticles)
+    })
+
+    it('Should use GetArticlesByIsFavorite when byTypeName is "favorite"', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.favorite })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticlesByIsFavorite)
+    })
+
+    it('Should use GetArticlesByIsNew when byTypeName is "new"', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.new })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticlesByIsNew)
+    })
+
+    it('Should use GetArticlesByIsReaded when byTypeName is "archived"', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.archived })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticlesByIsReaded)
+    })
+
+    it('Should use GetArticlesByTagName when byTagName is set', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: 'vue', byTypeName: null })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticlesByTagName)
+    })
+
+    it('Should prioritize byTagName over byTypeName', () => {
+      const offset = ref(0)
+      const articleFiltering = ref({ byTagName: 'vue', byTypeName: ArticleTypeFiltering.favorite })
+      useGetArticles(offset, 10, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query.value).toBe(GetArticlesByTagName)
+    })
+
+    it('Should pass correct variables to useQuery', () => {
+      const offset = ref(5)
+      const articleFiltering = ref({ byTagName: 'react', byTypeName: null })
+      useGetArticles(offset, 15, articleFiltering)
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.variables.value).toEqual({
+        offset: 5,
+        limit: 15,
+        articleName: 'react',
+      })
     })
   })
 
@@ -113,6 +205,47 @@ describe('article.graphql composables', () => {
       expect(result.data).toBeDefined()
       expect(result.fetching).toBeDefined()
       expect(result.error).toBeDefined()
+    })
+  })
+
+  describe('useToggleFavorite', () => {
+    it('Should initialize with correct structure', () => {
+      const result = useToggleFavorite()
+
+      expect(result.toggleFavorite).toBeDefined()
+      expect(typeof result.toggleFavorite).toBe('function')
+      expect(result.data).toBeDefined()
+      expect(result.fetching).toBeDefined()
+      expect(result.error).toBeDefined()
+    })
+
+    it('Should call executeMutation with correct input', async () => {
+      const result = useToggleFavorite()
+      const mockId = 'article-123'
+
+      await result.toggleFavorite(mockId)
+
+      expect(mockExecuteMutation).toHaveBeenCalledWith({
+        input: mockId,
+      })
+    })
+  })
+
+  describe('useArticleStats', () => {
+    it('Should initialize with correct structure', () => {
+      const result = useArticleStats()
+
+      expect(result.stats).toBeDefined()
+      expect(result.executeQuery).toBeDefined()
+      expect(result.fetching).toBeDefined()
+      expect(result.error).toBeDefined()
+    })
+
+    it('Should call useQuery with GetArticleStatsByCategories', () => {
+      useArticleStats()
+
+      const callArgs = getQueryCallArg(0)
+      expect(callArgs.query).toBeDefined()
     })
   })
 })
