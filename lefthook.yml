@@ -7,7 +7,16 @@ pre-commit:
   commands:
     backend-build-and-format:
       run: dotnet build && dotnet format
-      root: ./backend/api
+      root: "backend/api/"
     frontend-build-and-format:
       run: pnpm build && pnpm lint
-      root: ./frontend/markivio-frontend
+      root: "frontend/markivio-frontend/"
+
+pre-push:
+  commands:
+    test-backend:
+      run: dotnet test
+      root: "backend/api/"
+    test-frontend:
+      run: pnpm test:unit --ci
+      root: "frontend/markivio-frontend/"
