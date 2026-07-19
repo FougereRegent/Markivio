@@ -347,6 +347,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task UpdateArticle_ShouldNotChangeTitle_WhenSameTitleWithDifferentCase()
     {
         // Arrange
+        var token = new CancellationToken();
         Guid articleId = Guid.NewGuid();
         string originalTitle = "My Article";
         Article existing = CreateArticle(title: originalTitle);
@@ -368,7 +369,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .Returns((Article a) => a);
 
         // Act
-        Result<ArticleInformation> result = await useCase.UpdateArticle(input);
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
