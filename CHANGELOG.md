@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/FougereRegent/Markivio/compare/v1.8.0...v1.9.0) (2026-07-19)
+
+
+### Features
+
+* make responsive app ([#45](https://github.com/FougereRegent/Markivio/issues/45)) ([5add366](https://github.com/FougereRegent/Markivio/commit/5add366aafe0eda7902eec6fc8cf1d8f37a472c3))
+
 # [1.8.0](https://github.com/FougereRegent/Markivio/compare/v1.7.0...v1.8.0) (2026-07-05)
 
 
