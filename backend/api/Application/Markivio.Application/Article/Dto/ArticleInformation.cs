@@ -1,5 +1,6 @@
-namespace Markivio.Application.Dto;
+using Markivio.Domain.Entities;
 
+namespace Markivio.Application.Dto;
 
 public class ArticleInformation
 {
@@ -12,4 +13,5 @@ public class ArticleInformation
     public List<TagInformation> Tags { get; set; } = new List<TagInformation>();
     public string Content { get; set; } = string.Empty;
     public bool IsFavorite { get; set; }
+    public ArticleReading Reading { get; set; } = ArticleReading.New;
 }
