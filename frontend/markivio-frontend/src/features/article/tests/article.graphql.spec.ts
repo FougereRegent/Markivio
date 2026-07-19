@@ -21,6 +21,10 @@ const { mockExecuteMutation, mockUseQuery } = vi.hoisted(() => ({
   })),
 }))
 
+function getQueryCallArg(callIndex: number): { query: { value: unknown }; variables: { value: unknown } } {
+  return (mockUseQuery.mock.calls as Array<Array<unknown>>)[callIndex]![0] as { query: { value: unknown }; variables: { value: unknown } }
+}
+
 vi.mock('@urql/vue', async () => {
   const actual = await vi.importActual('@urql/vue')
   return {
@@ -82,7 +86,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: null, byTypeName: null })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticles)
     })
 
@@ -91,7 +95,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.all })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticles)
     })
 
@@ -100,7 +104,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.favorite })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticlesByIsFavorite)
     })
 
@@ -109,7 +113,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.new })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticlesByIsNew)
     })
 
@@ -118,7 +122,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: null, byTypeName: ArticleTypeFiltering.archived })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticlesByIsReaded)
     })
 
@@ -127,7 +131,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: 'vue', byTypeName: null })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticlesByTagName)
     })
 
@@ -136,7 +140,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: 'vue', byTypeName: ArticleTypeFiltering.favorite })
       useGetArticles(offset, 10, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query.value).toBe(GetArticlesByTagName)
     })
 
@@ -145,7 +149,7 @@ describe('article.graphql composables', () => {
       const articleFiltering = ref({ byTagName: 'react', byTypeName: null })
       useGetArticles(offset, 15, articleFiltering)
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.variables.value).toEqual({
         offset: 5,
         limit: 15,
@@ -240,7 +244,7 @@ describe('article.graphql composables', () => {
     it('Should call useQuery with GetArticleStatsByCategories', () => {
       useArticleStats()
 
-      const callArgs = mockUseQuery.mock.calls[0][0]
+      const callArgs = getQueryCallArg(0)
       expect(callArgs.query).toBeDefined()
     })
   })

@@ -74,7 +74,7 @@ describe('article-store', () => {
     it('should reset offset to 0 when called with a type', () => {
       const store = useArticleStore()
       store.offset = 10
-      store.changeTypeFilter('favorite')
+      store.changeTypeFilter('favorite' as import('@/features/article/composables/article.graphql').ArticleTypeFiltering)
       expect(store.offset).toBe(0)
     })
 

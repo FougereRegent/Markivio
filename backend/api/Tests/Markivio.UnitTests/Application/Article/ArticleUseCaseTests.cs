@@ -191,6 +191,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task UpdateArticle_ShouldFail_WhenArticleNotFound()
     {
         // Arrange
+        var token = new CancellationToken();
         var input = new UpdateArticle(
             Id: Guid.NewGuid(),
             Title: faker.Random.Word(),
@@ -201,7 +202,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync((Article?)null);
 
         // Act
-        Result<ArticleInformation> result = await useCase.UpdateArticle(input);
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -213,6 +214,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task UpdateArticle_ShouldFail_WhenTitleAlreadyExists()
     {
         // Arrange
+        var token = new CancellationToken();
         Guid articleId = Guid.NewGuid();
         Article existing = CreateArticle(title: "Original Title");
         existing.Id = articleId;
@@ -235,7 +237,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync(CreateArticle(title: newTitle));
 
         // Act
-        Result<ArticleInformation> result = await useCase.UpdateArticle(input);
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -247,6 +249,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task UpdateArticle_ShouldFail_WhenTitleIsEmpty()
     {
         // Arrange
+        var token = new CancellationToken();
         Guid articleId = Guid.NewGuid();
         Article existing = CreateArticle(title: "Original Title");
         existing.Id = articleId;
@@ -264,7 +267,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .Returns(Enumerable.Empty<Tag>().AsQueryable());
 
         // Act
-        Result<ArticleInformation> result = await useCase.UpdateArticle(input);
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -277,6 +280,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     {
         // Arrange
         Guid articleId = Guid.NewGuid();
+        var token = new CancellationToken();
         Article existing = CreateArticle(title: "Original Title");
         existing.Id = articleId;
 
@@ -299,7 +303,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .Returns((Article a) => a);
 
         // Act
-        Result<ArticleInformation> result = await useCase.UpdateArticle(input);
+        Result<ArticleInformation> result = await useCase.UpdateArticle(input, token);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
@@ -313,6 +317,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     {
         // Arrange
         Guid articleId = Guid.NewGuid();
+        var token = new CancellationToken();
         Article existing = CreateArticle(title: "Original Title");
         existing.Id = articleId;
 
@@ -332,7 +337,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .Returns((Article a) => a);
 
         // Act
-        await useCase.UpdateArticle(input);
+        await useCase.UpdateArticle(input, token);
 
         // Assert
         workerMock.Verify(pre => pre.SendMessageAsync(It.IsAny<ReadableArticleMessage>(), It.IsAny<CancellationToken>()), Times.Once());
@@ -674,6 +679,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task SetOrUnsetFavoriteArticle_ShouldFail_WhenArticleNotFound()
     {
         // Arrange
+        var token = new CancellationToken();
         Guid articleId = Guid.NewGuid();
         var input = new ArticleById(articleId);
 
@@ -681,7 +687,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .ReturnsAsync((Article?)null);
 
         // Act
-        Result<ArticleInformation> result = await useCase.SetOrUnsetFavoriteArticle(input);
+        Result<ArticleInformation> result = await useCase.SetOrUnsetFavoriteArticle(input, token);
 
         // Assert
         result.IsFailed.ShouldBeTrue();
@@ -694,6 +700,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     {
         // Arrange
         Article article = CreateArticle();
+        var token = new CancellationToken();
         article.IsFavorite = false;
         var input = new ArticleById(article.Id);
 
@@ -704,7 +711,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .Returns((Article a) => a);
 
         // Act
-        Result<ArticleInformation> result = await useCase.SetOrUnsetFavoriteArticle(input);
+        Result<ArticleInformation> result = await useCase.SetOrUnsetFavoriteArticle(input, token);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
@@ -717,6 +724,7 @@ public sealed class ArticleUseCaseTests : BaseTests
     public async Task SetOrUnsetFavoriteArticle_ShouldToggleBackToFalse_WhenCalledTwice()
     {
         // Arrange
+        var token = new CancellationToken();
         Article article = CreateArticle();
         article.IsFavorite = true;
         var input = new ArticleById(article.Id);
@@ -728,7 +736,7 @@ public sealed class ArticleUseCaseTests : BaseTests
             .Returns((Article a) => a);
 
         // Act
-        Result<ArticleInformation> result = await useCase.SetOrUnsetFavoriteArticle(input);
+        Result<ArticleInformation> result = await useCase.SetOrUnsetFavoriteArticle(input, token);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();

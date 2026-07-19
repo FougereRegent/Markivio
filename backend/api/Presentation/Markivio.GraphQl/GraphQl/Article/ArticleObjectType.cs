@@ -37,21 +37,23 @@ public class ArticleInformationType : ObjectType<ArticleInformation>
             .Field(f => f.IsFavorite)
             .Type<BooleanType>();
 
-		descriptor.Field(f => f.Reading)
-			.Type<ReadingType>();
+        descriptor.Field(f => f.Reading)
+            .Type<ReadingType>();
     }
 }
 
-public class ReadingType : EnumType<ArticleReading> {
-    protected override void Configure(IEnumTypeDescriptor<ArticleReading> descriptor) {
-		descriptor.Name("ReadingStatus");
+public class ReadingType : EnumType<ArticleReading>
+{
+    protected override void Configure(IEnumTypeDescriptor<ArticleReading> descriptor)
+    {
+        descriptor.Name("ReadingStatus");
 
-		descriptor.Value(ArticleReading.New)
-			.Name("New");
-		descriptor.Value(ArticleReading.Read)
-			.Name("Read");
-		descriptor.Value(ArticleReading.Pending)
-			.Name("Pending");
-	}
+        descriptor.Value(ArticleReading.New)
+            .Name("New");
+        descriptor.Value(ArticleReading.Read)
+            .Name("Read");
+        descriptor.Value(ArticleReading.Pending)
+            .Name("Pending");
+    }
 }
 
